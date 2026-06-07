@@ -79,18 +79,27 @@ implementation without rewriting pages or feature components.
 - Phase 1: Next.js foundation, landing page, dashboard shell, mock data and API
   abstraction completed.
 - Phase 1.1: Repository initialization and governance.
-- Phase 2: Integrate live Futures Lab read-only endpoints.
-- Phase 3: Add filters, loading states and error states.
-- Phase 4: Add historical intelligence views.
-- Phase 5: Add test coverage for data transformations and API contracts.
-- Phase 6: Prepare production deployment hardening.
+- Phase 2: Market Intelligence API contract completed.
+- Phase 2.1: Futures Lab alignment and governance update.
+- Phase 3: Smallest read-only real data integration.
+- Phase 4: Add filters, loading states and error states.
+- Phase 5: Add historical intelligence views.
+- Phase 6: Add test coverage for data transformations and API contracts.
 - Phase 7: Evaluate account, billing or subscription needs only if explicitly
   approved later.
+
+## Source Control Policy
+
+Every completed phase must end with git status verification, a commit, a push to
+Gitea and a report containing branch, commit hash, commit message and push
+status. See [Governance](docs/governance.md).
 
 ## Documentation
 
 - [Roadmap](docs/roadmap.md)
 - [Architecture](docs/architecture.md)
+- [Governance](docs/governance.md)
 - [Phase 1 Notes](docs/phase-1.md)
+- [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

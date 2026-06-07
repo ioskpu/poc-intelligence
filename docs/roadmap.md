@@ -21,36 +21,52 @@
 - Added the `src/services/api` abstraction layer.
 - Verified lint and production build.
 
-## Phase 2 - Planned
+## Phase 1.1 - Completed
+
+- Created the official Gitea repository.
+- Configured `origin`.
+- Committed and pushed the initial repository state.
+- Added README, architecture and roadmap governance documentation.
+
+## Phase 2 - Completed
+
+- Defined the Market Intelligence API contract.
+- Added formal documentation for markets, opportunity scores, regimes and
+  pattern rankings.
+- Proposed versioned read-only endpoints under `/api/v1`.
+- Added documentation-only TypeScript models.
+
+## Phase 2.1 - Completed
+
+- Added mandatory source control governance for all future phases.
+- Audited Futures Lab backend capabilities against the Phase 2 contract.
+- Documented contract coverage, integration readiness, risks and the smallest
+  recommended implementation phase.
+
+## Phase 3 - Planned
 
 - Connect the frontend to read-only Futures Lab API endpoints.
 - Define environment variables for API base URL and runtime configuration.
 - Keep all network access inside `src/services/api`.
 - Add initial loading and error handling for live data.
 
-## Phase 3 - Planned
+## Phase 4 - Planned
 
 - Add dashboard filters for market, regime and horizon.
 - Add client-side refresh behavior if needed.
 - Introduce React Query only if live client-side data management requires it.
 
-## Phase 4 - Planned
+## Phase 5 - Planned
 
 - Add historical intelligence views.
 - Support comparisons across snapshots, regimes and markets.
 - Add charting only where it improves interpretation.
 
-## Phase 5 - Planned
+## Phase 6 - Planned
 
 - Add focused tests for pure business logic.
 - Add API contract validation when Futures Lab response shapes are stable.
 - Add regression coverage for data transformation utilities.
-
-## Phase 6 - Planned
-
-- Prepare production deployment hardening.
-- Document Vercel environment configuration.
-- Add basic observability and deployment checks.
 
 ## Phase 7 - Planned
 
