@@ -43,27 +43,33 @@
 - Documented contract coverage, integration readiness, risks and the smallest
   recommended implementation phase.
 
-## Phase 3 - Planned
+## Phase 3 - Completed
 
-- Connect the frontend to read-only Futures Lab API endpoints.
-- Define environment variables for API base URL and runtime configuration.
-- Keep all network access inside `src/services/api`.
-- Add initial loading and error handling for live data.
+- Integrated real market ranking data from the existing Futures Lab internal
+  dashboard state endpoint.
+- Kept access isolated in `src/services/api`.
+- Added minimal loading, empty and error states.
+- Kept the scope limited to market rankings only.
 
 ## Phase 4 - Planned
+
+- Expand read-only Futures Lab integration beyond market rankings.
+- Define environment variables for API base URL and runtime configuration.
+- Keep all network access inside `src/services/api`.
+- Replace remaining mock non-ranking dashboard sections when contracts are
+  ready.
+
+## Phase 5 - Planned
 
 - Add dashboard filters for market, regime and horizon.
 - Add client-side refresh behavior if needed.
 - Introduce React Query only if live client-side data management requires it.
 
-## Phase 5 - Planned
+## Phase 6 - Planned
 
 - Add historical intelligence views.
 - Support comparisons across snapshots, regimes and markets.
 - Add charting only where it improves interpretation.
-
-## Phase 6 - Planned
-
 - Add focused tests for pure business logic.
 - Add API contract validation when Futures Lab response shapes are stable.
 - Add regression coverage for data transformation utilities.

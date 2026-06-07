@@ -1,5 +1,18 @@
-import { intelligenceSnapshot } from "@/services/api/mock-data";
+import { getMarketRankings } from "@/services/api/market-rankings";
+import {
+  mockOpportunityRankings,
+  mockPatternDiscovery,
+  mockRegimeAnalysis,
+} from "@/services/api/mock-data";
 
 export async function getIntelligenceSnapshot() {
-  return intelligenceSnapshot;
+  const marketRankings = await getMarketRankings();
+
+  return {
+    generatedAt: marketRankings.generatedAt,
+    marketRankings: marketRankings.rankings,
+    opportunityRankings: mockOpportunityRankings,
+    patternDiscovery: mockPatternDiscovery,
+    regimeAnalysis: mockRegimeAnalysis,
+  };
 }

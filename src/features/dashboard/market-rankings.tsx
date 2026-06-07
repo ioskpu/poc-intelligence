@@ -24,6 +24,11 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {rankings.length === 0 ? (
+          <div className="rounded-md border bg-background p-6 text-sm text-muted-foreground">
+            No Futures Lab rankings are available in the latest dashboard state.
+          </div>
+        ) : (
         <Table>
           <TableHeader>
             <TableRow>
@@ -50,6 +55,7 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
             ))}
           </TableBody>
         </Table>
+        )}
       </CardContent>
     </Card>
   );
