@@ -19,8 +19,7 @@ type MarketRankingResult = {
   rankings: MarketRanking[];
 };
 
-const DEFAULT_FUTURES_LAB_URL = "http://127.0.0.1:8000";
-const DEFAULT_INTERNAL_API_KEY = "dev-secret-key";
+const DEFAULT_REQUEST_TIMEOUT_MS = 20000;
 
 export async function getMarketRankings(): Promise<MarketRankingResult> {
   const state = await fetchFuturesDashboardState();
@@ -35,22 +34,24 @@ export async function getMarketRankings(): Promise<MarketRankingResult> {
 }
 
 async function fetchFuturesDashboardState(): Promise<FuturesDashboardState> {
-  const baseUrl = (
-    process.env.FUTURES_LAB_API_BASE_URL ?? DEFAULT_FUTURES_LAB_URL
-  ).replace(/\/$/, "");
-  const apiKey =
-    process.env.FUTURES_LAB_INTERNAL_API_KEY ?? DEFAULT_INTERNAL_API_KEY;
+  const { apiKey, baseUrl, timeoutMs } = readFuturesLabConfig();
 
-  const response = await fetch(`${baseUrl}/internal/dashboard/state`, {
-    headers: {
-      "X-API-KEY": apiKey,
-    },
-    cache: "no-store",
-    signal: AbortSignal.timeout(8000),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${baseUrl}/internal/dashboard/state`, {
+      headers: {
+        "X-API-KEY": apiKey,
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (error) {
+    throw new Error(toNetworkErrorMessage(error));
+  }
 
   if (!response.ok) {
-    throw new Error(`Futures Lab dashboard state failed: ${response.status}`);
+    throw new Error(toStatusErrorMessage(response.status));
   }
 
   const payload: unknown = await response.json();
@@ -60,6 +61,53 @@ async function fetchFuturesDashboardState(): Promise<FuturesDashboardState> {
   }
 
   return payload;
+}
+
+function readFuturesLabConfig() {
+  const rawBaseUrl = process.env.FUTURES_LAB_API_BASE_URL?.trim();
+  const apiKey = process.env.FUTURES_LAB_INTERNAL_API_KEY?.trim();
+
+  if (!rawBaseUrl) {
+    throw new Error("FUTURES_LAB_API_BASE_URL is required");
+  }
+
+  if (!apiKey) {
+    throw new Error("FUTURES_LAB_INTERNAL_API_KEY is required");
+  }
+
+  let url: URL;
+
+  try {
+    url = new URL(rawBaseUrl);
+  } catch {
+    throw new Error("FUTURES_LAB_API_BASE_URL must be a valid URL");
+  }
+
+  if (!["http:", "https:"].includes(url.protocol)) {
+    throw new Error("FUTURES_LAB_API_BASE_URL must use http or https");
+  }
+
+  return {
+    apiKey,
+    baseUrl: rawBaseUrl.replace(/\/$/, ""),
+    timeoutMs: readRequestTimeoutMs(),
+  };
+}
+
+function readRequestTimeoutMs() {
+  const rawTimeout = process.env.FUTURES_LAB_REQUEST_TIMEOUT_MS?.trim();
+
+  if (!rawTimeout) {
+    return DEFAULT_REQUEST_TIMEOUT_MS;
+  }
+
+  const parsed = Number(rawTimeout);
+
+  if (!Number.isFinite(parsed) || parsed < 1000) {
+    throw new Error("FUTURES_LAB_REQUEST_TIMEOUT_MS must be at least 1000");
+  }
+
+  return Math.round(parsed);
 }
 
 function isDashboardState(value: unknown): value is FuturesDashboardState {
@@ -83,7 +131,9 @@ function normalizeScore(value: unknown) {
     return 0;
   }
 
-  return Math.max(0, Math.min(100, Math.round(parsed)));
+  const scaled = parsed >= 0 && parsed <= 1 ? parsed * 100 : parsed;
+
+  return Math.max(0, Math.min(100, Math.round(scaled)));
 }
 
 function mapDirection(value: string): Direction {
@@ -134,4 +184,32 @@ function readTimestamp(value: unknown) {
   }
 
   return parsed.toISOString();
+}
+
+function toStatusErrorMessage(status: number) {
+  if (status === 401 || status === 403) {
+    return `Futures Lab authentication failed: ${status}`;
+  }
+
+  if (status === 404) {
+    return "Futures Lab dashboard state endpoint was not found: 404";
+  }
+
+  if (status >= 500) {
+    return `Futures Lab dashboard state is unavailable: ${status}`;
+  }
+
+  return `Futures Lab dashboard state failed: ${status}`;
+}
+
+function toNetworkErrorMessage(error: unknown) {
+  if (error instanceof DOMException && error.name === "TimeoutError") {
+    return "Futures Lab dashboard state request timed out";
+  }
+
+  if (error instanceof Error && error.name === "AbortError") {
+    return "Futures Lab dashboard state request was aborted";
+  }
+
+  return "Futures Lab dashboard state is unreachable";
 }

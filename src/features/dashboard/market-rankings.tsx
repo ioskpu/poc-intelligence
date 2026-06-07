@@ -29,32 +29,32 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
             No Futures Lab rankings are available in the latest dashboard state.
           </div>
         ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Market</TableHead>
-              <TableHead>Regime</TableHead>
-              <TableHead className="text-right">Score</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rankings.map((ranking) => (
-              <TableRow key={ranking.symbol}>
-                <TableCell className="font-medium">{ranking.symbol}</TableCell>
-                <TableCell>{ranking.market}</TableCell>
-                <TableCell>
-                  <Badge tone={getDirectionTone(ranking.direction)}>
-                    {ranking.regime}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  {ranking.consistencyScore}
-                </TableCell>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead>Market</TableHead>
+                <TableHead>Regime</TableHead>
+                <TableHead className="text-right">Score</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {rankings.map((ranking) => (
+                <TableRow key={ranking.symbol}>
+                  <TableCell className="font-medium">{ranking.symbol}</TableCell>
+                  <TableCell>{ranking.market}</TableCell>
+                  <TableCell>
+                    <Badge tone={getDirectionTone(ranking.direction)}>
+                      {ranking.regime}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {ranking.consistencyScore}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </CardContent>
     </Card>

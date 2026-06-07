@@ -51,6 +51,14 @@
 - Added minimal loading, empty and error states.
 - Kept the scope limited to market rankings only.
 
+## Phase 3.2 - Completed
+
+- Fixed Futures Lab score normalization from decimal `0-1` values to display
+  scores in the `0-100` range.
+- Removed unsafe default API host and API key fallbacks.
+- Added explicit environment validation and clearer error messages.
+- Verified live rendering against the observed Futures Lab runtime.
+
 ## Phase 4 - Planned
 
 - Expand read-only Futures Lab integration beyond market rankings.
