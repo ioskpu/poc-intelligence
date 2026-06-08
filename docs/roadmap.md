@@ -91,6 +91,14 @@
 - Avoided setup memory, ghost tracking, execution language and new backend
   functionality.
 
+## Phase 8 - Completed
+
+- Added a compact Setup Memory dashboard section.
+- Surfaced existing `capital_control.futures_lab.setup_rankings.by_setup_key`
+  records.
+- Presented setup memory as historical laboratory observations.
+- Avoided ghost tracking, prediction systems, charts and new analytics engines.
+
 ## Future Planned Work
 
 - Add focused tests for pure business logic.

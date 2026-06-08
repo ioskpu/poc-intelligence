@@ -8,6 +8,7 @@ import { PatternDiscovery } from "@/features/dashboard/pattern-discovery";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { RegimeAnalysis } from "@/features/dashboard/regime-analysis";
+import { SetupMemory } from "@/features/dashboard/setup-memory";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
 type DashboardShellProps = {
@@ -28,6 +29,7 @@ export function DashboardShell({ snapshot }: DashboardShellProps) {
             <RankingExplanation lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt} />
           </section>
           <RecentLabDecisions decisions={snapshot.labDecisions} />
+          <SetupMemory records={snapshot.setupMemory} />
           <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <OpportunityRankings rankings={snapshot.opportunityRankings} />
             <PatternDiscovery patterns={snapshot.patternDiscovery} />

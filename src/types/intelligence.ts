@@ -41,6 +41,20 @@ export type LabDecision = {
   observedAt: string;
 };
 
+export type SetupMemory = {
+  setupKey: string;
+  symbol: string;
+  side: string;
+  tradeCount: number | null;
+  winRate: number | null;
+  healthScore: number | null;
+  healthLabel: string;
+  pnlTotal: number | null;
+  averagePnl: number | null;
+  summaryText: string;
+  lastSeenAt: string;
+};
+
 export type OpportunityRanking = {
   symbol: string;
   label: string;
@@ -69,6 +83,7 @@ export type IntelligenceSnapshot = {
   labDecisions: LabDecision[];
   marketSummary: MarketSummary;
   marketRankings: MarketRanking[];
+  setupMemory: SetupMemory[];
   opportunityRankings: OpportunityRanking[];
   patternDiscovery: PatternDiscovery[];
   regimeAnalysis: RegimeAnalysis[];
