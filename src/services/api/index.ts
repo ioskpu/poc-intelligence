@@ -1,4 +1,5 @@
 import { getGhostTracking } from "@/services/api/ghost-tracking";
+import { createIntelligenceBrief } from "@/services/api/intelligence-brief";
 import { getRecentLabDecisions } from "@/services/api/lab-decisions";
 import { getMarketRankings } from "@/services/api/market-rankings";
 import { getSetupMemory } from "@/services/api/setup-memory";
@@ -20,6 +21,13 @@ export async function getIntelligenceSnapshot() {
   return {
     generatedAt: marketRankings.generatedAt,
     ghostTracking,
+    intelligenceBrief: createIntelligenceBrief({
+      ghostTracking,
+      labDecisions,
+      marketRankings: marketRankings.rankings,
+      marketSummary: marketRankings.summary,
+      setupMemory,
+    }),
     labDecisions,
     marketSummary: marketRankings.summary,
     marketRankings: marketRankings.rankings,

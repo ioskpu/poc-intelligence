@@ -106,6 +106,20 @@
 - Presented rejected-opportunity outcomes as post-evaluation research feedback.
 - Avoided predictive models, historical charts and new analytics engines.
 
+## Phase 10 - Completed
+
+- Analyzed product positioning and retention.
+- Recommended Research Observatory as the primary product direction.
+- Recommended a Daily Intelligence Brief for the next implementation phase.
+
+## Phase 11 - Completed
+
+- Added a compact Intelligence Brief as the top dashboard section.
+- Synthesized existing rankings, freshness, recent decisions, setup memory and
+  ghost tracking observations.
+- Kept narrative logic inside `src/services/api`.
+- Avoided AI summaries, predictions, alerts and recommendation language.
+
 ## Future Planned Work
 
 - Add focused tests for pure business logic.

@@ -2,6 +2,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
 import { GhostTracking } from "@/features/dashboard/ghost-tracking";
+import { IntelligenceBrief } from "@/features/dashboard/intelligence-brief";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
 import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
@@ -23,6 +24,7 @@ export function DashboardShell({ snapshot }: DashboardShellProps) {
       <div className="min-w-0 flex-1">
         <TopBar generatedAt={snapshot.generatedAt} />
         <div className="space-y-6 p-5">
+          <IntelligenceBrief brief={snapshot.intelligenceBrief} />
           <MarketSummaryCards summary={snapshot.marketSummary} />
           <FreshnessStrip freshness={snapshot.marketSummary.freshness} />
           <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">

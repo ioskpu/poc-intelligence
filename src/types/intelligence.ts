@@ -76,6 +76,17 @@ export type GhostTracking = {
   records: GhostTrackingRecord[];
 };
 
+export type IntelligenceBriefItem = {
+  label: string;
+  value: string;
+  detail: string;
+};
+
+export type IntelligenceBrief = {
+  headline: string;
+  items: IntelligenceBriefItem[];
+};
+
 export type OpportunityRanking = {
   symbol: string;
   label: string;
@@ -101,6 +112,7 @@ export type RegimeAnalysis = {
 
 export type IntelligenceSnapshot = {
   generatedAt: string;
+  intelligenceBrief: IntelligenceBrief;
   labDecisions: LabDecision[];
   marketSummary: MarketSummary;
   marketRankings: MarketRanking[];
