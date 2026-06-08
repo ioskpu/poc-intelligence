@@ -44,6 +44,9 @@ Private live integration variables:
 - `FUTURES_LAB_DASHBOARD_STATE_PATH`: Private dashboard state endpoint path.
 - `FUTURES_LAB_REQUEST_TIMEOUT_MS`: Optional request timeout override.
 
+If those private variables are omitted, POC Intelligence runs in public demo
+mode using local mock data only.
+
 ## Build Instructions
 
 Run lint:
@@ -125,6 +128,7 @@ status. See [Governance](docs/governance.md).
 - [Phase 11 Notes](docs/phase-11.md)
 - [Phase 12 Notes](docs/phase-12.md)
 - [Phase 15.1 Sanitization Notes](docs/phase-15-1-sanitization.md)
+- [Phase 15.3 Public Demo Notes](docs/phase-15-3-public-demo.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 ## Contributing
