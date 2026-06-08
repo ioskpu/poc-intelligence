@@ -15,15 +15,15 @@ export function SetupMemory({ records }: SetupMemoryProps) {
           Historical Futures Lab observations for recurring setup patterns.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2">
         {records.length === 0 ? (
-          <div className="rounded-md border bg-background p-4 text-sm text-muted-foreground">
+          <div className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
             No setup memory records are available from Futures Lab.
           </div>
         ) : (
           records.map((record) => (
             <article
-              className="rounded-md border bg-background p-4"
+              className="rounded-md border bg-background p-3"
               key={`${record.setupKey}-${record.symbol}-${record.side}`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -48,7 +48,7 @@ export function SetupMemory({ records }: SetupMemoryProps) {
                   {formatDate(record.lastSeenAt)}
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 {toMetric("Trades", record.tradeCount)}
                 {toMetric("Win rate", record.winRate, "%")}
                 {toMetric("Health", record.healthScore)}

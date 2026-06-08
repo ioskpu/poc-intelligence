@@ -11,10 +11,10 @@ export function ChangeAwareness({ changeAwareness }: ChangeAwarenessProps) {
       <CardHeader>
         <CardTitle>What Changed</CardTitle>
         <CardDescription>
-          {changeAwareness.currentWindow} compared with {changeAwareness.baselineWindow}.
+          {changeAwareness.currentWindow} vs {changeAwareness.baselineWindow}.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-3 lg:grid-cols-4">
+      <CardContent className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
         {changeAwareness.items.map((item) => (
           <article className="rounded-md border bg-background p-3" key={item.label}>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">

@@ -42,7 +42,15 @@ const GHOST_RECORD_LIMIT = 5;
 
 export async function getGhostTracking(): Promise<GhostTracking> {
   const state = (await fetchFuturesDashboardState()) as GhostDashboardState;
-  const ghost = state.capital_control?.futures_lab?.ghost_tracking;
+
+  return getGhostTrackingFromState(state);
+}
+
+export function getGhostTrackingFromState(
+  state: FuturesDashboardState,
+): GhostTracking {
+  const ghostState = state as GhostDashboardState;
+  const ghost = ghostState.capital_control?.futures_lab?.ghost_tracking;
 
   if (!ghost) {
     return emptyGhostTracking();

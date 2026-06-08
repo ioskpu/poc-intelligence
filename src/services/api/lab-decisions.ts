@@ -35,7 +35,15 @@ const RECENT_DECISION_LIMIT = 5;
 
 export async function getRecentLabDecisions(): Promise<LabDecision[]> {
   const state = (await fetchFuturesDashboardState()) as DecisionDashboardState;
-  const futuresLab = state.capital_control?.futures_lab;
+
+  return getRecentLabDecisionsFromState(state);
+}
+
+export function getRecentLabDecisionsFromState(
+  state: FuturesDashboardState,
+): LabDecision[] {
+  const decisionState = state as DecisionDashboardState;
+  const futuresLab = decisionState.capital_control?.futures_lab;
   const rows = Array.isArray(futuresLab?.recent_decisions)
     ? futuresLab.recent_decisions
     : [];

@@ -1,9 +1,12 @@
 import { getChangeAwareness } from "@/services/api/change-awareness";
-import { getGhostTracking } from "@/services/api/ghost-tracking";
+import { getGhostTrackingFromState } from "@/services/api/ghost-tracking";
 import { createIntelligenceBrief } from "@/services/api/intelligence-brief";
-import { getRecentLabDecisions } from "@/services/api/lab-decisions";
-import { getMarketRankings } from "@/services/api/market-rankings";
-import { getSetupMemory } from "@/services/api/setup-memory";
+import { getRecentLabDecisionsFromState } from "@/services/api/lab-decisions";
+import {
+  fetchFuturesDashboardState,
+  getMarketRankingsFromState,
+} from "@/services/api/market-rankings";
+import { getSetupMemoryFromState } from "@/services/api/setup-memory";
 import {
   mockOpportunityRankings,
   mockPatternDiscovery,
@@ -11,20 +14,14 @@ import {
 } from "@/services/api/mock-data";
 
 export async function getIntelligenceSnapshot() {
-  const [
-    marketRankings,
-    labDecisions,
-    setupMemory,
-    ghostTracking,
-    changeAwareness,
-  ] =
-    await Promise.all([
-    getMarketRankings(),
-    getRecentLabDecisions(),
-    getSetupMemory(),
-    getGhostTracking(),
+  const [dashboardState, changeAwareness] = await Promise.all([
+    fetchFuturesDashboardState(),
     getChangeAwareness(),
   ]);
+  const marketRankings = getMarketRankingsFromState(dashboardState);
+  const labDecisions = getRecentLabDecisionsFromState(dashboardState);
+  const setupMemory = getSetupMemoryFromState(dashboardState);
+  const ghostTracking = getGhostTrackingFromState(dashboardState);
 
   return {
     changeAwareness,

@@ -13,7 +13,7 @@ export function FreshnessStrip({ freshness }: FreshnessStripProps) {
 
   return (
     <Card>
-      <CardContent className="grid gap-3 p-4 md:grid-cols-3">
+      <CardContent className="grid gap-2 p-3 md:grid-cols-3">
         {freshness.map((status) => (
           <div
             className="flex items-center justify-between gap-3 rounded-md border bg-background px-3 py-2"

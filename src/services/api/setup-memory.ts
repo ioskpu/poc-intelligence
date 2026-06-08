@@ -36,7 +36,15 @@ const SETUP_MEMORY_LIMIT = 5;
 
 export async function getSetupMemory(): Promise<SetupMemory[]> {
   const state = (await fetchFuturesDashboardState()) as SetupMemoryDashboardState;
-  const setupRankings = state.capital_control?.futures_lab?.setup_rankings;
+
+  return getSetupMemoryFromState(state);
+}
+
+export function getSetupMemoryFromState(
+  state: FuturesDashboardState,
+): SetupMemory[] {
+  const setupState = state as SetupMemoryDashboardState;
+  const setupRankings = setupState.capital_control?.futures_lab?.setup_rankings;
 
   if (setupRankings?.available !== true) {
     return [];

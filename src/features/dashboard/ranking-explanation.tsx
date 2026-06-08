@@ -10,25 +10,14 @@ export function RankingExplanation({ lastUpdatedAt }: RankingExplanationProps) {
     <Card>
       <CardHeader>
         <Info className="h-5 w-5 text-secondary" aria-hidden="true" />
-        <CardTitle>How to read this ranking</CardTitle>
+        <CardTitle>Ranking Guide</CardTitle>
         <CardDescription>
-          Futures Lab ranks active futures markets by current quantitative
-          strength.
+          Futures Lab ranks active futures markets by current quantitative strength.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
-        <p>
-          Scores run from 0 to 100. Higher scores indicate stronger current
-          ranking evidence in the Futures Lab scanner.
-        </p>
-        <p>
-          Ranking reasons and supporting metrics come directly from existing
-          Futures Lab scanner output.
-        </p>
-        <p>
-          The table is informational only. It does not execute trades and does
-          not provide financial advice.
-        </p>
+      <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
+        <p>Scores run from 0 to 100. Higher scores indicate stronger scanner evidence.</p>
+        <p>Reasons and supporting metrics come directly from Futures Lab scanner output.</p>
         <div className="rounded-md border bg-background p-3">
           <p className="text-xs uppercase tracking-wide">Latest scan</p>
           <p className="mt-1 text-foreground">{formatDate(lastUpdatedAt)}</p>

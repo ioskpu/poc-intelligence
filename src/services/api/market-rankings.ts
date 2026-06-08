@@ -41,6 +41,13 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 60000;
 
 export async function getMarketRankings(): Promise<MarketRankingResult> {
   const state = await fetchFuturesDashboardState();
+
+  return getMarketRankingsFromState(state);
+}
+
+export function getMarketRankingsFromState(
+  state: FuturesDashboardState,
+): MarketRankingResult {
   const rows = Array.isArray(state.futures_scanner_rankings)
     ? state.futures_scanner_rankings
     : [];

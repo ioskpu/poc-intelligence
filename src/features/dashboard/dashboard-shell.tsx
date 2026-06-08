@@ -24,12 +24,16 @@ export function DashboardShell({ snapshot }: DashboardShellProps) {
       <AppSidebar />
       <div className="min-w-0 flex-1">
         <TopBar generatedAt={snapshot.generatedAt} />
-        <div className="space-y-6 p-5">
-          <IntelligenceBrief brief={snapshot.intelligenceBrief} />
-          <ChangeAwareness changeAwareness={snapshot.changeAwareness} />
-          <MarketSummaryCards summary={snapshot.marketSummary} />
-          <FreshnessStrip freshness={snapshot.marketSummary.freshness} />
-          <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-5 p-4 lg:p-5">
+          <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+            <IntelligenceBrief brief={snapshot.intelligenceBrief} />
+            <ChangeAwareness changeAwareness={snapshot.changeAwareness} />
+          </section>
+          <section className="space-y-4">
+            <MarketSummaryCards summary={snapshot.marketSummary} />
+            <FreshnessStrip freshness={snapshot.marketSummary.freshness} />
+          </section>
+          <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
             <MarketRankings rankings={snapshot.marketRankings} />
             <RankingExplanation lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt} />
           </section>

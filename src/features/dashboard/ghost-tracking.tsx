@@ -15,22 +15,22 @@ export function GhostTracking({ ghostTracking }: GhostTrackingProps) {
           Post-evaluation observations from rejected Futures Lab opportunities.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-2 md:grid-cols-4">
+      <CardContent className="space-y-3">
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
           {toSummaryMetric("Settled", ghostTracking.settledCount)}
           {toSummaryMetric("Pending", ghostTracking.pendingCount)}
           {toSummaryMetric("Positive rate", ghostTracking.positiveRate, "%")}
           {toSummaryMetric("Avg hypothetical PnL", ghostTracking.averageHypotheticalPnlPct, "%")}
         </div>
         {ghostTracking.records.length === 0 ? (
-          <div className="rounded-md border bg-background p-4 text-sm text-muted-foreground">
+          <div className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
             No ghost tracking records are available from Futures Lab.
           </div>
         ) : (
           <div className="grid gap-3 xl:grid-cols-2">
             {ghostTracking.records.map((record) => (
               <article
-                className="rounded-md border bg-background p-4"
+                className="rounded-md border bg-background p-3"
                 key={record.rejectionReason}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -48,7 +48,7 @@ export function GhostTracking({ ghostTracking }: GhostTrackingProps) {
                     </Badge>
                   ) : null}
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                   {toRecordMetric("Total", record.totalCount)}
                   {toRecordMetric("Settled", record.settledCount)}
                   {toRecordMetric("Positive", record.settledPositiveCount)}

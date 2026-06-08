@@ -18,7 +18,7 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
   return (
     <Card id="markets">
       <CardHeader>
-        <CardTitle>Market rankings</CardTitle>
+        <CardTitle>Market Rankings</CardTitle>
         <CardDescription>
           Real Futures Lab scanner output ordered by rank.
         </CardDescription>
@@ -30,7 +30,8 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
             waiting for its next scanner run.
           </div>
         ) : (
-          <Table>
+          <div className="overflow-x-auto">
+            <Table className="min-w-[880px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Rank</TableHead>
@@ -91,7 +92,8 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
                 );
               })}
             </TableBody>
-          </Table>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>

@@ -11,12 +11,12 @@ export function IntelligenceBrief({ brief }: IntelligenceBriefProps) {
       <CardHeader>
         <CardTitle>Intelligence Brief</CardTitle>
         <CardDescription>
-          Current Futures Lab observations, summarized without recommendations.
+          Current Futures Lab observations, summarized as a concise brief.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         <p className="text-base font-semibold leading-6">{brief.headline}</p>
-        <div className="grid gap-3 lg:grid-cols-5">
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-5">
           {brief.items.map((item) => (
             <article className="rounded-md border bg-background p-3" key={item.label}>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">

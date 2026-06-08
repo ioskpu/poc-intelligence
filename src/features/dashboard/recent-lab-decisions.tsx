@@ -15,15 +15,15 @@ export function RecentLabDecisions({ decisions }: RecentLabDecisionsProps) {
           Recent Futures Lab research activity from existing decision records.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2">
         {decisions.length === 0 ? (
-          <div className="rounded-md border bg-background p-4 text-sm text-muted-foreground">
+          <div className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
             No recent lab decision records are available from Futures Lab.
           </div>
         ) : (
           decisions.map((decision) => (
             <article
-              className="rounded-md border bg-background p-4"
+              className="rounded-md border bg-background p-3"
               key={`${decision.symbol}-${decision.observedAt}-${decision.decisionType}`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -43,7 +43,7 @@ export function RecentLabDecisions({ decisions }: RecentLabDecisionsProps) {
                   {formatDate(decision.observedAt)}
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="rounded-md border px-2 py-1">
                   Type: {decision.decisionType}
                 </span>
