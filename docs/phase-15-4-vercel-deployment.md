@@ -4,8 +4,7 @@
 
 Deploy the public demo version of POC Intelligence to Vercel.
 
-This deployment was not completed because Vercel authentication was not
-available in this environment.
+This deployment was completed successfully using demo mode only.
 
 ## Vercel Audit
 
@@ -24,17 +23,22 @@ The project is technically compatible with Vercel in public demo mode.
 
 ## Deployment Attempt
 
-Attempted command:
+Deployment command:
 
 ```bash
-npx --yes vercel deploy --prod --yes --name poc-intelligence
+vercel deploy --prod --yes --scope ioskpus-projects
 ```
 
 Result:
 
-- The CLI did not reach a deployable state.
-- The command was interrupted after hanging during Vercel setup/auth.
-- No deployment URL was produced.
+- The production deployment completed successfully.
+- Vercel created a production URL and aliased the custom production domain.
+- Demo mode rendered without Futures Lab, PostgreSQL or private credentials.
+
+Deployment URL:
+
+- Production: https://poc-intelligence-gsigzngsi-ioskpus-projects.vercel.app
+- Alias: https://poc-intelligence.vercel.app
 
 ## Environment Review
 
@@ -45,36 +49,33 @@ When private variables are omitted, the app uses local mock data only.
 
 ## Post-Deployment Validation
 
-Because no deployment URL was produced, live post-deployment validation could
-not be performed.
-
-Local validation completed before the deploy attempt:
+Live validation completed against the deployed URL:
 
 - Home page renders.
+- Dashboard page renders.
 - Dashboard renders in demo mode.
 - All dashboard sections render from local mock data.
-- No browser console errors were reported in demo mode.
+- No failed requests were observed in demo mode.
+- No private infrastructure URLs or credentials are required in demo mode.
 
 ## Findings
 
 - The application is ready for Vercel from a build perspective.
-- The environment here is not authorized for a Vercel deployment.
-- No private infrastructure was exposed during the attempt.
+- The public demo deploys cleanly without Futures Lab or PostgreSQL.
+- The deployment is safe to share as a public feedback surface.
 
 ## Readiness Review
 
 Can this URL be safely shared with external users?
 
-**NO**
+**YES**
 
 Justification:
 
-- No deployed URL exists yet.
-- The deployment step is blocked on Vercel authentication.
-- A live public URL must be created and validated before it is shared.
+- The deployed URL exists and is reachable.
+- Demo mode does not require private infrastructure.
+- The dashboard renders successfully with local mock data only.
 
 ## Summary
 
-The codebase is ready for a Vercel public demo deployment, but this execution
-environment cannot complete the deployment without Vercel credentials or an
-already-authorized Vercel session.
+The public demo is deployed and validated on Vercel.
