@@ -35,6 +35,14 @@ Open:
 - Landing page: `http://localhost:3000`
 - Dashboard: `http://localhost:3000/dashboard`
 
+Required environment variables:
+
+- `FUTURES_LAB_API_BASE_URL`: Futures Lab API base URL.
+- `FUTURES_LAB_INTERNAL_API_KEY`: Internal API key for dashboard state access.
+- `FUTURES_LAB_DATABASE_URL`: Read-only Postgres connection string for
+  historical comparison queries.
+- `FUTURES_LAB_REQUEST_TIMEOUT_MS`: Optional request timeout override.
+
 ## Build Instructions
 
 Run lint:
@@ -90,6 +98,7 @@ implementation without rewriting pages or feature components.
 - Phase 8: Setup memory intelligence completed.
 - Phase 9: Ghost tracking intelligence completed.
 - Phase 11: Intelligence narrative layer completed.
+- Phase 12: Change awareness layer completed.
 - Future: Evaluate account, billing or subscription needs only if explicitly
   approved later.
 
@@ -113,6 +122,7 @@ status. See [Governance](docs/governance.md).
 - [Phase 8 Notes](docs/phase-8.md)
 - [Phase 9 Notes](docs/phase-9.md)
 - [Phase 11 Notes](docs/phase-11.md)
+- [Phase 12 Notes](docs/phase-12.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

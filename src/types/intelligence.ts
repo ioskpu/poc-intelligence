@@ -87,6 +87,18 @@ export type IntelligenceBrief = {
   items: IntelligenceBriefItem[];
 };
 
+export type ChangeAwarenessItem = {
+  label: string;
+  statement: string;
+  detail: string;
+};
+
+export type ChangeAwareness = {
+  currentWindow: string;
+  baselineWindow: string;
+  items: ChangeAwarenessItem[];
+};
+
 export type OpportunityRanking = {
   symbol: string;
   label: string;
@@ -112,6 +124,7 @@ export type RegimeAnalysis = {
 
 export type IntelligenceSnapshot = {
   generatedAt: string;
+  changeAwareness: ChangeAwareness;
   intelligenceBrief: IntelligenceBrief;
   labDecisions: LabDecision[];
   marketSummary: MarketSummary;

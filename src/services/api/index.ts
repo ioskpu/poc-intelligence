@@ -1,3 +1,4 @@
+import { getChangeAwareness } from "@/services/api/change-awareness";
 import { getGhostTracking } from "@/services/api/ghost-tracking";
 import { createIntelligenceBrief } from "@/services/api/intelligence-brief";
 import { getRecentLabDecisions } from "@/services/api/lab-decisions";
@@ -10,15 +11,23 @@ import {
 } from "@/services/api/mock-data";
 
 export async function getIntelligenceSnapshot() {
-  const [marketRankings, labDecisions, setupMemory, ghostTracking] =
+  const [
+    marketRankings,
+    labDecisions,
+    setupMemory,
+    ghostTracking,
+    changeAwareness,
+  ] =
     await Promise.all([
     getMarketRankings(),
     getRecentLabDecisions(),
     getSetupMemory(),
     getGhostTracking(),
+    getChangeAwareness(),
   ]);
 
   return {
+    changeAwareness,
     generatedAt: marketRankings.generatedAt,
     ghostTracking,
     intelligenceBrief: createIntelligenceBrief({

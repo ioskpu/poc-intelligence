@@ -37,7 +37,7 @@ type MarketRankingResult = {
   rankings: MarketRanking[];
 };
 
-const DEFAULT_REQUEST_TIMEOUT_MS = 20000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 60000;
 
 export async function getMarketRankings(): Promise<MarketRankingResult> {
   const state = await fetchFuturesDashboardState();

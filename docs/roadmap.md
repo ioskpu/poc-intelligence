@@ -120,6 +120,14 @@
 - Kept narrative logic inside `src/services/api`.
 - Avoided AI summaries, predictions, alerts and recommendation language.
 
+## Phase 12 - Completed
+
+- Added a compact What Changed dashboard section.
+- Compared current 24-hour observations with the previous 24-hour baseline.
+- Used existing Futures Lab scanner, decision and ghost tracking tables.
+- Avoided charts, alerts, trace-event analytics, predictions and
+  recommendations.
+
 ## Future Planned Work
 
 - Add focused tests for pure business logic.
