@@ -88,6 +88,7 @@ implementation without rewriting pages or feature components.
 - Phase 6: Scanner context expansion completed.
 - Phase 7: Recent Futures Lab decision activity completed.
 - Phase 8: Setup memory intelligence completed.
+- Phase 9: Ghost tracking intelligence completed.
 - Future: Evaluate account, billing or subscription needs only if explicitly
   approved later.
 
@@ -109,6 +110,7 @@ status. See [Governance](docs/governance.md).
 - [Phase 6 Notes](docs/phase-6.md)
 - [Phase 7 Notes](docs/phase-7.md)
 - [Phase 8 Notes](docs/phase-8.md)
+- [Phase 9 Notes](docs/phase-9.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

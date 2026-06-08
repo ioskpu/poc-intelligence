@@ -99,6 +99,13 @@
 - Presented setup memory as historical laboratory observations.
 - Avoided ghost tracking, prediction systems, charts and new analytics engines.
 
+## Phase 9 - Completed
+
+- Added a compact Ghost Tracking dashboard section.
+- Surfaced existing `capital_control.futures_lab.ghost_tracking` records.
+- Presented rejected-opportunity outcomes as post-evaluation research feedback.
+- Avoided predictive models, historical charts and new analytics engines.
+
 ## Future Planned Work
 
 - Add focused tests for pure business logic.

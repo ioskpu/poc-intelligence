@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
+import { GhostTracking } from "@/features/dashboard/ghost-tracking";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
 import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
@@ -30,6 +31,7 @@ export function DashboardShell({ snapshot }: DashboardShellProps) {
           </section>
           <RecentLabDecisions decisions={snapshot.labDecisions} />
           <SetupMemory records={snapshot.setupMemory} />
+          <GhostTracking ghostTracking={snapshot.ghostTracking} />
           <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <OpportunityRankings rankings={snapshot.opportunityRankings} />
             <PatternDiscovery patterns={snapshot.patternDiscovery} />

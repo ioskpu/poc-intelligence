@@ -55,6 +55,27 @@ export type SetupMemory = {
   lastSeenAt: string;
 };
 
+export type GhostTrackingRecord = {
+  rejectionReason: string;
+  rejectionReasonLabel: string;
+  totalCount: number | null;
+  settledCount: number | null;
+  settledPositiveCount: number | null;
+  averageHypotheticalPnlPct: number | null;
+  profitFactor: number | null;
+};
+
+export type GhostTracking = {
+  pendingCount: number | null;
+  settledCount: number | null;
+  positiveRate: number | null;
+  averageHypotheticalPnlPct: number | null;
+  averageMfePct: number | null;
+  averageMaePct: number | null;
+  lastSettledAt: string | null;
+  records: GhostTrackingRecord[];
+};
+
 export type OpportunityRanking = {
   symbol: string;
   label: string;
@@ -84,6 +105,7 @@ export type IntelligenceSnapshot = {
   marketSummary: MarketSummary;
   marketRankings: MarketRanking[];
   setupMemory: SetupMemory[];
+  ghostTracking: GhostTracking;
   opportunityRankings: OpportunityRanking[];
   patternDiscovery: PatternDiscovery[];
   regimeAnalysis: RegimeAnalysis[];
