@@ -46,7 +46,7 @@ of the lab before moving into the detailed evidence sections.
 
 ## Technical Findings
 
-- Duplicate calls to `/internal/dashboard/state` were removed by reusing a
+- Duplicate calls to `the internal dashboard state endpoint` were removed by reusing a
   single dashboard snapshot inside `src/services/api/index.ts`.
 - The data access boundary remains in `src/services/api`.
 - No new SQL queries were added.

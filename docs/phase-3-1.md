@@ -29,37 +29,35 @@ implementation phase:
 
 Observed Futures Lab runtime:
 
-- API host: `192.168.0.212`
-- API port: `8010`
-- Health endpoint: `GET /health`
-- Dashboard state endpoint: `GET /internal/dashboard/state`
+- API host: private Futures Lab runtime host
+- API port: private runtime port
+- Health endpoint: private health endpoint
+- Dashboard state endpoint: internal dashboard state endpoint
 - Authentication: required
 - Auth header: `X-API-KEY`
 
 Evidence:
 
-- `GET http://192.168.0.212:8010/health` returned HTTP `200`.
-- `GET http://192.168.0.212:8010/internal/dashboard/state` with an invalid key
-  returned HTTP `401`.
-- `GET http://192.168.0.212:8010/internal/dashboard/state` with the runtime key
-  returned HTTP `200`.
+- The private health endpoint returned HTTP `200`.
+- The internal dashboard state endpoint with an invalid key returned HTTP
+  `401`.
+- The internal dashboard state endpoint with the runtime key returned HTTP
+  `200`.
 
 Local ports checked:
 
-- `127.0.0.1:8000`: closed
-- `127.0.0.1:8010`: closed
-- `127.0.0.1:5432`: closed
+- No local loopback service was reachable during validation.
 
 Remote ports checked:
 
-- `192.168.0.212:8010`: active uvicorn service
-- `192.168.0.212:8000`: unavailable during validation
+- Private Futures Lab runtime: active service
+- Alternative runtime target: unavailable during validation
 
 ## Endpoint Verification
 
 Endpoint:
 
-`GET /internal/dashboard/state`
+`GET the internal dashboard state endpoint`
 
 Result:
 
@@ -120,8 +118,8 @@ Fields inferred rather than returned:
 
 POC Intelligence was run with:
 
-- `FUTURES_LAB_API_BASE_URL=http://192.168.0.212:8010`
-- `FUTURES_LAB_INTERNAL_API_KEY=<runtime key>`
+- `FUTURES_LAB_API_BASE_URL=https://example.internal`
+- `FUTURES_LAB_INTERNAL_API_KEY=<private runtime key>`
 
 Dashboard result:
 
@@ -168,13 +166,13 @@ error message:
 ### Issue 1: API Port Mismatch
 
 Root cause:
-The live Futures Lab dashboard API is running on `192.168.0.212:8010`, while
-POC Intelligence defaults to `http://127.0.0.1:8000`.
+The deployment target must use the private Futures Lab runtime instead of the
+local development default.
 
 Required change:
-Update deployment environment variables to use:
+Update deployment environment variables to use the private runtime host.
 
-`FUTURES_LAB_API_BASE_URL=http://192.168.0.212:8010`
+`FUTURES_LAB_API_BASE_URL=https://example.internal`
 
 Implementation complexity:
 LOW

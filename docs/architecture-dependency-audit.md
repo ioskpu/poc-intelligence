@@ -31,7 +31,7 @@ table names, fields and timestamp semantics.
 Browser
   -> Next.js dashboard
     -> src/services/api/getIntelligenceSnapshot()
-      -> Futures Lab API: GET /internal/dashboard/state
+      -> Futures Lab API: GET the internal dashboard state endpoint
       -> PostgreSQL: futures_scanner_rankings
       -> PostgreSQL: futures_lab_decisions
       -> PostgreSQL: futures_lab_ghost_tracks
@@ -45,7 +45,7 @@ Browser
 - Purpose: Current Futures Lab state for dashboard surfaces.
 - Primary source file: `src/services/api/market-rankings.ts`
 - Shared function: `fetchFuturesDashboardState()`
-- Endpoint: `GET /internal/dashboard/state`
+- Endpoint: `GET the internal dashboard state endpoint`
 - Dependency type: Runtime HTTP dependency.
 - Data consumed:
   - `futures_scanner_rankings`
@@ -159,7 +159,7 @@ The current database integration only executes `SELECT` statements defined in
 
 ### Endpoint
 
-- Endpoint: `/internal/dashboard/state`
+- Endpoint: `the internal dashboard state endpoint`
 - Method: `GET`
 - Source file: `src/services/api/market-rankings.ts`
 - Base URL variable: `FUTURES_LAB_API_BASE_URL`
@@ -270,7 +270,7 @@ The current architecture is:
 
 ### Long-Term Recommendation
 
-1. Consolidate dashboard state fetching so `/internal/dashboard/state` is called
+1. Consolidate dashboard state fetching so `the internal dashboard state endpoint` is called
    once per dashboard request.
 2. Move Change Awareness queries behind a Futures Lab read-only API endpoint.
 3. Use a read-only PostgreSQL credential while direct DB access remains.

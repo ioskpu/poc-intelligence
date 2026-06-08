@@ -13,7 +13,7 @@
 The dashboard continues to consume the existing Futures Lab dashboard state
 endpoint:
 
-`/internal/dashboard/state`
+`the internal dashboard state endpoint`
 
 Ghost tracking is read from:
 

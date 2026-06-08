@@ -35,12 +35,13 @@ Open:
 - Landing page: `http://localhost:3000`
 - Dashboard: `http://localhost:3000/dashboard`
 
-Required environment variables:
+Private live integration variables:
 
 - `FUTURES_LAB_API_BASE_URL`: Futures Lab API base URL.
 - `FUTURES_LAB_INTERNAL_API_KEY`: Internal API key for dashboard state access.
 - `FUTURES_LAB_DATABASE_URL`: Read-only Postgres connection string for
   historical comparison queries.
+- `FUTURES_LAB_DASHBOARD_STATE_PATH`: Private dashboard state endpoint path.
 - `FUTURES_LAB_REQUEST_TIMEOUT_MS`: Optional request timeout override.
 
 ## Build Instructions
@@ -123,6 +124,14 @@ status. See [Governance](docs/governance.md).
 - [Phase 9 Notes](docs/phase-9.md)
 - [Phase 11 Notes](docs/phase-11.md)
 - [Phase 12 Notes](docs/phase-12.md)
+- [Phase 15.1 Sanitization Notes](docs/phase-15-1-sanitization.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
+
+## Contributing
+
+1. Create a branch from `main`.
+2. Run `npm run lint` and `npm run build` before opening a pull request.
+3. Avoid committing environment files, secrets or private infrastructure
+   details.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

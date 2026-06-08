@@ -53,12 +53,12 @@ Optional environment variable:
 
 - `FUTURES_LAB_REQUEST_TIMEOUT_MS`
 
-The integration no longer silently falls back to `127.0.0.1:8000` or
-`dev-secret-key`.
+The integration no longer silently falls back to a local development default
+or placeholder secret.
 
 Current observed Futures Lab runtime:
 
-- `FUTURES_LAB_API_BASE_URL=http://192.168.0.212:8010`
+- `FUTURES_LAB_API_BASE_URL=https://example.internal`
 - `FUTURES_LAB_REQUEST_TIMEOUT_MS=20000`
 
 The internal API key must be set in the runtime environment and must not be
@@ -84,7 +84,7 @@ business logic.
 
 ## Live Validation Evidence
 
-Validation used the observed Futures Lab runtime at `192.168.0.212:8010`.
+Validation used the observed private Futures Lab runtime.
 
 Latest sampled backend row:
 

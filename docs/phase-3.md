@@ -10,7 +10,7 @@
 
 Selected source:
 
-`GET /internal/dashboard/state`
+`GET the internal dashboard state endpoint`
 
 Futures Lab source table behind the endpoint:
 

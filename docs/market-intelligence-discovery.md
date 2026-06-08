@@ -12,7 +12,7 @@ database changes were made.
 
 Live Futures Lab endpoint reviewed:
 
-`GET /internal/dashboard/state`
+`GET the internal dashboard state endpoint`
 
 Observed live dashboard state includes:
 

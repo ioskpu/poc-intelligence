@@ -30,10 +30,10 @@ Recommended public deployment model today: **Static demo mode**.
 
 Findings:
 
-- `.env.example` contains `http://192.168.0.212:8010`.
-- Multiple phase documents contain the internal Futures Lab host and port,
-  including `192.168.0.212:8010`.
-- Historical docs also mention `127.0.0.1:8000` as a development fallback.
+- `.env.example` now uses a neutral placeholder for the private runtime host.
+- Multiple phase documents used to contain private runtime host and port
+  details. Those should remain redacted in the public mirror.
+- Historical docs also referenced local development fallback details.
 
 Assessment:
 
@@ -63,7 +63,8 @@ Findings:
 - No committed secret value was found in the repository scan.
 - `FUTURES_LAB_INTERNAL_API_KEY` is referenced as an environment variable, but
   no actual key value was found.
-- Docs use placeholder language such as `<runtime key>`, which is acceptable.
+- Docs use placeholder language such as `<private runtime key>`, which is
+  acceptable.
 
 Assessment:
 
@@ -84,7 +85,7 @@ Assessment:
 ### `FUTURES_LAB_INTERNAL_API_KEY`
 
 - Classification: PRIVATE ONLY
-- Purpose: Authentication header value for `/internal/dashboard/state`.
+- Purpose: Authentication header value for `the internal dashboard state endpoint`.
 - Deployment impact: Required for live Futures Lab integration.
 - Exposure risk: Critical. This is a secret and must never be public.
 
@@ -103,6 +104,14 @@ Assessment:
 - Deployment impact: Optional. Adjusts runtime tolerance for slow responses.
 - Exposure risk: Low. This is configuration only and does not reveal secrets.
 
+### `FUTURES_LAB_DASHBOARD_STATE_PATH`
+
+- Classification: PRIVATE ONLY
+- Purpose: Path for the private Futures Lab dashboard state endpoint.
+- Deployment impact: Required for live Futures Lab integration.
+- Exposure risk: Medium. It reveals an internal route name, even if the host is
+  not public.
+
 ## Part 3 - GitHub Mirror Preparation
 
 ### Repository Suitability
@@ -118,8 +127,6 @@ What is acceptable:
 
 What still needs cleanup:
 
-- Replace the internal IP in `.env.example` with a neutral placeholder.
-- Redact or rewrite public-facing docs that mention internal hosts and ports.
 - Separate public product narrative from private validation notes.
 - Review phase notes for operational details that do not need to be public.
 
@@ -151,6 +158,7 @@ The dashboard requires:
 - `FUTURES_LAB_API_BASE_URL`
 - `FUTURES_LAB_INTERNAL_API_KEY`
 - `FUTURES_LAB_DATABASE_URL`
+- `FUTURES_LAB_DASHBOARD_STATE_PATH`
 
 That makes the current runtime private by design.
 

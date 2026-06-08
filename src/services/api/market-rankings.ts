@@ -60,12 +60,13 @@ export function getMarketRankingsFromState(
 }
 
 export async function fetchFuturesDashboardState(): Promise<FuturesDashboardState> {
-  const { apiKey, baseUrl, timeoutMs } = readFuturesLabConfig();
+  const { apiKey, baseUrl, dashboardStatePath, timeoutMs } =
+    readFuturesLabConfig();
 
   let response: Response;
 
   try {
-    response = await fetch(`${baseUrl}/internal/dashboard/state`, {
+    response = await fetch(`${baseUrl}${dashboardStatePath}`, {
       headers: {
         "X-API-KEY": apiKey,
       },
@@ -116,8 +117,23 @@ function readFuturesLabConfig() {
   return {
     apiKey,
     baseUrl: rawBaseUrl.replace(/\/$/, ""),
+    dashboardStatePath: readDashboardStatePath(),
     timeoutMs: readRequestTimeoutMs(),
   };
+}
+
+function readDashboardStatePath() {
+  const rawPath = process.env.FUTURES_LAB_DASHBOARD_STATE_PATH?.trim();
+
+  if (!rawPath) {
+    throw new Error("FUTURES_LAB_DASHBOARD_STATE_PATH is required");
+  }
+
+  if (!rawPath.startsWith("/")) {
+    throw new Error("FUTURES_LAB_DASHBOARD_STATE_PATH must start with /");
+  }
+
+  return rawPath;
 }
 
 function readRequestTimeoutMs() {

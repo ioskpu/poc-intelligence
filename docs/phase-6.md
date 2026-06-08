@@ -12,7 +12,7 @@
 The phase continued to use the existing Futures Lab internal dashboard state
 endpoint:
 
-`/internal/dashboard/state`
+`the internal dashboard state endpoint`
 
 No new endpoints, backend changes, database changes or scoring systems were
 created.

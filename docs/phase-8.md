@@ -11,7 +11,7 @@
 The dashboard continues to consume the existing Futures Lab dashboard state
 endpoint:
 
-`/internal/dashboard/state`
+`the internal dashboard state endpoint`
 
 Setup memory is read from:
 
