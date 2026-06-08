@@ -20,20 +20,23 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
       <CardHeader>
         <CardTitle>Market rankings</CardTitle>
         <CardDescription>
-          Futures markets ordered by current consistency score.
+          Real Futures Lab scanner output ordered by rank.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {rankings.length === 0 ? (
           <div className="rounded-md border bg-background p-6 text-sm text-muted-foreground">
-            No Futures Lab rankings are available in the latest dashboard state.
+            No market rankings are available yet. Futures Lab may still be
+            waiting for its next scanner run.
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Rank</TableHead>
                 <TableHead>Symbol</TableHead>
                 <TableHead>Market</TableHead>
+                <TableHead>Direction</TableHead>
                 <TableHead>Regime</TableHead>
                 <TableHead className="text-right">Score</TableHead>
               </TableRow>
@@ -41,8 +44,12 @@ export function MarketRankings({ rankings }: MarketRankingsProps) {
             <TableBody>
               {rankings.map((ranking) => (
                 <TableRow key={ranking.symbol}>
+                  <TableCell className="font-mono text-muted-foreground">
+                    #{ranking.rank || "-"}
+                  </TableCell>
                   <TableCell className="font-medium">{ranking.symbol}</TableCell>
                   <TableCell>{ranking.market}</TableCell>
+                  <TableCell>{ranking.direction}</TableCell>
                   <TableCell>
                     <Badge tone={getDirectionTone(ranking.direction)}>
                       {ranking.regime}

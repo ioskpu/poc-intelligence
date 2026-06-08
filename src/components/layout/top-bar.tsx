@@ -23,7 +23,7 @@ export function TopBar({ generatedAt }: TopBarProps) {
       <div className="flex items-center gap-3">
         <Badge tone="positive">
           <Activity className="mr-1 h-3 w-3" aria-hidden="true" />
-          Mock API online
+          Futures Lab data
         </Badge>
         <ButtonLink href="/" variant="ghost" size="sm">
           <CircleHelp className="h-4 w-4" aria-hidden="true" />

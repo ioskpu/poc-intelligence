@@ -59,7 +59,15 @@
 - Added explicit environment validation and clearer error messages.
 - Verified live rendering against the observed Futures Lab runtime.
 
-## Phase 4 - Planned
+## Phase 4 - Completed
+
+- Added a compact summary section for total markets, top symbol, top score and
+  latest scan timestamp.
+- Added a simple ranking explanation panel.
+- Improved ranking table readability with rank, direction and regime hint.
+- Improved empty and error state messaging for first-time users.
+
+## Phase 5 - Planned
 
 - Expand read-only Futures Lab integration beyond market rankings.
 - Define environment variables for API base URL and runtime configuration.
@@ -67,13 +75,13 @@
 - Replace remaining mock non-ranking dashboard sections when contracts are
   ready.
 
-## Phase 5 - Planned
+## Phase 6 - Planned
 
 - Add dashboard filters for market, regime and horizon.
 - Add client-side refresh behavior if needed.
 - Introduce React Query only if live client-side data management requires it.
 
-## Phase 6 - Planned
+## Phase 7 - Planned
 
 - Add historical intelligence views.
 - Support comparisons across snapshots, regimes and markets.
@@ -82,7 +90,7 @@
 - Add API contract validation when Futures Lab response shapes are stable.
 - Add regression coverage for data transformation utilities.
 
-## Phase 7 - Planned
+## Future Considerations
 
 - Evaluate account, billing or subscription capabilities only if explicitly
   approved.

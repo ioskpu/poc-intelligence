@@ -10,6 +10,7 @@ export async function getIntelligenceSnapshot() {
 
   return {
     generatedAt: marketRankings.generatedAt,
+    marketSummary: marketRankings.summary,
     marketRankings: marketRankings.rankings,
     opportunityRankings: mockOpportunityRankings,
     patternDiscovery: mockPatternDiscovery,

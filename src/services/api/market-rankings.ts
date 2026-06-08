@@ -1,4 +1,4 @@
-import type { Direction, MarketRanking } from "@/types/intelligence";
+import type { Direction, MarketRanking, MarketSummary } from "@/types/intelligence";
 
 type FuturesDashboardState = {
   generated_at?: string;
@@ -16,6 +16,7 @@ type FuturesScannerRow = {
 
 type MarketRankingResult = {
   generatedAt: string;
+  summary: MarketSummary;
   rankings: MarketRanking[];
 };
 
@@ -30,6 +31,7 @@ export async function getMarketRankings(): Promise<MarketRankingResult> {
   return {
     generatedAt: readTimestamp(state.generated_at) ?? latestScannedAt(rows),
     rankings: rows.map(toMarketRanking),
+    summary: toMarketSummary(rows),
   };
 }
 
@@ -115,13 +117,39 @@ function isDashboardState(value: unknown): value is FuturesDashboardState {
 }
 
 function toMarketRanking(row: FuturesScannerRow): MarketRanking {
+  const symbol = readText(row.symbol) || "UNKNOWN";
+
   return {
-    symbol: readText(row.symbol) || "UNKNOWN",
+    rank: readRank(row.rank_position),
+    symbol,
     market: "Binance USDT Perpetual",
     consistencyScore: normalizeScore(row.score),
     regime: humanizeRegime(readText(row.regime_bias)),
     direction: mapDirection(readText(row.direction_hint)),
+    scannedAt: readTimestamp(row.scanned_at) ?? new Date(0).toISOString(),
   };
+}
+
+function toMarketSummary(rows: FuturesScannerRow[]): MarketSummary {
+  const rankings = rows.map(toMarketRanking);
+  const topRanking = rankings[0];
+
+  return {
+    totalMarkets: rankings.length,
+    topSymbol: topRanking?.symbol ?? "None",
+    topScore: topRanking?.consistencyScore ?? 0,
+    lastUpdatedAt: latestScannedAt(rows),
+  };
+}
+
+function readRank(value: unknown) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return 0;
+  }
+
+  return Math.round(parsed);
 }
 
 function normalizeScore(value: unknown) {

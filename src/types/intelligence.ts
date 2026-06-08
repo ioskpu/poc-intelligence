@@ -1,11 +1,20 @@
 export type Direction = "Bullish" | "Bearish" | "Neutral";
 
 export type MarketRanking = {
+  rank: number;
   symbol: string;
   market: string;
   consistencyScore: number;
   regime: string;
   direction: Direction;
+  scannedAt: string;
+};
+
+export type MarketSummary = {
+  totalMarkets: number;
+  topSymbol: string;
+  topScore: number;
+  lastUpdatedAt: string;
 };
 
 export type OpportunityRanking = {
@@ -33,6 +42,7 @@ export type RegimeAnalysis = {
 
 export type IntelligenceSnapshot = {
   generatedAt: string;
+  marketSummary: MarketSummary;
   marketRankings: MarketRanking[];
   opportunityRankings: OpportunityRanking[];
   patternDiscovery: PatternDiscovery[];
