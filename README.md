@@ -84,8 +84,8 @@ implementation without rewriting pages or feature components.
 - Phase 3: First read-only real market ranking integration completed.
 - Phase 3.2: Market ranking integration hardening completed.
 - Phase 4: Market intelligence dashboard experience completed.
-- Phase 5: Add historical intelligence views.
-- Phase 6: Add test coverage for data transformations and API contracts.
+- Phase 5: Market intelligence surface discovery completed.
+- Phase 6: Scanner context expansion completed.
 - Phase 7: Evaluate account, billing or subscription needs only if explicitly
   approved later.
 
@@ -104,6 +104,7 @@ status. See [Governance](docs/governance.md).
 - [Phase 3 Notes](docs/phase-3.md)
 - [Phase 3.2 Notes](docs/phase-3-2.md)
 - [Phase 4 Notes](docs/phase-4.md)
+- [Phase 6 Notes](docs/phase-6.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

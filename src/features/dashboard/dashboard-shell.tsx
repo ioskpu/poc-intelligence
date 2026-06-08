@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TopBar } from "@/components/layout/top-bar";
+import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
 import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
@@ -20,6 +21,7 @@ export function DashboardShell({ snapshot }: DashboardShellProps) {
         <TopBar generatedAt={snapshot.generatedAt} />
         <div className="space-y-6 p-5">
           <MarketSummaryCards summary={snapshot.marketSummary} />
+          <FreshnessStrip freshness={snapshot.marketSummary.freshness} />
           <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <MarketRankings rankings={snapshot.marketRankings} />
             <RankingExplanation lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt} />

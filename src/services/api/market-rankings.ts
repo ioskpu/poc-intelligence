@@ -1,17 +1,34 @@
-import type { Direction, MarketRanking, MarketSummary } from "@/types/intelligence";
+import type {
+  Direction,
+  FreshnessStatus,
+  MarketRanking,
+  MarketSummary,
+} from "@/types/intelligence";
 
 type FuturesDashboardState = {
+  data_freshness?: Record<string, FuturesFreshnessEntry>;
   generated_at?: string;
   futures_scanner_rankings?: FuturesScannerRow[];
 };
 
+type FuturesFreshnessEntry = {
+  age_minutes?: unknown;
+  is_fresh?: unknown;
+  timestamp?: unknown;
+};
+
 type FuturesScannerRow = {
-  symbol?: unknown;
+  funding_rate?: unknown;
+  price_change_pct?: unknown;
   rank_position?: unknown;
-  score?: unknown;
   direction_hint?: unknown;
+  ranking_reason?: unknown;
   regime_bias?: unknown;
+  realized_volatility_pct?: unknown;
+  score?: unknown;
   scanned_at?: unknown;
+  symbol?: unknown;
+  trend_strength_pct?: unknown;
 };
 
 type MarketRankingResult = {
@@ -31,7 +48,7 @@ export async function getMarketRankings(): Promise<MarketRankingResult> {
   return {
     generatedAt: readTimestamp(state.generated_at) ?? latestScannedAt(rows),
     rankings: rows.map(toMarketRanking),
-    summary: toMarketSummary(rows),
+    summary: toMarketSummary(rows, state.data_freshness),
   };
 }
 
@@ -126,11 +143,19 @@ function toMarketRanking(row: FuturesScannerRow): MarketRanking {
     consistencyScore: normalizeScore(row.score),
     regime: humanizeRegime(readText(row.regime_bias)),
     direction: mapDirection(readText(row.direction_hint)),
+    rankingReason: readText(row.ranking_reason),
+    priceChangePct: readOptionalNumber(row.price_change_pct),
+    realizedVolatilityPct: readOptionalNumber(row.realized_volatility_pct),
+    trendStrengthPct: readOptionalNumber(row.trend_strength_pct),
+    fundingRate: readOptionalNumber(row.funding_rate),
     scannedAt: readTimestamp(row.scanned_at) ?? new Date(0).toISOString(),
   };
 }
 
-function toMarketSummary(rows: FuturesScannerRow[]): MarketSummary {
+function toMarketSummary(
+  rows: FuturesScannerRow[],
+  freshness?: Record<string, FuturesFreshnessEntry>,
+): MarketSummary {
   const rankings = rows.map(toMarketRanking);
   const topRanking = rankings[0];
 
@@ -139,6 +164,33 @@ function toMarketSummary(rows: FuturesScannerRow[]): MarketSummary {
     topSymbol: topRanking?.symbol ?? "None",
     topScore: topRanking?.consistencyScore ?? 0,
     lastUpdatedAt: latestScannedAt(rows),
+    freshness: toFreshnessStatuses(freshness),
+  };
+}
+
+function toFreshnessStatuses(
+  freshness?: Record<string, FuturesFreshnessEntry>,
+): FreshnessStatus[] {
+  if (!freshness) {
+    return [];
+  }
+
+  return [
+    toFreshnessStatus("Scanner", freshness.futures_scanner),
+    toFreshnessStatus("Decisions", freshness.futures_lab_decision),
+    toFreshnessStatus("Observations", freshness.futures_lab_observation),
+  ].filter((item) => item.timestamp !== null || item.ageMinutes !== null);
+}
+
+function toFreshnessStatus(
+  label: string,
+  entry?: FuturesFreshnessEntry,
+): FreshnessStatus {
+  return {
+    label,
+    timestamp: readTimestamp(entry?.timestamp),
+    ageMinutes: readOptionalNumber(entry?.age_minutes),
+    isFresh: typeof entry?.is_fresh === "boolean" ? entry.is_fresh : null,
   };
 }
 
@@ -198,6 +250,12 @@ function latestScannedAt(rows: FuturesScannerRow[]) {
 
 function readText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function readOptionalNumber(value: unknown) {
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function readTimestamp(value: unknown) {

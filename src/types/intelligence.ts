@@ -7,7 +7,19 @@ export type MarketRanking = {
   consistencyScore: number;
   regime: string;
   direction: Direction;
+  rankingReason: string;
+  priceChangePct: number | null;
+  realizedVolatilityPct: number | null;
+  trendStrengthPct: number | null;
+  fundingRate: number | null;
   scannedAt: string;
+};
+
+export type FreshnessStatus = {
+  label: string;
+  timestamp: string | null;
+  ageMinutes: number | null;
+  isFresh: boolean | null;
 };
 
 export type MarketSummary = {
@@ -15,6 +27,7 @@ export type MarketSummary = {
   topSymbol: string;
   topScore: number;
   lastUpdatedAt: string;
+  freshness: FreshnessStatus[];
 };
 
 export type OpportunityRanking = {

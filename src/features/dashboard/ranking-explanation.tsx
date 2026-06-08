@@ -22,6 +22,10 @@ export function RankingExplanation({ lastUpdatedAt }: RankingExplanationProps) {
           ranking evidence in the Futures Lab scanner.
         </p>
         <p>
+          Ranking reasons and supporting metrics come directly from existing
+          Futures Lab scanner output.
+        </p>
+        <p>
           The table is informational only. It does not execute trades and does
           not provide financial advice.
         </p>

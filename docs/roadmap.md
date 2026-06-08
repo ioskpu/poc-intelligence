@@ -67,28 +67,29 @@
 - Improved ranking table readability with rank, direction and regime hint.
 - Improved empty and error state messaging for first-time users.
 
-## Phase 5 - Planned
+## Phase 5 - Completed
 
-- Expand read-only Futures Lab integration beyond market rankings.
-- Define environment variables for API base URL and runtime configuration.
-- Keep all network access inside `src/services/api`.
-- Replace remaining mock non-ranking dashboard sections when contracts are
-  ready.
+- Audited existing Futures Lab sources for high-value market intelligence
+  surfaces.
+- Documented data source purpose, fields, refresh patterns, user value,
+  engineering effort and suitability.
+- Prioritized opportunities already available without new backend systems.
+- Recommended scanner context expansion as the smallest next product phase.
 
-## Phase 6 - Planned
+## Phase 6 - Completed
 
-- Add dashboard filters for market, regime and horizon.
-- Add client-side refresh behavior if needed.
-- Introduce React Query only if live client-side data management requires it.
+- Exposed existing scanner context fields in the ranking table.
+- Added ranking reasons and supporting metrics from `futures_scanner_rankings`.
+- Added a compact freshness strip using existing `data_freshness` values.
+- Kept all transformations inside `src/services/api`.
 
 ## Phase 7 - Planned
 
-- Add historical intelligence views.
-- Support comparisons across snapshots, regimes and markets.
-- Add charting only where it improves interpretation.
 - Add focused tests for pure business logic.
 - Add API contract validation when Futures Lab response shapes are stable.
 - Add regression coverage for data transformation utilities.
+- Evaluate historical intelligence views only after the current scanner
+  experience is stable.
 
 ## Future Considerations
 
