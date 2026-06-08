@@ -1,19 +1,21 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCopy, type Locale } from "@/lib/i18n";
 import type { PatternDiscovery as PatternDiscoveryType } from "@/types/intelligence";
 
 type PatternDiscoveryProps = {
   patterns: PatternDiscoveryType[];
+  locale: Locale;
 };
 
-export function PatternDiscovery({ patterns }: PatternDiscoveryProps) {
+export function PatternDiscovery({ patterns, locale }: PatternDiscoveryProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="patterns">
       <CardHeader>
-        <CardTitle>Pattern discovery</CardTitle>
-        <CardDescription>
-          Recurring outcomes discovered across historical Futures Lab data.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.patternDiscovery.title}</CardTitle>
+        <CardDescription>{copy.dashboard.patternDiscovery.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {patterns.map((pattern) => (
@@ -22,7 +24,7 @@ export function PatternDiscovery({ patterns }: PatternDiscoveryProps) {
               <div>
                 <p className="text-sm font-semibold">{pattern.name}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {pattern.occurrences} occurrences
+                  {pattern.occurrences} {copy.dashboard.patternDiscovery.occurrences}
                 </p>
               </div>
               <p className="text-sm font-semibold">{pattern.winRate}% win rate</p>

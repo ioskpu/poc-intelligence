@@ -1,10 +1,15 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cookies } from "next/headers";
+import { LOCALE_COOKIE_NAME, resolveLocale } from "@/lib/i18n";
 
-export default function DashboardLoading() {
+export default async function DashboardLoading() {
+  const cookieStore = await cookies();
+  const locale = resolveLocale(cookieStore.get(LOCALE_COOKIE_NAME)?.value);
+
   return (
     <main className="flex min-h-screen bg-background text-foreground">
-      <AppSidebar />
+      <AppSidebar locale={locale} />
       <div className="min-w-0 flex-1">
         <header className="min-h-16 border-b bg-background px-5 py-4">
           <div className="h-3 w-36 rounded bg-muted" />

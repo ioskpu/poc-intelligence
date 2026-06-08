@@ -1,24 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate, formatNumber, getCopy, translateSide, type Locale } from "@/lib/i18n";
 import type { SetupMemory as SetupMemoryRecord } from "@/types/intelligence";
 
 type SetupMemoryProps = {
   records: SetupMemoryRecord[];
+  locale: Locale;
 };
 
-export function SetupMemory({ records }: SetupMemoryProps) {
+export function SetupMemory({ records, locale }: SetupMemoryProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="setup-memory">
       <CardHeader>
-        <CardTitle>Setup Memory</CardTitle>
-        <CardDescription>
-          Historical Futures Lab observations for recurring setup patterns.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.setupMemory.title}</CardTitle>
+        <CardDescription>{copy.dashboard.setupMemory.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         {records.length === 0 ? (
           <div className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
-            No setup memory records are available from Futures Lab.
+            {copy.dashboard.setupMemory.empty}
           </div>
         ) : (
           records.map((record) => (
@@ -30,7 +32,7 @@ export function SetupMemory({ records }: SetupMemoryProps) {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-semibold">{record.symbol}</p>
-                    <Badge tone="info">{record.side}</Badge>
+                    <Badge tone="info">{translateSide(record.side, locale)}</Badge>
                     <Badge tone={getHealthTone(record.healthLabel)}>
                       {record.healthLabel}
                     </Badge>
@@ -45,15 +47,15 @@ export function SetupMemory({ records }: SetupMemoryProps) {
                   ) : null}
                 </div>
                 <div className="text-right text-xs text-muted-foreground">
-                  {formatDate(record.lastSeenAt)}
+                  {formatDate(record.lastSeenAt, locale)}
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                {toMetric("Trades", record.tradeCount)}
-                {toMetric("Win rate", record.winRate, "%")}
-                {toMetric("Health", record.healthScore)}
-                {toMetric("PnL", record.pnlTotal)}
-                {toMetric("Avg PnL", record.averagePnl)}
+                {toMetric(copy.dashboard.setupMemory.metrics.trades, record.tradeCount, locale)}
+                {toMetric(copy.dashboard.setupMemory.metrics.winRate, record.winRate, locale, "%")}
+                {toMetric(copy.dashboard.setupMemory.metrics.health, record.healthScore, locale)}
+                {toMetric(copy.dashboard.setupMemory.metrics.pnl, record.pnlTotal, locale)}
+                {toMetric(copy.dashboard.setupMemory.metrics.averagePnl, record.averagePnl, locale)}
               </div>
             </article>
           ))
@@ -77,30 +79,17 @@ function getHealthTone(label: string) {
   return "neutral";
 }
 
-function toMetric(label: string, value: number | null, suffix = "") {
+function toMetric(label: string, value: number | null, locale: Locale, suffix = "") {
   if (value === null) {
     return null;
   }
 
   const displayValue =
-    suffix === "%" ? `${formatNumber(value * 100)}${suffix}` : formatNumber(value);
+    suffix === "%" ? `${formatNumber(value * 100, locale)}${suffix}` : formatNumber(value, locale);
 
   return (
     <span className="rounded-md border px-2 py-1" key={label}>
       {label}: {displayValue}
     </span>
   );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 4,
-  }).format(value);
 }

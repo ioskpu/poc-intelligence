@@ -1,18 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCopy, type Locale } from "@/lib/i18n";
 import type { OpportunityRanking } from "@/types/intelligence";
 
 type OpportunityRankingsProps = {
   rankings: OpportunityRanking[];
+  locale: Locale;
 };
 
-export function OpportunityRankings({ rankings }: OpportunityRankingsProps) {
+export function OpportunityRankings({ rankings, locale }: OpportunityRankingsProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="opportunities">
       <CardHeader>
-        <CardTitle>Opportunity rankings</CardTitle>
-        <CardDescription>
-          Ranked statistical opportunities from the mock API layer.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.opportunityRankings.title}</CardTitle>
+        <CardDescription>{copy.dashboard.opportunityRankings.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {rankings.map((ranking) => (
@@ -23,7 +25,7 @@ export function OpportunityRankings({ rankings }: OpportunityRankingsProps) {
                   {ranking.symbol} · {ranking.label}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Horizon: {ranking.horizon}
+                  {copy.dashboard.opportunityRankings.horizon}: {ranking.horizon}
                 </p>
               </div>
               <p className="text-lg font-semibold">{ranking.edgeScore.toFixed(1)}</p>
@@ -35,7 +37,7 @@ export function OpportunityRankings({ rankings }: OpportunityRankingsProps) {
               />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Confidence {ranking.confidence}%
+              {copy.dashboard.opportunityRankings.confidence} {ranking.confidence}%
             </p>
           </article>
         ))}

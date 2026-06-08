@@ -1,31 +1,34 @@
 import { Clock, Hash, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate, getCopy, type Locale } from "@/lib/i18n";
 import type { MarketSummary } from "@/types/intelligence";
 
 type MarketSummaryCardsProps = {
   summary: MarketSummary;
+  locale: Locale;
 };
 
-export function MarketSummaryCards({ summary }: MarketSummaryCardsProps) {
+export function MarketSummaryCards({ summary, locale }: MarketSummaryCardsProps) {
+  const copy = getCopy(locale);
   const cards = [
     {
-      label: "Markets shown",
+      label: copy.dashboard.marketSummary.marketsShown,
       value: summary.totalMarkets,
       icon: Hash,
     },
     {
-      label: "Top ranked symbol",
+      label: copy.dashboard.marketSummary.topSymbol,
       value: summary.topSymbol,
       icon: Star,
     },
     {
-      label: "Top score",
+      label: copy.dashboard.marketSummary.topScore,
       value: summary.totalMarkets > 0 ? `${summary.topScore}` : "-",
       icon: TrendingUp,
     },
     {
-      label: "Last updated",
-      value: formatDate(summary.lastUpdatedAt),
+      label: copy.dashboard.marketSummary.lastUpdated,
+      value: formatDate(summary.lastUpdatedAt, locale),
       icon: Clock,
     },
   ];
@@ -45,11 +48,4 @@ export function MarketSummaryCards({ summary }: MarketSummaryCardsProps) {
       ))}
     </section>
   );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
 }

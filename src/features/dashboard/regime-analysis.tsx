@@ -1,19 +1,21 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCopy, translateVolatility, type Locale } from "@/lib/i18n";
 import type { RegimeAnalysis as RegimeAnalysisType } from "@/types/intelligence";
 
 type RegimeAnalysisProps = {
   regimes: RegimeAnalysisType[];
+  locale: Locale;
 };
 
-export function RegimeAnalysis({ regimes }: RegimeAnalysisProps) {
+export function RegimeAnalysis({ regimes, locale }: RegimeAnalysisProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="regimes">
       <CardHeader>
-        <CardTitle>Regime analysis</CardTitle>
-        <CardDescription>
-          Current market state estimates with probability and volatility context.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.regimeAnalysis.title}</CardTitle>
+        <CardDescription>{copy.dashboard.regimeAnalysis.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {regimes.map((regime) => (
@@ -26,11 +28,11 @@ export function RegimeAnalysis({ regimes }: RegimeAnalysisProps) {
                 </p>
               </div>
               <Badge tone={getVolatilityTone(regime.volatility)}>
-                {regime.volatility}
+                {translateVolatility(regime.volatility, locale)}
               </Badge>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              Probability {regime.probability}%
+              {copy.dashboard.regimeAnalysis.probability} {regime.probability}%
             </p>
           </article>
         ))}

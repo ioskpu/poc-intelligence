@@ -1,24 +1,33 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  formatDate,
+  formatNumber,
+  getCopy,
+  translateSide,
+  translateSignalStatus,
+  type Locale,
+} from "@/lib/i18n";
 import type { LabDecision } from "@/types/intelligence";
 
 type RecentLabDecisionsProps = {
   decisions: LabDecision[];
+  locale: Locale;
 };
 
-export function RecentLabDecisions({ decisions }: RecentLabDecisionsProps) {
+export function RecentLabDecisions({ decisions, locale }: RecentLabDecisionsProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="lab-decisions">
       <CardHeader>
-        <CardTitle>Recent Lab Decisions</CardTitle>
-        <CardDescription>
-          Recent Futures Lab research activity from existing decision records.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.recentDecisions.title}</CardTitle>
+        <CardDescription>{copy.dashboard.recentDecisions.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         {decisions.length === 0 ? (
           <div className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
-            No recent lab decision records are available from Futures Lab.
+            {copy.dashboard.recentDecisions.empty}
           </div>
         ) : (
           decisions.map((decision) => (
@@ -30,9 +39,9 @@ export function RecentLabDecisions({ decisions }: RecentLabDecisionsProps) {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-semibold">{decision.symbol}</p>
-                    <Badge tone="info">{decision.selectedSide}</Badge>
+                    <Badge tone="info">{translateSide(decision.selectedSide, locale)}</Badge>
                     <Badge tone={getSignalTone(decision.signalStatus)}>
-                      {decision.signalStatus}
+                      {translateSignalStatus(decision.signalStatus, locale)}
                     </Badge>
                   </div>
                   <p className="mt-2 text-sm leading-5 text-foreground">
@@ -40,21 +49,21 @@ export function RecentLabDecisions({ decisions }: RecentLabDecisionsProps) {
                   </p>
                 </div>
                 <div className="text-right text-xs text-muted-foreground">
-                  {formatDate(decision.observedAt)}
+                  {formatDate(decision.observedAt, locale)}
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="rounded-md border px-2 py-1">
-                  Type: {decision.decisionType}
+                  {copy.dashboard.recentDecisions.fields.type}: {decision.decisionType}
                 </span>
                 {decision.rewardRisk !== null ? (
                   <span className="rounded-md border px-2 py-1">
-                    R/R: {formatNumber(decision.rewardRisk)}
+                    {copy.dashboard.recentDecisions.fields.rr}: {formatNumber(decision.rewardRisk, locale, { maximumFractionDigits: 2 })}
                   </span>
                 ) : null}
                 {decision.setupKey ? (
                   <span className="max-w-full truncate rounded-md border px-2 py-1">
-                    Setup: {decision.setupKey}
+                    {copy.dashboard.recentDecisions.fields.setup}: {decision.setupKey}
                   </span>
                 ) : null}
               </div>
@@ -76,17 +85,4 @@ function getSignalTone(status: string) {
   }
 
   return "neutral";
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 2,
-  }).format(value);
 }

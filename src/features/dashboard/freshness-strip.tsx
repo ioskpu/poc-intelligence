@@ -1,12 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  formatDate,
+  formatNumber,
+  translateFreshnessLabel,
+  type Locale,
+} from "@/lib/i18n";
 import type { FreshnessStatus } from "@/types/intelligence";
 
 type FreshnessStripProps = {
   freshness: FreshnessStatus[];
+  locale: Locale;
 };
 
-export function FreshnessStrip({ freshness }: FreshnessStripProps) {
+export function FreshnessStrip({ freshness, locale }: FreshnessStripProps) {
   if (freshness.length === 0) {
     return null;
   }
@@ -20,13 +27,15 @@ export function FreshnessStrip({ freshness }: FreshnessStripProps) {
             key={status.label}
           >
             <div className="min-w-0">
-              <div className="text-sm font-medium">{status.label}</div>
+              <div className="text-sm font-medium">
+                {translateFreshnessLabel(status.label, locale)}
+              </div>
               <div className="truncate text-xs text-muted-foreground">
-                {formatFreshness(status)}
+                {formatFreshness(status, locale)}
               </div>
             </div>
             <Badge tone={getFreshnessTone(status.isFresh)}>
-              {getFreshnessLabel(status.isFresh)}
+              {getFreshnessLabel(status.isFresh, locale)}
             </Badge>
           </div>
         ))}
@@ -47,40 +56,29 @@ function getFreshnessTone(isFresh: boolean | null) {
   return "neutral";
 }
 
-function getFreshnessLabel(isFresh: boolean | null) {
+function getFreshnessLabel(isFresh: boolean | null, locale: Locale) {
   if (isFresh === true) {
-    return "Fresh";
+    return locale === "es" ? "Reciente" : "Fresh";
   }
 
   if (isFresh === false) {
-    return "Stale";
+    return locale === "es" ? "Antiguo" : "Stale";
   }
 
-  return "Unknown";
+  return locale === "es" ? "Desconocido" : "Unknown";
 }
 
-function formatFreshness(status: FreshnessStatus) {
+function formatFreshness(status: FreshnessStatus, locale: Locale) {
   const age =
     status.ageMinutes === null
-      ? "age unavailable"
-      : `${formatNumber(status.ageMinutes)} min old`;
+      ? locale === "es"
+        ? "edad no disponible"
+        : "age unavailable"
+      : `${formatNumber(status.ageMinutes, locale)} ${locale === "es" ? "min de antigüedad" : "min old"}`;
 
   if (!status.timestamp) {
     return age;
   }
 
-  return `${age} - ${formatDate(status.timestamp)}`;
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 1,
-  }).format(value);
+  return `${age} - ${formatDate(status.timestamp, locale)}`;
 }

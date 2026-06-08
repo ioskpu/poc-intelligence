@@ -1,18 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCopy, type Locale } from "@/lib/i18n";
 import type { IntelligenceBrief as IntelligenceBriefData } from "@/types/intelligence";
 
 type IntelligenceBriefProps = {
   brief: IntelligenceBriefData;
+  locale: Locale;
 };
 
-export function IntelligenceBrief({ brief }: IntelligenceBriefProps) {
+export function IntelligenceBrief({ brief, locale }: IntelligenceBriefProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="intelligence-brief">
       <CardHeader>
-        <CardTitle>Intelligence Brief</CardTitle>
-        <CardDescription>
-          Current Futures Lab observations, summarized as a concise brief.
-        </CardDescription>
+        <CardTitle>{copy.dashboard.intelligenceBrief.title}</CardTitle>
+        <CardDescription>{copy.dashboard.intelligenceBrief.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-base font-semibold leading-6">{brief.headline}</p>

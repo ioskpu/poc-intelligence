@@ -1,15 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCopy, type Locale } from "@/lib/i18n";
 import type { ChangeAwareness as ChangeAwarenessData } from "@/types/intelligence";
 
 type ChangeAwarenessProps = {
   changeAwareness: ChangeAwarenessData;
+  locale: Locale;
 };
 
-export function ChangeAwareness({ changeAwareness }: ChangeAwarenessProps) {
+export function ChangeAwareness({ changeAwareness, locale }: ChangeAwarenessProps) {
+  const copy = getCopy(locale);
+
   return (
     <Card id="change-awareness">
       <CardHeader>
-        <CardTitle>What Changed</CardTitle>
+        <CardTitle>{copy.dashboard.changeAwareness.title}</CardTitle>
         <CardDescription>
           {changeAwareness.currentWindow} vs {changeAwareness.baselineWindow}.
         </CardDescription>

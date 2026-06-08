@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
 import { TopBar } from "@/components/layout/top-bar";
 import { ChangeAwareness } from "@/features/dashboard/change-awareness";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
@@ -12,40 +13,46 @@ import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { RegimeAnalysis } from "@/features/dashboard/regime-analysis";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
+import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
 type DashboardShellProps = {
+  locale: Locale;
   snapshot: IntelligenceSnapshot;
 };
 
-export function DashboardShell({ snapshot }: DashboardShellProps) {
+export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
   return (
     <main className="flex min-h-screen bg-background text-foreground">
-      <AppSidebar />
+      <AppSidebar locale={locale} />
       <div className="min-w-0 flex-1">
-        <TopBar generatedAt={snapshot.generatedAt} />
+        <PublicDemoBanner locale={locale} />
+        <TopBar generatedAt={snapshot.generatedAt} locale={locale} />
         <div className="space-y-5 p-4 lg:p-5">
           <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-            <IntelligenceBrief brief={snapshot.intelligenceBrief} />
-            <ChangeAwareness changeAwareness={snapshot.changeAwareness} />
+            <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
+            <ChangeAwareness changeAwareness={snapshot.changeAwareness} locale={locale} />
           </section>
           <section className="space-y-4">
-            <MarketSummaryCards summary={snapshot.marketSummary} />
-            <FreshnessStrip freshness={snapshot.marketSummary.freshness} />
+            <MarketSummaryCards summary={snapshot.marketSummary} locale={locale} />
+            <FreshnessStrip freshness={snapshot.marketSummary.freshness} locale={locale} />
           </section>
           <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-            <MarketRankings rankings={snapshot.marketRankings} />
-            <RankingExplanation lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt} />
+            <MarketRankings rankings={snapshot.marketRankings} locale={locale} />
+            <RankingExplanation
+              lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt}
+              locale={locale}
+            />
           </section>
-          <RecentLabDecisions decisions={snapshot.labDecisions} />
-          <SetupMemory records={snapshot.setupMemory} />
-          <GhostTracking ghostTracking={snapshot.ghostTracking} />
+          <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
+          <SetupMemory records={snapshot.setupMemory} locale={locale} />
+          <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
           <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <OpportunityRankings rankings={snapshot.opportunityRankings} />
-            <PatternDiscovery patterns={snapshot.patternDiscovery} />
+            <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
+            <PatternDiscovery patterns={snapshot.patternDiscovery} locale={locale} />
           </section>
           <section className="grid gap-6 xl:grid-cols-2">
-            <RegimeAnalysis regimes={snapshot.regimeAnalysis} />
+            <RegimeAnalysis regimes={snapshot.regimeAnalysis} locale={locale} />
           </section>
         </div>
       </div>
