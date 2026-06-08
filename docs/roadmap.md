@@ -83,7 +83,15 @@
 - Added a compact freshness strip using existing `data_freshness` values.
 - Kept all transformations inside `src/services/api`.
 
-## Phase 7 - Planned
+## Phase 7 - Completed
+
+- Added a compact Recent Lab Decisions dashboard section.
+- Surfaced existing `capital_control.futures_lab.recent_decisions` records.
+- Kept decision language framed as research activity and lab observations.
+- Avoided setup memory, ghost tracking, execution language and new backend
+  functionality.
+
+## Future Planned Work
 
 - Add focused tests for pure business logic.
 - Add API contract validation when Futures Lab response shapes are stable.

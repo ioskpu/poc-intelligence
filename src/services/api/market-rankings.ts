@@ -5,13 +5,13 @@ import type {
   MarketSummary,
 } from "@/types/intelligence";
 
-type FuturesDashboardState = {
+export type FuturesDashboardState = {
   data_freshness?: Record<string, FuturesFreshnessEntry>;
   generated_at?: string;
   futures_scanner_rankings?: FuturesScannerRow[];
 };
 
-type FuturesFreshnessEntry = {
+export type FuturesFreshnessEntry = {
   age_minutes?: unknown;
   is_fresh?: unknown;
   timestamp?: unknown;
@@ -52,7 +52,7 @@ export async function getMarketRankings(): Promise<MarketRankingResult> {
   };
 }
 
-async function fetchFuturesDashboardState(): Promise<FuturesDashboardState> {
+export async function fetchFuturesDashboardState(): Promise<FuturesDashboardState> {
   const { apiKey, baseUrl, timeoutMs } = readFuturesLabConfig();
 
   let response: Response;

@@ -86,7 +86,8 @@ implementation without rewriting pages or feature components.
 - Phase 4: Market intelligence dashboard experience completed.
 - Phase 5: Market intelligence surface discovery completed.
 - Phase 6: Scanner context expansion completed.
-- Phase 7: Evaluate account, billing or subscription needs only if explicitly
+- Phase 7: Recent Futures Lab decision activity completed.
+- Future: Evaluate account, billing or subscription needs only if explicitly
   approved later.
 
 ## Source Control Policy
@@ -105,6 +106,7 @@ status. See [Governance](docs/governance.md).
 - [Phase 3.2 Notes](docs/phase-3-2.md)
 - [Phase 4 Notes](docs/phase-4.md)
 - [Phase 6 Notes](docs/phase-6.md)
+- [Phase 7 Notes](docs/phase-7.md)
 - [Market Intelligence Contracts](docs/contracts/api-specification.md)
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

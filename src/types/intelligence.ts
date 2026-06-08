@@ -30,6 +30,17 @@ export type MarketSummary = {
   freshness: FreshnessStatus[];
 };
 
+export type LabDecision = {
+  symbol: string;
+  selectedSide: string;
+  decisionType: string;
+  reason: string;
+  signalStatus: string;
+  rewardRisk: number | null;
+  setupKey: string;
+  observedAt: string;
+};
+
 export type OpportunityRanking = {
   symbol: string;
   label: string;
@@ -55,6 +66,7 @@ export type RegimeAnalysis = {
 
 export type IntelligenceSnapshot = {
   generatedAt: string;
+  labDecisions: LabDecision[];
   marketSummary: MarketSummary;
   marketRankings: MarketRanking[];
   opportunityRankings: OpportunityRanking[];
