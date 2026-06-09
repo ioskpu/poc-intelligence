@@ -3,6 +3,7 @@ import type {
   PrivateBetaStatus,
 } from "@/lib/private-beta-content";
 import {
+  checkPrivateBetaDatabaseReachability,
   createPrivateBetaRequestInDatabase,
   listPrivateBetaEventsFromDatabase,
   listPrivateBetaRequestsFromDatabase,
@@ -127,4 +128,8 @@ export async function getPrivateBetaAdminSnapshot() {
     requests,
     counts,
   };
+}
+
+export async function getPrivateBetaHealth() {
+  return checkPrivateBetaDatabaseReachability();
 }

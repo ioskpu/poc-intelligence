@@ -218,6 +218,39 @@ export async function recordPrivateBetaEventInDatabase(
   });
 }
 
+export async function checkPrivateBetaDatabaseReachability() {
+  const connectionString = process.env.POC_INTELLIGENCE_DATABASE_URL?.trim();
+
+  if (!connectionString) {
+    return {
+      reachable: false,
+      reason: "POC_INTELLIGENCE_DATABASE_URL is required",
+    };
+  }
+
+  const client = new Client({
+    connectionString,
+    connectionTimeoutMillis: 3000,
+  });
+
+  try {
+    await client.connect();
+    await client.query("SELECT 1");
+
+    return {
+      reachable: true,
+      reason: null,
+    };
+  } catch (error) {
+    return {
+      reachable: false,
+      reason: error instanceof Error ? error.message : "Unknown database error",
+    };
+  } finally {
+    await client.end().catch(() => undefined);
+  }
+}
+
 type PrivateBetaRequestRow = {
   id: string;
   name: string;

@@ -5,6 +5,7 @@ import {
 } from "@/lib/private-beta-content";
 import {
   createPrivateBetaRequest as createStoredPrivateBetaRequest,
+  getPrivateBetaHealth as getStoredPrivateBetaHealth,
   getPrivateBetaAdminSnapshot as getStoredPrivateBetaAdminSnapshot,
   PrivateBetaNotFoundError,
   recordPrivateBetaEvent as recordStoredPrivateBetaEvent,
@@ -59,6 +60,10 @@ export async function trackPrivateBetaLandingVisit(input: unknown) {
 
 export async function getPrivateBetaAdminData(): Promise<PrivateBetaAdminSnapshot> {
   return getStoredPrivateBetaAdminSnapshot();
+}
+
+export async function getPrivateBetaHealth() {
+  return getStoredPrivateBetaHealth();
 }
 
 export function getPrivateBetaRequestCopy(locale: "es" | "en") {
