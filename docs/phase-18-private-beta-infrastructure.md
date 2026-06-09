@@ -24,8 +24,8 @@ Build the minimal private beta flow required to capture interest, review request
 ## Data Storage
 
 - Primary persistence uses `POC_INTELLIGENCE_DATABASE_URL` when it is configured.
-- For local development without a database, the beta store falls back to `.runtime/private-beta-store.json`.
-- The runtime file is ignored by Git.
+- This phase is superseded by the PostgreSQL-only migration in Phase 19.
+- Private Beta no longer relies on `.runtime` or JSON filesystem storage.
 
 ## UX Summary
 

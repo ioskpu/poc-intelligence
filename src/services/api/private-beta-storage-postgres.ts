@@ -14,8 +14,6 @@ import type {
 
 export async function listPrivateBetaRequestsFromDatabase() {
   return withPrivateBetaDatabase(async (client) => {
-    await ensureSchema(client);
-
     const result = await client.query<PrivateBetaRequestRow>(
       `
         SELECT
@@ -23,12 +21,11 @@ export async function listPrivateBetaRequestsFromDatabase() {
           name,
           email,
           experience_level,
-          interest,
+          interest_text,
           status,
           created_at,
-          updated_at,
-          reviewed_at
-        FROM poc_private_beta_requests
+          updated_at
+        FROM private_beta_requests
         ORDER BY created_at DESC
       `,
     );
@@ -39,8 +36,6 @@ export async function listPrivateBetaRequestsFromDatabase() {
 
 export async function listPrivateBetaEventsFromDatabase() {
   return withPrivateBetaDatabase(async (client) => {
-    await ensureSchema(client);
-
     const result = await client.query<PrivateBetaEventRow>(
       `
         SELECT
@@ -49,7 +44,7 @@ export async function listPrivateBetaEventsFromDatabase() {
           request_id,
           payload,
           created_at
-        FROM poc_private_beta_events
+        FROM private_beta_events
         ORDER BY created_at DESC
       `,
     );
@@ -62,42 +57,38 @@ export async function createPrivateBetaRequestInDatabase(
   input: PrivateBetaRequestInput,
 ) {
   return withPrivateBetaDatabase(async (client) => {
-    await ensureSchema(client);
     await client.query("BEGIN");
 
     try {
       const request = createRequestRecord(input);
       const result = await client.query<PrivateBetaRequestRow>(
         `
-          INSERT INTO poc_private_beta_requests (
+          INSERT INTO private_beta_requests (
             id,
             name,
             email,
             experience_level,
-            interest,
+            interest_text,
             status,
             created_at,
-            updated_at,
-            reviewed_at
+            updated_at
           )
-          VALUES ($1, $2, $3, $4, $5, 'Pending', now(), now(), NULL)
+          VALUES ($1, $2, $3, $4, $5, 'Pending', now(), now())
           ON CONFLICT (email) DO UPDATE SET
             name = EXCLUDED.name,
             experience_level = EXCLUDED.experience_level,
-            interest = EXCLUDED.interest,
+            interest_text = EXCLUDED.interest_text,
             status = 'Pending',
-            updated_at = now(),
-            reviewed_at = NULL
+            updated_at = now()
           RETURNING
             id,
             name,
             email,
             experience_level,
-            interest,
+            interest_text,
             status,
             created_at,
-            updated_at,
-            reviewed_at
+            updated_at
         `,
         [
           request.id,
@@ -112,7 +103,7 @@ export async function createPrivateBetaRequestInDatabase(
 
       await client.query(
         `
-          INSERT INTO poc_private_beta_events (
+          INSERT INTO private_beta_events (
             id,
             event_name,
             request_id,
@@ -146,26 +137,22 @@ export async function updatePrivateBetaRequestStatusInDatabase(
   status: PrivateBetaStatus,
 ) {
   return withPrivateBetaDatabase(async (client) => {
-    await ensureSchema(client);
-
     const result = await client.query<PrivateBetaRequestRow>(
       `
-        UPDATE poc_private_beta_requests
+        UPDATE private_beta_requests
         SET
           status = $2,
-          updated_at = now(),
-          reviewed_at = CASE WHEN $2 = 'Pending' THEN NULL ELSE now() END
+          updated_at = now()
         WHERE id = $1
         RETURNING
           id,
           name,
           email,
           experience_level,
-          interest,
+          interest_text,
           status,
           created_at,
-          updated_at,
-          reviewed_at
+          updated_at
       `,
       [requestId, status],
     );
@@ -178,7 +165,7 @@ export async function updatePrivateBetaRequestStatusInDatabase(
 
     await client.query(
       `
-        INSERT INTO poc_private_beta_events (
+        INSERT INTO private_beta_events (
           id,
           event_name,
           request_id,
@@ -210,11 +197,9 @@ export async function recordPrivateBetaEventInDatabase(
   input: PrivateBetaEventInput,
 ) {
   await withPrivateBetaDatabase(async (client) => {
-    await ensureSchema(client);
-
     await client.query(
       `
-        INSERT INTO poc_private_beta_events (
+        INSERT INTO private_beta_events (
           id,
           event_name,
           request_id,
@@ -238,11 +223,10 @@ type PrivateBetaRequestRow = {
   name: string;
   email: string;
   experience_level: string;
-  interest: string | null;
+  interest_text: string | null;
   status: PrivateBetaStatus;
   created_at: string;
   updated_at: string;
-  reviewed_at: string | null;
 };
 
 type PrivateBetaEventRow = {
@@ -273,42 +257,6 @@ function withPrivateBetaDatabase<T>(
   });
 }
 
-async function ensureSchema(client: Client) {
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS poc_private_beta_requests (
-      id text PRIMARY KEY,
-      name text NOT NULL,
-      email text NOT NULL UNIQUE,
-      experience_level text NOT NULL,
-      interest text,
-      status text NOT NULL DEFAULT 'Pending',
-      created_at timestamptz NOT NULL DEFAULT now(),
-      updated_at timestamptz NOT NULL DEFAULT now(),
-      reviewed_at timestamptz
-    );
-  `);
-
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS poc_private_beta_events (
-      id text PRIMARY KEY,
-      event_name text NOT NULL,
-      request_id text,
-      payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-      created_at timestamptz NOT NULL DEFAULT now()
-    );
-  `);
-
-  await client.query(`
-    CREATE INDEX IF NOT EXISTS poc_private_beta_requests_status_created_at_idx
-    ON poc_private_beta_requests (status, created_at DESC);
-  `);
-
-  await client.query(`
-    CREATE INDEX IF NOT EXISTS poc_private_beta_events_created_at_idx
-    ON poc_private_beta_events (created_at DESC);
-  `);
-}
-
 function createRequestRecord(
   input: PrivateBetaRequestInput,
 ): PrivateBetaRequestRecord {
@@ -323,7 +271,6 @@ function createRequestRecord(
     status: "Pending",
     createdAt: now,
     updatedAt: now,
-    reviewedAt: null,
   };
 }
 
@@ -333,11 +280,10 @@ function mapRequestRow(row: PrivateBetaRequestRow): PrivateBetaRequestRecord {
     name: row.name,
     email: row.email,
     experienceLevel: row.experience_level as PrivateBetaExperienceLevel,
-    interest: row.interest,
+    interest: row.interest_text,
     status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    reviewedAt: row.reviewed_at,
   };
 }
 
