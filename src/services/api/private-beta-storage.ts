@@ -3,13 +3,12 @@ import type {
   PrivateBetaStatus,
 } from "@/lib/private-beta-content";
 import {
-  checkPrivateBetaDatabaseReachability,
-  createPrivateBetaRequestInDatabase,
-  listPrivateBetaEventsFromDatabase,
-  listPrivateBetaRequestsFromDatabase,
-  recordPrivateBetaEventInDatabase,
-  updatePrivateBetaRequestStatusInDatabase,
-} from "@/services/api/private-beta-storage-postgres";
+  checkPrivateBetaBackendReachability,
+  createPrivateBetaRequestInBackend,
+  fetchPrivateBetaAdminSnapshotFromBackend,
+  recordPrivateBetaEventInBackend,
+  updatePrivateBetaRequestStatusInBackend,
+} from "@/services/api/private-beta-backend";
 
 export type PrivateBetaRequestInput = {
   name: string;
@@ -57,22 +56,24 @@ export class PrivateBetaNotFoundError extends Error {
 }
 
 export async function listPrivateBetaRequests() {
-  return listPrivateBetaRequestsFromDatabase();
+  const snapshot = await fetchPrivateBetaAdminSnapshotFromBackend();
+  return snapshot.requests;
 }
 
 export async function listPrivateBetaEvents() {
-  return listPrivateBetaEventsFromDatabase();
+  const snapshot = await fetchPrivateBetaAdminSnapshotFromBackend();
+  return snapshot.events;
 }
 
 export async function createPrivateBetaRequest(input: PrivateBetaRequestInput) {
-  return createPrivateBetaRequestInDatabase(input);
+  return createPrivateBetaRequestInBackend(input);
 }
 
 export async function updatePrivateBetaRequestStatus(
   requestId: string,
   status: PrivateBetaStatus,
 ) {
-  const request = await updatePrivateBetaRequestStatusInDatabase(
+  const request = await updatePrivateBetaRequestStatusInBackend(
     requestId,
     status,
   );
@@ -85,51 +86,13 @@ export async function updatePrivateBetaRequestStatus(
 }
 
 export async function recordPrivateBetaEvent(input: PrivateBetaEventInput) {
-  await recordPrivateBetaEventInDatabase(input);
+  await recordPrivateBetaEventInBackend(input);
 }
 
 export async function getPrivateBetaAdminSnapshot() {
-  const [requests, events] = await Promise.all([
-    listPrivateBetaRequests(),
-    listPrivateBetaEvents(),
-  ]);
-
-  const counts = requests.reduce(
-    (accumulator, request) => {
-      accumulator.total += 1;
-      accumulator[request.status.toLowerCase() as "pending" | "approved" | "rejected"] +=
-        1;
-      return accumulator;
-    },
-    {
-      total: 0,
-      pending: 0,
-      approved: 0,
-      rejected: 0,
-    },
-  );
-
-  const eventCounts = events.reduce(
-    (accumulator, event) => {
-      accumulator[event.eventName] += 1;
-      return accumulator;
-    },
-    {
-      landing_visit: 0,
-      beta_request_submitted: 0,
-      beta_approved: 0,
-      beta_rejected: 0,
-    },
-  );
-
-  return {
-    events,
-    eventCounts,
-    requests,
-    counts,
-  };
+  return fetchPrivateBetaAdminSnapshotFromBackend();
 }
 
 export async function getPrivateBetaHealth() {
-  return checkPrivateBetaDatabaseReachability();
+  return checkPrivateBetaBackendReachability();
 }

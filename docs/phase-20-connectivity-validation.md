@@ -8,6 +8,10 @@ Audit the full Private Beta path from the public app to PostgreSQL:
 - API routes on Vercel
 - PostgreSQL on the Linux backend
 
+## Status
+
+This phase captured the failed direct-to-database path. It is superseded by Phase 21, which routes Vercel through the backend gateway instead of connecting directly to PostgreSQL.
+
 ## Runtime placement
 
 ### Vercel
@@ -31,21 +35,17 @@ These components live on the backend Linux server:
 
 ## Connectivity path
 
-Current request path:
+Historical request path:
 
 `Landing -> Vercel API route -> PostgreSQL connection string`
 
-The API route uses `POC_INTELLIGENCE_DATABASE_URL` and connects directly to PostgreSQL with the `pg` client.
+That path is no longer the intended production path.
 
 ## Database URL classification
 
-`POC_INTELLIGENCE_DATABASE_URL` is a private backend dependency.
+The direct database variable is no longer used by the frontend.
 
-It is not local to the browser, and it is not a public internet endpoint by default.
-
-The repository does not currently contain a live production value for this variable.
-
-Vercel project environment inspection showed no environment variables configured for the project.
+The new production-facing variable is `POC_INTELLIGENCE_API_URL`.
 
 ## Healthcheck
 
@@ -65,26 +65,18 @@ HTTP status:
 
 ## Validation findings
 
-- The API routes do attempt to connect directly to PostgreSQL.
-- Vercel currently has no configured environment variables for the project.
-- The backend PostgreSQL service is on the Linux server and is not exposed publicly on port `5432`.
-- No firewall changes were made.
-- No public PostgreSQL endpoint exists for Vercel to use in the current setup.
+- The direct-to-PostgreSQL attempt failed because the frontend had no public path to the database.
+- The backend PostgreSQL service is on the Linux server and remains private.
+- No firewall changes were made for PostgreSQL.
+- The backend gateway is now the intended public entry point.
 
 ## Risk assessment
 
 High risk:
 
-- production writes from Vercel to PostgreSQL are not confirmed
-- admin reads from Vercel to PostgreSQL are not confirmed
-- submission flow may fail with `database unreachable` until a secure network path exists
+- if Vercel cannot reach `POC_INTELLIGENCE_API_URL`, the waitlist flow will still fail
+- the remaining problem is API gateway reachability, not database exposure
 
 ## Recommended next action
 
-Provide a secure, reachable PostgreSQL path for Vercel, such as:
-
-- a private tunnel
-- a proxy on the Linux server
-- a managed database endpoint
-
-Without that network path, the Private Beta API cannot be confirmed as production-ready.
+Provide a reachable backend API path for Vercel and keep PostgreSQL private behind it.

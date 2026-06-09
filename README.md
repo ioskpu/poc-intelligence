@@ -43,6 +43,8 @@ Private live integration variables:
   historical comparison queries.
 - `FUTURES_LAB_DASHBOARD_STATE_PATH`: Private dashboard state endpoint path.
 - `FUTURES_LAB_REQUEST_TIMEOUT_MS`: Optional request timeout override.
+- `POC_INTELLIGENCE_API_URL`: Public backend API base URL for Private Beta
+  requests, admin reads and health checks.
 
 If those private variables are omitted, POC Intelligence runs in public demo
 mode using local mock data only.
@@ -103,6 +105,14 @@ implementation without rewriting pages or feature components.
 - Phase 9: Ghost tracking intelligence completed.
 - Phase 11: Intelligence narrative layer completed.
 - Phase 12: Change awareness layer completed.
+- Phase 15.1: Public repository sanitization completed.
+- Phase 15.3: Public demo mode completed.
+- Phase 16.1: Bilingual validation support completed.
+- Phase 17: Structured feedback process completed.
+- Phase 18: Private beta infrastructure completed.
+- Phase 19: Private beta PostgreSQL persistence completed.
+- Phase 20: Connectivity validation completed.
+- Phase 21: Private beta backend gateway completed.
 - Future: Evaluate account, billing or subscription needs only if explicitly
   approved later.
 
