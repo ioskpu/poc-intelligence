@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCopy, type Locale } from "@/lib/i18n";
 import type { OpportunityRanking } from "@/types/intelligence";
@@ -13,8 +14,14 @@ export function OpportunityRankings({ rankings, locale }: OpportunityRankingsPro
   return (
     <Card id="opportunities">
       <CardHeader>
-        <CardTitle>{copy.dashboard.opportunityRankings.title}</CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <CardTitle>{copy.dashboard.opportunityRankings.title}</CardTitle>
+          <Badge tone="info">{copy.dashboard.opportunityRankings.badge}</Badge>
+        </div>
         <CardDescription>{copy.dashboard.opportunityRankings.description}</CardDescription>
+        <p className="text-xs leading-5 text-muted-foreground">
+          {copy.dashboard.opportunityRankings.note}
+        </p>
       </CardHeader>
       <CardContent className="space-y-3">
         {rankings.map((ranking) => (

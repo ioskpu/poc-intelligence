@@ -161,7 +161,10 @@ const copy = {
       opportunityRankings: {
         title: "Ranking de Oportunidades",
         description:
-          "Oportunidades estadísticas rankeadas por la capa de API mock.",
+          "Oportunidades estadísticas rankeadas por un módulo de investigación experimental.",
+        badge: "Módulo de Investigación Experimental",
+        note:
+          "Esta sección aparece en la demo pública como superficie de evaluación y puede cambiar antes de la beta.",
         horizon: "Horizonte",
         confidence: "Confianza",
       },
@@ -328,7 +331,11 @@ const copy = {
       },
       opportunityRankings: {
         title: "Opportunity rankings",
-        description: "Ranked statistical opportunities from the mock API layer.",
+        description:
+          "Ranked statistical opportunities from an experimental research module.",
+        badge: "Experimental Research Module",
+        note:
+          "This section remains visible in the public demo as an evaluation surface and may change before beta release.",
         horizon: "Horizon",
         confidence: "Confidence",
       },

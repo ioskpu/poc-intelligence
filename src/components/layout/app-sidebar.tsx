@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { BarChart3, Compass, Gauge, Layers, LayoutDashboard } from "lucide-react";
+import { BarChart3, Compass, LayoutDashboard } from "lucide-react";
 import { getCopy, type Locale } from "@/lib/i18n";
 
 const navItems = [
   { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
   { href: "/dashboard#markets", key: "markets", icon: BarChart3 },
   { href: "/dashboard#opportunities", key: "opportunities", icon: Compass },
-  { href: "/dashboard#patterns", key: "patterns", icon: Layers },
-  { href: "/dashboard#regimes", key: "regimes", icon: Gauge },
 ] as const;
 
 type AppSidebarProps = {

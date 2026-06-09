@@ -8,10 +8,8 @@ import { IntelligenceBrief } from "@/features/dashboard/intelligence-brief";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
 import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
-import { PatternDiscovery } from "@/features/dashboard/pattern-discovery";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
-import { RegimeAnalysis } from "@/features/dashboard/regime-analysis";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
 import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
@@ -47,12 +45,8 @@ export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
           <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
           <SetupMemory records={snapshot.setupMemory} locale={locale} />
           <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
-          <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <section className="space-y-6">
             <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
-            <PatternDiscovery patterns={snapshot.patternDiscovery} locale={locale} />
-          </section>
-          <section className="grid gap-6 xl:grid-cols-2">
-            <RegimeAnalysis regimes={snapshot.regimeAnalysis} locale={locale} />
           </section>
         </div>
       </div>
