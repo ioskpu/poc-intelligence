@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCopy, type Locale, translateDirection } from "@/lib/i18n";
+import { getCopy, type Locale } from "@/lib/i18n";
 
 type BenefitKey = "changed" | "rankings" | "brief" | "ghosts";
 
@@ -41,10 +41,11 @@ export function LandingBrandSlot() {
 export function LandingProductMockup({ locale }: LandingVisualProps) {
   const copy = getCopy(locale);
   const changeRows = getChangeRows(locale);
+  const heroRows = heroRankings.slice(0, 2);
 
   return (
     <Card className="overflow-hidden border-muted/70 shadow-sm">
-      <div className="flex items-center justify-between border-b bg-muted/25 px-4 py-3">
+      <div className="flex items-center justify-between border-b bg-muted/25 px-4 py-2.5">
         <div className="flex items-center gap-3">
           <LandingBrandSlot />
           <div>
@@ -57,112 +58,10 @@ export function LandingProductMockup({ locale }: LandingVisualProps) {
         <Badge tone="info">{copy.banner.title}</Badge>
       </div>
 
-      <CardContent className="space-y-4 p-4">
-        <section className="rounded-lg border bg-background p-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                {copy.dashboard.intelligenceBrief.title}
-              </p>
-              <h3 className="mt-2 text-lg font-semibold leading-tight">
-                {locale === "es"
-                  ? "BTCUSDT mantiene el liderato"
-                  : "BTCUSDT keeps the lead"}
-              </h3>
-            </div>
-            <Badge tone="info">{locale === "es" ? "En vivo" : "Live"}</Badge>
-          </div>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            {locale === "es"
-              ? "El liderazgo se mantiene mientras la presión direccional se concentra en los mismos mercados."
-              : "Leadership holds while directional pressure stays concentrated in the same markets."}
-          </p>
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            <MetricPill
-              label={copy.dashboard.marketSummary.topSymbol}
-              value="BTCUSDT"
-            />
-            <MetricPill label={copy.dashboard.marketSummary.topScore} value="96" />
-            <MetricPill
-              label={copy.dashboard.marketSummary.lastUpdated}
-              value={locale === "es" ? "hace 4 min" : "4m ago"}
-            />
-          </div>
-        </section>
-
-        <div className="grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
-          <section className="rounded-lg border bg-muted/20 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                  {copy.dashboard.changeAwareness.title}
-                </p>
-                <h4 className="mt-1 text-sm font-semibold">
-                  {locale === "es" ? "Movimientos de ranking" : "Ranking moves"}
-                </h4>
-              </div>
-              <Badge tone="info">{locale === "es" ? "Cambio" : "Change"}</Badge>
-            </div>
-            <div className="mt-4 space-y-3">
-              {changeRows.map((row) => (
-                <div
-                  key={row.symbol}
-                  className="flex items-center justify-between gap-3 rounded-md border bg-background px-3 py-2"
-                >
-                  <div>
-                    <p className="text-sm font-semibold">{row.symbol}</p>
-                    <p className="text-xs text-muted-foreground">{row.note}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {row.movement.startsWith("+") ? (
-                      <ArrowUpRight className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-                    ) : (
-                      <ArrowDownRight className="h-4 w-4 text-rose-500" aria-hidden="true" />
-                    )}
-                    <span className="text-sm font-semibold">{row.movement}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="rounded-lg border bg-muted/20 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                  {copy.dashboard.marketRankings.title}
-                </p>
-                <h4 className="mt-1 text-sm font-semibold">
-                  {locale === "es" ? "Tabla simplificada" : "Simplified table"}
-                </h4>
-              </div>
-              <Badge tone="info">
-                {copy.dashboard.marketRankings.headers.score}
-              </Badge>
-            </div>
-            <div className="mt-4 overflow-hidden rounded-md border bg-background">
-              <div className="grid grid-cols-[0.7fr_1fr_0.6fr_0.8fr] border-b px-3 py-2 text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                <span>{copy.dashboard.marketRankings.headers.rank}</span>
-                <span>{locale === "es" ? "Símbolo" : "Symbol"}</span>
-                <span>{copy.dashboard.marketRankings.headers.score}</span>
-                <span>{copy.dashboard.marketRankings.headers.direction}</span>
-              </div>
-              <div className="divide-y">
-                {heroRankings.map((row) => (
-                  <div
-                    key={row.symbol}
-                    className="grid grid-cols-[0.7fr_1fr_0.6fr_0.8fr] items-center px-3 py-2 text-sm"
-                  >
-                    <span className="font-semibold">{row.rank}</span>
-                    <span>{row.symbol}</span>
-                    <span>{row.score}</span>
-                    <span>{translateDirection(row.direction, locale)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
+      <CardContent className="space-y-3 p-3">
+        <HeroBriefPanel locale={locale} />
+        <HeroChangePanel locale={locale} changeRows={changeRows.slice(0, 2)} />
+        <HeroRankingPanel locale={locale} rows={heroRows} />
       </CardContent>
     </Card>
   );
@@ -305,7 +204,7 @@ export function LandingBenefitVisual({
 function MetricPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border bg-muted/30 px-3 py-2">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </p>
       <p className="mt-1 text-sm font-semibold">{value}</p>
@@ -321,6 +220,141 @@ function HistoryMetric({ label, value }: { label: string; value: string }) {
       </p>
       <p className="mt-1 text-sm font-semibold">{value}</p>
     </div>
+  );
+}
+
+function HeroBriefPanel({ locale }: { locale: Locale }) {
+  const copy = getCopy(locale);
+
+  return (
+    <section className="rounded-lg border bg-background p-3">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            {copy.dashboard.intelligenceBrief.title}
+          </p>
+          <h3 className="mt-2 text-base font-semibold leading-tight">
+            {locale === "es"
+              ? "BTCUSDT mantiene el liderato"
+              : "BTCUSDT keeps the lead"}
+          </h3>
+        </div>
+        <Badge tone="info">{locale === "es" ? "En vivo" : "Live"}</Badge>
+      </div>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+        {locale === "es"
+          ? "El liderazgo se mantiene mientras la presión direccional se concentra en los mismos mercados."
+          : "Leadership holds while directional pressure stays concentrated in the same markets."}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <MetricPill label={copy.dashboard.marketSummary.topSymbol} value="BTCUSDT" />
+        <MetricPill label={copy.dashboard.marketSummary.topScore} value="96" />
+        <MetricPill
+          label={copy.dashboard.marketSummary.lastUpdated}
+          value={locale === "es" ? "hace 4 min" : "4m ago"}
+        />
+      </div>
+    </section>
+  );
+}
+
+function HeroChangePanel({
+  locale,
+  changeRows,
+}: {
+  locale: Locale;
+  changeRows: readonly {
+    symbol: string;
+    movement: string;
+    note: string;
+  }[];
+}) {
+  const copy = getCopy(locale);
+
+  return (
+    <section className="rounded-lg border bg-muted/20 p-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            {copy.dashboard.changeAwareness.title}
+          </p>
+          <h4 className="mt-1 text-xs font-semibold">
+            {locale === "es" ? "Movimientos de ranking" : "Ranking moves"}
+          </h4>
+        </div>
+        <Badge tone="info">{locale === "es" ? "Cambio" : "Change"}</Badge>
+      </div>
+      <div className="mt-3 space-y-2">
+        {changeRows.map((row) => (
+          <div
+            key={row.symbol}
+            className="flex items-center justify-between gap-3 rounded-md border bg-background px-3 py-2"
+          >
+            <div>
+              <p className="text-sm font-semibold">{row.symbol}</p>
+              <p className="text-xs text-muted-foreground">{row.note}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              {row.movement.startsWith("+") ? (
+                <ArrowUpRight className="h-4 w-4 text-emerald-500" aria-hidden="true" />
+              ) : (
+                <ArrowDownRight className="h-4 w-4 text-rose-500" aria-hidden="true" />
+              )}
+              <span className="text-sm font-semibold">{row.movement}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HeroRankingPanel({
+  locale,
+  rows,
+}: {
+  locale: Locale;
+  rows: readonly {
+    rank: number;
+    symbol: string;
+    score: number;
+  }[];
+}) {
+  const copy = getCopy(locale);
+
+  return (
+    <section className="rounded-lg border bg-muted/20 p-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            {copy.dashboard.marketRankings.title}
+          </p>
+          <h4 className="mt-1 text-xs font-semibold">
+            {locale === "es" ? "Tabla simplificada" : "Simplified table"}
+          </h4>
+        </div>
+        <Badge tone="info">{copy.dashboard.marketRankings.headers.score}</Badge>
+      </div>
+      <div className="mt-3 overflow-hidden rounded-md border bg-background">
+        <div className="grid grid-cols-[0.6fr_1.3fr_0.7fr] border-b px-3 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          <span>{copy.dashboard.marketRankings.headers.rank}</span>
+          <span>{locale === "es" ? "Símbolo" : "Symbol"}</span>
+          <span>{copy.dashboard.marketRankings.headers.score}</span>
+        </div>
+        <div className="divide-y">
+          {rows.map((row) => (
+            <div
+              key={row.symbol}
+              className="grid grid-cols-[0.6fr_1.3fr_0.7fr] items-center px-3 py-2 text-sm"
+            >
+              <span className="font-semibold">{row.rank}</span>
+              <span>{row.symbol}</span>
+              <span>{row.score}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
