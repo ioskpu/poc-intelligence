@@ -65,21 +65,6 @@ const copy = {
           },
         },
       },
-      privateBeta: {
-        badge: "Beta Privada",
-        title: "Acceso a beta privada",
-        description:
-          "El acceso es limitado y se incorpora por etapas. No todos los registros son aprobados automáticamente.",
-        processTitle: "Qué ocurre después del registro",
-        bullets: {
-          limited: "Acceso limitado para evaluar la calidad de la experiencia.",
-          gradual: "Incorporación gradual para mantener feedback directo con usuarios.",
-          reviewed:
-            "Las solicitudes se revisan manualmente antes de aprobar un cupo.",
-          next:
-            "Después del registro, el equipo decide si el perfil entra en la siguiente ola.",
-        },
-      },
       terminology: {
         title: "Terminología que permanece en inglés",
         description:
@@ -247,21 +232,6 @@ const copy = {
             description:
               "Review what happened to previously observed opportunities.",
           },
-        },
-      },
-      privateBeta: {
-        badge: "Private Beta",
-        title: "Private Beta Access",
-        description:
-          "Access is limited and added in waves. Not every registration is approved automatically.",
-        processTitle: "What happens after sign-up",
-        bullets: {
-          limited: "Limited access keeps the product evaluation focused.",
-          gradual: "Users are added gradually so feedback stays direct.",
-          reviewed:
-            "Requests are reviewed manually before a seat is approved.",
-          next:
-            "After registration, the team decides whether the profile joins the next wave.",
         },
       },
       terminology: {

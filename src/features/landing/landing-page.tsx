@@ -7,6 +7,7 @@ import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { getTerminologyEntries } from "@/lib/terminology";
 import { LandingBenefitVisual, LandingBrandSlot, LandingProductMockup } from "@/features/landing/landing-visuals";
+import { PrivateBetaSection } from "@/features/private-beta/private-beta-section";
 
 type LandingPageProps = {
   locale: Locale;
@@ -86,40 +87,7 @@ export function LandingPage({ locale }: LandingPageProps) {
         </div>
       </section>
 
-      <section
-        id="private-beta"
-        className="mx-auto grid max-w-6xl gap-4 px-6 pb-20 lg:grid-cols-[1.1fr_0.9fr]"
-      >
-        <Card className="h-full">
-          <CardHeader className="space-y-3">
-            <Badge tone="info" className="w-fit">
-              {copy.landing.privateBeta.badge}
-            </Badge>
-            <CardTitle>{copy.landing.privateBeta.title}</CardTitle>
-            <CardDescription className="leading-6">
-              {copy.landing.privateBeta.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
-            <BetaBullet>{copy.landing.privateBeta.bullets.limited}</BetaBullet>
-            <BetaBullet>{copy.landing.privateBeta.bullets.gradual}</BetaBullet>
-            <BetaBullet>{copy.landing.privateBeta.bullets.reviewed}</BetaBullet>
-            <BetaBullet>{copy.landing.privateBeta.bullets.next}</BetaBullet>
-          </CardContent>
-        </Card>
-
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>{copy.landing.privateBeta.processTitle}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
-            <ProcessStep index="01" text={copy.landing.privateBeta.bullets.limited} />
-            <ProcessStep index="02" text={copy.landing.privateBeta.bullets.reviewed} />
-            <ProcessStep index="03" text={copy.landing.privateBeta.bullets.next} />
-            <p>{copy.landing.privateBeta.bullets.gradual}</p>
-          </CardContent>
-        </Card>
-      </section>
+      <PrivateBetaSection locale={locale} />
 
       <section className="mx-auto max-w-6xl px-6 pb-20">
         <Card>
@@ -140,25 +108,5 @@ export function LandingPage({ locale }: LandingPageProps) {
         </Card>
       </section>
     </main>
-  );
-}
-
-function BetaBullet({ children }: { children: string }) {
-  return (
-    <div className="flex gap-3">
-      <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
-      <p>{children}</p>
-    </div>
-  );
-}
-
-function ProcessStep({ index, text }: { index: string; text: string }) {
-  return (
-    <div className="flex gap-4 rounded-md border bg-muted/40 p-3">
-      <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border bg-background text-xs font-semibold text-foreground">
-        {index}
-      </span>
-      <p className="pt-1">{text}</p>
-    </div>
   );
 }
