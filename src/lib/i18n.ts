@@ -41,15 +41,6 @@ const copy = {
         "No es un scanner, una plataforma de señales, un broker ni un terminal de trading.",
       audienceNote:
         "Pensado para personas que quieren entender el mercado con claridad, no operar desde la interfaz.",
-      snapshot: {
-        title: "Qué obtiene el usuario",
-        items: {
-          change: "Una lectura rápida de lo que cambió desde la última visita.",
-          rankings: "Una vista clara de los mercados que están destacando.",
-          brief: "Un resumen corto de los cambios más importantes.",
-          ghosts: "Contexto histórico de oportunidades observadas antes.",
-        },
-      },
       benefits: {
         title: "Beneficios para el usuario",
         description:
@@ -234,15 +225,6 @@ const copy = {
         "Not a scanner, signal platform, broker, or trading terminal.",
       audienceNote:
         "Made for people who want a clear market read, not execution from the interface.",
-      snapshot: {
-        title: "What the user gets",
-        items: {
-          change: "A quick read on what changed since the last visit.",
-          rankings: "A clear view of the markets that are leading now.",
-          brief: "A short summary of the most important shifts.",
-          ghosts: "Historical context for opportunities observed earlier.",
-        },
-      },
       benefits: {
         title: "User benefits",
         description:

@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, Radar, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,25 +6,7 @@ import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { getTerminologyEntries } from "@/lib/terminology";
-
-const benefitCards = [
-  {
-    key: "changed",
-    icon: Sparkles,
-  },
-  {
-    key: "rankings",
-    icon: BarChart3,
-  },
-  {
-    key: "brief",
-    icon: Sparkles,
-  },
-  {
-    key: "ghosts",
-    icon: Radar,
-  },
-] as const;
+import { LandingBenefitVisual, LandingBrandSlot, LandingProductMockup } from "@/features/landing/landing-visuals";
 
 type LandingPageProps = {
   locale: Locale;
@@ -40,7 +22,10 @@ export function LandingPage({ locale }: LandingPageProps) {
 
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <p className="text-sm font-semibold">POC Intelligence</p>
+          <div className="flex items-center gap-3">
+            <LandingBrandSlot />
+            <p className="text-sm font-semibold">POC Intelligence</p>
+          </div>
           <div className="flex items-center gap-3">
             <div className="rounded-full border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
               {copy.banner.title}
@@ -82,25 +67,7 @@ export function LandingPage({ locale }: LandingPageProps) {
           </p>
         </div>
 
-        <Card className="border-muted/70">
-          <CardHeader className="space-y-3">
-            <Badge tone="info" className="w-fit">
-              {copy.banner.title}
-            </Badge>
-            <CardTitle className="text-2xl">{copy.landing.snapshot.title}</CardTitle>
-            <CardDescription>{copy.landing.audienceNote}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
-              {Object.values(copy.landing.snapshot.items).map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <LandingProductMockup locale={locale} />
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-20">
@@ -112,19 +79,10 @@ export function LandingPage({ locale }: LandingPageProps) {
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {benefitCards.map((benefit) => {
-            const benefitCopy = copy.landing.benefits.items[benefit.key];
-
-            return (
-              <Card key={benefit.key}>
-                <CardHeader>
-                  <benefit.icon className="h-5 w-5 text-secondary" aria-hidden="true" />
-                  <CardTitle className="mt-3 text-base">{benefitCopy.title}</CardTitle>
-                  <CardDescription className="leading-6">{benefitCopy.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            );
-          })}
+          <LandingBenefitVisual locale={locale} benefitKey="changed" />
+          <LandingBenefitVisual locale={locale} benefitKey="rankings" />
+          <LandingBenefitVisual locale={locale} benefitKey="brief" />
+          <LandingBenefitVisual locale={locale} benefitKey="ghosts" />
         </div>
       </section>
 
