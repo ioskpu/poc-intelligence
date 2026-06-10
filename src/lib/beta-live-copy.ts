@@ -2,9 +2,9 @@ import type { Locale } from "@/lib/i18n";
 
 const copy = {
   es: {
-    title: "Profundidad Beta Live",
+    title: "Beta Research Layer",
     description:
-      "Capas internas que amplían el observatory con datos reales ya existentes de Futures Lab.",
+      "Profundidad adicional con datos reales ya existentes de Futures Lab.",
     sections: {
       scanner: {
         title: "Scanner Detail",
@@ -138,9 +138,9 @@ const copy = {
     },
   },
   en: {
-    title: "Beta Live Depth",
+    title: "Beta Research Layer",
     description:
-      "Internal layers that deepen the observatory with existing real Futures Lab data.",
+      "Additional depth using existing real Futures Lab data.",
     sections: {
       scanner: {
         title: "Scanner Detail",

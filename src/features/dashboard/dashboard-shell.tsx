@@ -2,16 +2,17 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
 import { TopBar } from "@/components/layout/top-bar";
 import { ChangeAwareness } from "@/features/dashboard/change-awareness";
-import { BetaLiveDepth } from "@/features/dashboard/beta-live-depth";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
 import { GhostTracking } from "@/features/dashboard/ghost-tracking";
 import { IntelligenceBrief } from "@/features/dashboard/intelligence-brief";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
+import { BetaResearchLayer } from "@/features/dashboard/beta-research-layer";
 import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
+import { isBetaResearchEnabled } from "@/lib/feature-flags";
 import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
@@ -21,14 +22,16 @@ type DashboardShellProps = {
 };
 
 export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
+  const betaResearchEnabled = isBetaResearchEnabled();
   const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
+  const showBetaResearchLayer = betaResearchEnabled && betaLiveEnabled;
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
-      <AppSidebar locale={locale} betaLive={betaLiveEnabled} />
+      <AppSidebar locale={locale} betaLive={showBetaResearchLayer} />
       <div className="min-w-0 flex-1">
-        <PublicDemoBanner locale={locale} betaLive={betaLiveEnabled} />
-        <TopBar generatedAt={snapshot.generatedAt} locale={locale} betaLive={betaLiveEnabled} />
+        <PublicDemoBanner locale={locale} betaLive={showBetaResearchLayer} />
+        <TopBar generatedAt={snapshot.generatedAt} locale={locale} betaLive={showBetaResearchLayer} />
         <div className="space-y-5 p-4 lg:p-5">
           <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
             <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
@@ -48,13 +51,12 @@ export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
           <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
           <SetupMemory records={snapshot.setupMemory} locale={locale} />
           <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
-          {betaLiveEnabled ? (
-            <BetaLiveDepth betaLive={snapshot.betaLiveInsights!} locale={locale} />
-          ) : (
-            <section className="space-y-6">
-              <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
-            </section>
-          )}
+          <section className="space-y-6">
+            <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
+          </section>
+          {showBetaResearchLayer ? (
+            <BetaResearchLayer betaLive={snapshot.betaLiveInsights!} locale={locale} />
+          ) : null}
         </div>
       </div>
     </main>

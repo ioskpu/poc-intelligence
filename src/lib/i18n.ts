@@ -15,15 +15,15 @@ const copy = {
       title: "Demostración pública",
       message:
         "Esta es una demostración pública que utiliza datos de ejemplo para evaluación del producto.",
-      betaTitle: "Beta Live interna",
+      betaTitle: "Beta Research",
       betaMessage:
-        "Este panel expone datos reales de Futures Lab para validar profundidad de producto con usuarios aprobados.",
+        "Este panel agrega profundidad real de investigación para validar la experiencia con usuarios aprobados.",
     },
     topBar: {
       snapshot: "Resumen de inteligencia",
       generated: "Generado",
       publicDemo: "Demostración pública",
-      betaLive: "Beta Live",
+      betaLive: "Beta Research",
       overview: "Inicio",
       language: "Idioma",
     },
@@ -31,7 +31,7 @@ const copy = {
       dashboard: "Panel",
       markets: "Mercados",
       opportunities: "Oportunidades",
-      betaLiveDepth: "Profundidad Beta Live",
+      betaLiveDepth: "Beta Research",
       patterns: "Patrones",
       regimes: "Regímenes",
     },
@@ -160,6 +160,11 @@ const copy = {
         },
         lastSettled: "Último ghost liquidado",
       },
+      betaResearch: {
+        badge: "Beta Research",
+        description:
+          "Capa adicional para usuarios aprobados que necesitan más profundidad de investigación.",
+      },
       opportunityRankings: {
         title: "Ranking de Oportunidades",
         description:
@@ -189,15 +194,15 @@ const copy = {
       title: "Public demo",
       message:
         "This public demonstration uses sample research data for product evaluation.",
-      betaTitle: "Internal Beta Live",
+      betaTitle: "Beta Research",
       betaMessage:
-        "This panel exposes real Futures Lab data to validate product depth with approved users.",
+        "This panel adds real research depth to validate the approved user experience.",
     },
     topBar: {
       snapshot: "Intelligence snapshot",
       generated: "Generated",
       publicDemo: "Public demo",
-      betaLive: "Beta Live",
+      betaLive: "Beta Research",
       overview: "Overview",
       language: "Language",
     },
@@ -205,7 +210,7 @@ const copy = {
       dashboard: "Dashboard",
       markets: "Markets",
       opportunities: "Opportunities",
-      betaLiveDepth: "Beta Live Depth",
+      betaLiveDepth: "Beta Research",
       patterns: "Patterns",
       regimes: "Regimes",
     },
@@ -332,6 +337,11 @@ const copy = {
           positive: "Positive",
         },
         lastSettled: "Last settled ghost",
+      },
+      betaResearch: {
+        badge: "Beta Research",
+        description:
+          "Additional depth for approved users who need more research context.",
       },
       opportunityRankings: {
         title: "Opportunity rankings",
