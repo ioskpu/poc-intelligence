@@ -12,7 +12,6 @@ import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
-import { isBetaResearchEnabled } from "@/lib/feature-flags";
 import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
@@ -27,10 +26,8 @@ export function DashboardShell({
   snapshot,
   betaResearchEnabled: sessionBetaResearchEnabled = false,
 }: DashboardShellProps) {
-  const betaResearchEnabled =
-    sessionBetaResearchEnabled || isBetaResearchEnabled();
   const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
-  const showBetaResearchLayer = betaResearchEnabled && betaLiveEnabled;
+  const showBetaResearchLayer = sessionBetaResearchEnabled && betaLiveEnabled;
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
