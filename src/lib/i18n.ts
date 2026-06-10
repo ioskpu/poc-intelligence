@@ -12,17 +12,17 @@ const localeLabels: Record<Locale, string> = {
 const copy = {
   es: {
     banner: {
-      title: "Demostración pública",
+      title: "Observatorio público",
       message:
-        "Esta es una demostración pública que utiliza datos de ejemplo para evaluación del producto.",
+        "Vista pública del observatorio de investigación. Los datos se actualizan periódicamente desde el pipeline del observatorio; algunas capacidades avanzadas están disponibles únicamente para participantes Beta.",
       betaTitle: "Beta Research",
       betaMessage:
-        "Este panel agrega profundidad real de investigación para validar la experiencia con usuarios aprobados.",
+        "Este panel agrega mayor profundidad de investigación para usuarios aprobados.",
     },
     topBar: {
       snapshot: "Resumen de inteligencia",
       generated: "Generado",
-      publicDemo: "Demostración pública",
+      publicDemo: "Observatorio público",
       betaLive: "Beta Research",
       overview: "Inicio",
       language: "Idioma",
@@ -40,7 +40,7 @@ const copy = {
       title: "Lo que cambió en el mercado desde la última vez que lo miraste.",
       description:
         "Diseñado para traders discrecionales, investigadores cuantitativos y mesas pequeñas que necesitan una lectura rápida del mercado: qué cambió, qué destaca y qué merece otra mirada.",
-      primaryAction: "Entrar a la demo",
+      primaryAction: "Abrir observatorio",
       secondaryAction: "Ver beta privada",
       disclaimer:
         "No es un scanner, una plataforma de señales, un broker ni un terminal de trading.",
@@ -171,7 +171,7 @@ const copy = {
           "Oportunidades estadísticas rankeadas por un módulo de investigación experimental.",
         badge: "Módulo de Investigación Experimental",
         note:
-          "Esta sección aparece en la demo pública como superficie de evaluación y puede cambiar antes de la beta.",
+          "Esta sección es parte de la vista pública del observatorio y puede cambiar mientras se valida la capa de investigación.",
         horizon: "Horizonte",
         confidence: "Confianza",
       },
@@ -191,17 +191,17 @@ const copy = {
   },
   en: {
     banner: {
-      title: "Public demo",
+      title: "Public Observatory",
       message:
-        "This public demonstration uses sample research data for product evaluation.",
+        "Public view of the research observatory. Data is refreshed periodically from the observatory pipeline; advanced research capabilities are available to approved Beta participants.",
       betaTitle: "Beta Research",
       betaMessage:
-        "This panel adds real research depth to validate the approved user experience.",
+        "This panel adds deeper research context for approved users.",
     },
     topBar: {
       snapshot: "Intelligence snapshot",
       generated: "Generated",
-      publicDemo: "Public demo",
+      publicDemo: "Public Observatory",
       betaLive: "Beta Research",
       overview: "Overview",
       language: "Language",
@@ -219,7 +219,7 @@ const copy = {
       title: "What changed in the market since the last time you looked.",
       description:
         "Built for discretionary traders, quant researchers, and small desks that need a fast read on the market: what changed, what is standing out, and what deserves another look.",
-      primaryAction: "Enter the demo",
+      primaryAction: "Open Observatory",
       secondaryAction: "Explore Private Beta",
       disclaimer:
         "Not a scanner, signal platform, broker, or trading terminal.",
@@ -349,7 +349,7 @@ const copy = {
           "Ranked statistical opportunities from an experimental research module.",
         badge: "Experimental Research Module",
         note:
-          "This section remains visible in the public demo as an evaluation surface and may change before beta release.",
+          "This section is part of the public observatory view and may change while the research layer is validated.",
         horizon: "Horizon",
         confidence: "Confidence",
       },

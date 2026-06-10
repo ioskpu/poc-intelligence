@@ -317,7 +317,7 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         reset: "Submit another request",
       },
       process: {
-        limited: "Limited access keeps the product evaluation focused.",
+        limited: "Limited access keeps feedback focused and direct.",
         gradual: "Users are added gradually so feedback stays direct.",
         reviewed: "Requests are reviewed manually before a seat is approved.",
         next: "After registration, the team decides whether the profile joins the next wave.",
