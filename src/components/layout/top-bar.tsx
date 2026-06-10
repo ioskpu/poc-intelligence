@@ -30,6 +30,11 @@ export function TopBar({ generatedAt, locale, betaLive = false }: TopBarProps) {
           {betaLive ? copy.topBar.betaLive : copy.topBar.publicDemo}
         </Badge>
         <LanguageSwitcher locale={locale} />
+        {betaLive ? (
+          <ButtonLink href="/api/beta-auth/logout" variant="outline" size="sm">
+            {locale === "es" ? "Salir" : "Logout"}
+          </ButtonLink>
+        ) : null}
         <ButtonLink href="/" variant="ghost" size="sm">
           <CircleHelp className="h-4 w-4" aria-hidden="true" />
           {copy.topBar.overview}

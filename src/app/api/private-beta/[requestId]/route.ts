@@ -4,6 +4,7 @@ import {
   PrivateBetaValidationError,
   changePrivateBetaRequestStatus,
 } from "@/services/api/private-beta";
+import { getCurrentBetaSessionToken } from "@/services/api/beta-auth";
 
 type RouteParams = {
   params: Promise<{
@@ -15,7 +16,12 @@ export async function PATCH(request: Request, context: RouteParams) {
   try {
     const { requestId } = await context.params;
     const body = await request.json();
-    const record = await changePrivateBetaRequestStatus(requestId, body.status);
+    const sessionToken = await getCurrentBetaSessionToken();
+    const record = await changePrivateBetaRequestStatus(
+      requestId,
+      body.status,
+      sessionToken,
+    );
 
     return NextResponse.json({ request: record });
   } catch (error) {

@@ -19,10 +19,16 @@ import type { IntelligenceSnapshot } from "@/types/intelligence";
 type DashboardShellProps = {
   locale: Locale;
   snapshot: IntelligenceSnapshot;
+  betaResearchEnabled?: boolean;
 };
 
-export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
-  const betaResearchEnabled = isBetaResearchEnabled();
+export function DashboardShell({
+  locale,
+  snapshot,
+  betaResearchEnabled: sessionBetaResearchEnabled = false,
+}: DashboardShellProps) {
+  const betaResearchEnabled =
+    sessionBetaResearchEnabled || isBetaResearchEnabled();
   const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
   const showBetaResearchLayer = betaResearchEnabled && betaLiveEnabled;
 

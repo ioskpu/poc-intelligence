@@ -7,6 +7,7 @@ import {
   createPrivateBetaRequest as createStoredPrivateBetaRequest,
   getPrivateBetaHealth as getStoredPrivateBetaHealth,
   getPrivateBetaAdminSnapshot as getStoredPrivateBetaAdminSnapshot,
+  getPrivateBetaAdminSnapshotWithSession as getStoredPrivateBetaAdminSnapshotWithSession,
   PrivateBetaNotFoundError,
   recordPrivateBetaEvent as recordStoredPrivateBetaEvent,
   updatePrivateBetaRequestStatus as updateStoredPrivateBetaRequestStatus,
@@ -44,9 +45,10 @@ export async function submitPrivateBetaRequest(
 export async function changePrivateBetaRequestStatus(
   requestId: string,
   status: unknown,
+  sessionToken?: string | null,
 ) {
   const nextStatus = parseStatus(status);
-  return updateStoredPrivateBetaRequestStatus(requestId, nextStatus);
+  return updateStoredPrivateBetaRequestStatus(requestId, nextStatus, sessionToken);
 }
 
 export async function trackPrivateBetaLandingVisit(input: unknown) {
@@ -60,6 +62,12 @@ export async function trackPrivateBetaLandingVisit(input: unknown) {
 
 export async function getPrivateBetaAdminData(): Promise<PrivateBetaAdminSnapshot> {
   return getStoredPrivateBetaAdminSnapshot();
+}
+
+export async function getPrivateBetaAdminDataWithSession(
+  sessionToken: string,
+): Promise<PrivateBetaAdminSnapshot> {
+  return getStoredPrivateBetaAdminSnapshotWithSession(sessionToken);
 }
 
 export async function getPrivateBetaHealth() {

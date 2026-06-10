@@ -5,6 +5,7 @@ import type {
   PrivateBetaRequestRecord,
 } from "@/services/api/private-beta-storage";
 import type { PrivateBetaStatus } from "@/lib/private-beta-content";
+import type { BetaSession } from "@/lib/beta-auth";
 
 type PrivateBetaAdminSnapshotPayload = {
   requests: PrivateBetaRequestRecord[];
@@ -48,13 +49,20 @@ async function fetchPrivateBetaApi(
   options?: {
     method?: string;
     body?: Record<string, unknown>;
+    sessionToken?: string | null;
   },
 ) {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (options?.sessionToken) {
+    headers.Authorization = `Bearer ${options.sessionToken}`;
+  }
+
   const response = await fetch(new URL(path, getPrivateBetaApiBaseUrl()), {
     method: options?.method ?? "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body:
       options?.body === undefined ? undefined : JSON.stringify(options.body),
     cache: "no-store",
@@ -73,6 +81,14 @@ export async function fetchPrivateBetaAdminSnapshotFromBackend() {
   return fetchPrivateBetaApi("/private-beta/requests") as Promise<PrivateBetaAdminSnapshotPayload>;
 }
 
+export async function fetchPrivateBetaAdminSnapshotFromBackendWithSession(
+  sessionToken: string,
+) {
+  return fetchPrivateBetaApi("/private-beta/requests", {
+    sessionToken,
+  }) as Promise<PrivateBetaAdminSnapshotPayload>;
+}
+
 export async function createPrivateBetaRequestInBackend(
   input: PrivateBetaRequestInput,
 ) {
@@ -87,11 +103,13 @@ export async function createPrivateBetaRequestInBackend(
 export async function updatePrivateBetaRequestStatusInBackend(
   requestId: string,
   status: PrivateBetaStatus,
+  sessionToken?: string | null,
 ) {
   try {
     const payload = (await fetchPrivateBetaApi(`/private-beta/${requestId}`, {
       method: "PATCH",
       body: { status },
+      sessionToken,
     })) as PrivateBetaRequestResponse;
 
     return payload.request;
@@ -113,6 +131,47 @@ export async function recordPrivateBetaEventInBackend(
   await fetchPrivateBetaApi("/private-beta/events", {
     method: "POST",
     body: input,
+  });
+}
+
+export async function requestPrivateBetaMagicLinkInBackend(
+  email: string,
+  redirectPath?: string | null,
+) {
+  return fetchPrivateBetaApi("/private-beta/auth/request-link", {
+    method: "POST",
+    body: {
+      email,
+      ...(redirectPath ? { redirectPath } : {}),
+    },
+  }) as Promise<{
+    ok: boolean;
+    delivery?: "email" | "log_only";
+    magicLink?: string;
+  }>;
+}
+
+export async function verifyPrivateBetaMagicTokenInBackend(token: string) {
+  return fetchPrivateBetaApi("/private-beta/auth/verify", {
+    method: "POST",
+    body: { token },
+  }) as Promise<
+    BetaSession & {
+      sessionToken: string;
+    }
+  >;
+}
+
+export async function fetchPrivateBetaSessionFromBackend(sessionToken: string) {
+  return fetchPrivateBetaApi("/private-beta/auth/session", {
+    sessionToken,
+  }) as Promise<BetaSession>;
+}
+
+export async function revokePrivateBetaSessionInBackend(sessionToken: string) {
+  await fetchPrivateBetaApi("/private-beta/auth/logout", {
+    method: "POST",
+    sessionToken,
   });
 }
 

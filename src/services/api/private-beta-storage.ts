@@ -6,6 +6,7 @@ import {
   checkPrivateBetaBackendReachability,
   createPrivateBetaRequestInBackend,
   fetchPrivateBetaAdminSnapshotFromBackend,
+  fetchPrivateBetaAdminSnapshotFromBackendWithSession,
   recordPrivateBetaEventInBackend,
   updatePrivateBetaRequestStatusInBackend,
 } from "@/services/api/private-beta-backend";
@@ -72,10 +73,12 @@ export async function createPrivateBetaRequest(input: PrivateBetaRequestInput) {
 export async function updatePrivateBetaRequestStatus(
   requestId: string,
   status: PrivateBetaStatus,
+  sessionToken?: string | null,
 ) {
   const request = await updatePrivateBetaRequestStatusInBackend(
     requestId,
     status,
+    sessionToken,
   );
 
   if (!request) {
@@ -91,6 +94,10 @@ export async function recordPrivateBetaEvent(input: PrivateBetaEventInput) {
 
 export async function getPrivateBetaAdminSnapshot() {
   return fetchPrivateBetaAdminSnapshotFromBackend();
+}
+
+export async function getPrivateBetaAdminSnapshotWithSession(sessionToken: string) {
+  return fetchPrivateBetaAdminSnapshotFromBackendWithSession(sessionToken);
 }
 
 export async function getPrivateBetaHealth() {

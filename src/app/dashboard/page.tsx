@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { DashboardShell } from "@/features/dashboard/dashboard-shell";
+import { getCurrentBetaSession } from "@/services/api/beta-auth";
 import { getIntelligenceSnapshot } from "@/services/api";
 import { LOCALE_COOKIE_NAME, resolveLocale } from "@/lib/i18n";
 
@@ -20,6 +21,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const locale = resolveLocale(
     resolvedSearchParams?.lang ?? cookieStore.get(LOCALE_COOKIE_NAME)?.value,
   );
+  const betaSession = await getCurrentBetaSession();
+  const betaResearchEnabled = betaSession?.account.status === "Active";
 
-  return <DashboardShell locale={locale} snapshot={snapshot} />;
+  return (
+    <DashboardShell
+      locale={locale}
+      snapshot={snapshot}
+      betaResearchEnabled={betaResearchEnabled}
+    />
+  );
 }
