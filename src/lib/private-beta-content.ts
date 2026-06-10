@@ -51,12 +51,44 @@ type PrivateBetaLocaleCopy = {
       rejected: string;
       visits: string;
       submissions: string;
+      pendingRequests: string;
+      approvedAccounts: string;
+      activeSessions: string;
+      revokedAccounts: string;
+    };
+    sections: {
+      summary: {
+        title: string;
+        description: string;
+      };
+      pendingRequests: {
+        title: string;
+        description: string;
+        empty: string;
+      };
+      approvedAccounts: {
+        title: string;
+        description: string;
+        empty: string;
+      };
+      activeSessions: {
+        title: string;
+        description: string;
+        empty: string;
+      };
     };
     table: {
       name: string;
       email: string;
       date: string;
       experience: string;
+      requestedAt: string;
+      role: string;
+      approvedAt: string;
+      lastLogin: string;
+      sessionCreated: string;
+      lastSeen: string;
+      expiresAt: string;
       status: string;
       actions: string;
     };
@@ -65,6 +97,16 @@ type PrivateBetaLocaleCopy = {
       reject: string;
       approving: string;
       rejecting: string;
+      viewDetails: string;
+      revokeAccess: string;
+      promoteToAdmin: string;
+      demoteAdmin: string;
+      terminateSession: string;
+    };
+    gaps: {
+      approvedAccountsDerived: string;
+      accountsApiMissing: string;
+      sessionsApiMissing: string;
     };
   };
   statusLabels: Record<PrivateBetaStatus, string>;
@@ -127,12 +169,50 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         rejected: "Rejected",
         visits: "Landing visits",
         submissions: "Submissions",
+        pendingRequests: "Solicitudes pendientes",
+        approvedAccounts: "Cuentas aprobadas",
+        activeSessions: "Sesiones activas",
+        revokedAccounts: "Cuentas revocadas",
+      },
+      sections: {
+        summary: {
+          title: "Resumen operativo",
+          description:
+            "Estado actual disponible desde las APIs existentes de Private Beta.",
+        },
+        pendingRequests: {
+          title: "Solicitudes pendientes",
+          description:
+            "Solicitudes que aun requieren aprobacion o rechazo manual.",
+          empty: "No hay solicitudes pendientes.",
+        },
+        approvedAccounts: {
+          title: "Cuentas aprobadas",
+          description:
+            "Inventario operativo de cuentas beta aprobadas y su rol.",
+          empty:
+            "El backend actual no expone una API para listar cuentas aprobadas.",
+        },
+        activeSessions: {
+          title: "Sesiones activas",
+          description:
+            "Sesiones beta vigentes con creacion, actividad reciente y expiracion.",
+          empty:
+            "El backend actual no expone una API para listar sesiones activas.",
+        },
       },
       table: {
         name: "Nombre",
         email: "Email",
         date: "Fecha",
         experience: "Experiencia",
+        requestedAt: "Solicitado",
+        role: "Rol",
+        approvedAt: "Aprobado",
+        lastLogin: "Ultimo login",
+        sessionCreated: "Sesion creada",
+        lastSeen: "Ultima actividad",
+        expiresAt: "Expira",
         status: "Estado",
         actions: "Acciones",
       },
@@ -141,6 +221,19 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         reject: "Reject",
         approving: "Aprobando...",
         rejecting: "Rechazando...",
+        viewDetails: "Ver detalles",
+        revokeAccess: "Revocar acceso",
+        promoteToAdmin: "Promover a admin",
+        demoteAdmin: "Quitar admin",
+        terminateSession: "Terminar sesion",
+      },
+      gaps: {
+        approvedAccountsDerived:
+          "Conteo derivado de solicitudes aprobadas hasta que exista API de cuentas.",
+        accountsApiMissing:
+          "Gap documentado: faltan endpoints para listar cuentas, revocar acceso y cambiar roles.",
+        sessionsApiMissing:
+          "Gap documentado: faltan endpoints para listar y terminar sesiones activas.",
       },
     },
     statusLabels: {
@@ -206,12 +299,50 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         rejected: "Rejected",
         visits: "Landing visits",
         submissions: "Submissions",
+        pendingRequests: "Pending requests",
+        approvedAccounts: "Approved accounts",
+        activeSessions: "Active sessions",
+        revokedAccounts: "Revoked accounts",
+      },
+      sections: {
+        summary: {
+          title: "Operations summary",
+          description:
+            "Current state available through the existing Private Beta APIs.",
+        },
+        pendingRequests: {
+          title: "Pending Requests",
+          description:
+            "Requests that still need manual approval or rejection.",
+          empty: "There are no pending requests.",
+        },
+        approvedAccounts: {
+          title: "Approved Accounts",
+          description:
+            "Operational inventory of approved beta accounts and roles.",
+          empty:
+            "The current backend does not expose an API to list approved accounts.",
+        },
+        activeSessions: {
+          title: "Active Sessions",
+          description:
+            "Current beta sessions with creation, recent activity, and expiration.",
+          empty:
+            "The current backend does not expose an API to list active sessions.",
+        },
       },
       table: {
         name: "Name",
         email: "Email",
         date: "Date",
         experience: "Experience",
+        requestedAt: "Requested At",
+        role: "Role",
+        approvedAt: "Approved At",
+        lastLogin: "Last Login",
+        sessionCreated: "Session Created",
+        lastSeen: "Last Seen",
+        expiresAt: "Expires At",
         status: "Status",
         actions: "Actions",
       },
@@ -220,6 +351,19 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         reject: "Reject",
         approving: "Approving...",
         rejecting: "Rejecting...",
+        viewDetails: "View Details",
+        revokeAccess: "Revoke Access",
+        promoteToAdmin: "Promote to Admin",
+        demoteAdmin: "Demote Admin",
+        terminateSession: "Terminate Session",
+      },
+      gaps: {
+        approvedAccountsDerived:
+          "Count derived from approved requests until an accounts API exists.",
+        accountsApiMissing:
+          "Documented gap: endpoints are missing for account listing, access revocation, and role changes.",
+        sessionsApiMissing:
+          "Documented gap: endpoints are missing for active session listing and termination.",
       },
     },
     statusLabels: {
