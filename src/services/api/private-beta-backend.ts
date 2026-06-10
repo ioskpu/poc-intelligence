@@ -10,6 +10,9 @@ import type { BetaSession } from "@/lib/beta-auth";
 type PrivateBetaAdminSnapshotPayload = {
   requests: PrivateBetaRequestRecord[];
   events: PrivateBetaEventRecord[];
+  accounts: PrivateBetaAccountRecord[];
+  sessions: PrivateBetaSessionRecord[];
+  auditEvents: PrivateBetaAuditEventRecord[];
   counts: {
     total: number;
     pending: number;
@@ -23,6 +26,46 @@ type PrivateBetaAdminSnapshotPayload = {
     beta_rejected: number;
   };
 };
+
+export type PrivateBetaAccountRecord = {
+  id: string;
+  email: string;
+  name: string;
+  role: "user" | "admin";
+  status: "Active" | "Revoked";
+  approvedAt: string | null;
+  revokedAt: string | null;
+  lastLoginAt: string | null;
+  createdAt: string | null;
+};
+
+export type PrivateBetaSessionRecord = {
+  id: string;
+  accountId: string;
+  email: string;
+  createdAt: string | null;
+  lastSeenAt: string | null;
+  expiresAt: string | null;
+  revokedAt: string | null;
+};
+
+export type PrivateBetaAuditEventRecord = {
+  id: string;
+  eventType: string;
+  actorAccountId: string | null;
+  actorEmail: string | null;
+  targetAccountId: string | null;
+  targetEmail: string | null;
+  targetSessionId: string | null;
+  payload: Record<string, unknown>;
+  createdAt: string | null;
+};
+
+export type PrivateBetaAccountAction =
+  | "revoke"
+  | "reactivate"
+  | "promote"
+  | "demote";
 
 type PrivateBetaRequestResponse = {
   request: PrivateBetaRequestRecord;
@@ -123,6 +166,41 @@ export async function updatePrivateBetaRequestStatusInBackend(
 
     throw error;
   }
+}
+
+export async function updatePrivateBetaAccountInBackend(
+  accountId: string,
+  action: PrivateBetaAccountAction,
+  sessionToken?: string | null,
+) {
+  return fetchPrivateBetaApi(`/private-beta/accounts/${accountId}`, {
+    method: "PATCH",
+    body: { action },
+    sessionToken,
+  }) as Promise<{ account: PrivateBetaAccountRecord }>;
+}
+
+export async function terminatePrivateBetaSessionInBackend(
+  sessionId: string,
+  sessionToken?: string | null,
+) {
+  return fetchPrivateBetaApi(`/private-beta/sessions/${sessionId}/terminate`, {
+    method: "POST",
+    sessionToken,
+  }) as Promise<{ session: PrivateBetaSessionRecord }>;
+}
+
+export async function terminatePrivateBetaAccountSessionsInBackend(
+  accountId: string,
+  sessionToken?: string | null,
+) {
+  return fetchPrivateBetaApi(
+    `/private-beta/accounts/${accountId}/sessions/terminate`,
+    {
+      method: "POST",
+      sessionToken,
+    },
+  ) as Promise<{ terminatedCount: number }>;
 }
 
 export async function recordPrivateBetaEventInBackend(

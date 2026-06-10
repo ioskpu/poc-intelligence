@@ -8,7 +8,11 @@ import {
   fetchPrivateBetaAdminSnapshotFromBackend,
   fetchPrivateBetaAdminSnapshotFromBackendWithSession,
   recordPrivateBetaEventInBackend,
+  terminatePrivateBetaAccountSessionsInBackend,
+  terminatePrivateBetaSessionInBackend,
+  updatePrivateBetaAccountInBackend,
   updatePrivateBetaRequestStatusInBackend,
+  type PrivateBetaAccountAction,
 } from "@/services/api/private-beta-backend";
 
 export type PrivateBetaRequestInput = {
@@ -86,6 +90,28 @@ export async function updatePrivateBetaRequestStatus(
   }
 
   return request;
+}
+
+export async function updatePrivateBetaAccount(
+  accountId: string,
+  action: PrivateBetaAccountAction,
+  sessionToken?: string | null,
+) {
+  return updatePrivateBetaAccountInBackend(accountId, action, sessionToken);
+}
+
+export async function terminatePrivateBetaSession(
+  sessionId: string,
+  sessionToken?: string | null,
+) {
+  return terminatePrivateBetaSessionInBackend(sessionId, sessionToken);
+}
+
+export async function terminatePrivateBetaAccountSessions(
+  accountId: string,
+  sessionToken?: string | null,
+) {
+  return terminatePrivateBetaAccountSessionsInBackend(accountId, sessionToken);
 }
 
 export async function recordPrivateBetaEvent(input: PrivateBetaEventInput) {

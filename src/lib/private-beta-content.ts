@@ -76,6 +76,11 @@ type PrivateBetaLocaleCopy = {
         description: string;
         empty: string;
       };
+      auditEvents: {
+        title: string;
+        description: string;
+        empty: string;
+      };
     };
     table: {
       name: string;
@@ -89,6 +94,10 @@ type PrivateBetaLocaleCopy = {
       sessionCreated: string;
       lastSeen: string;
       expiresAt: string;
+      event: string;
+      actor: string;
+      target: string;
+      createdAt: string;
       status: string;
       actions: string;
     };
@@ -102,6 +111,13 @@ type PrivateBetaLocaleCopy = {
       promoteToAdmin: string;
       demoteAdmin: string;
       terminateSession: string;
+      terminateAllSessions: string;
+      reactivateAccount: string;
+      actionMenu: string;
+      running: string;
+    };
+    search: {
+      accounts: string;
     };
     gaps: {
       approvedAccountsDerived: string;
@@ -190,15 +206,19 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
           title: "Cuentas aprobadas",
           description:
             "Inventario operativo de cuentas beta aprobadas y su rol.",
-          empty:
-            "El backend actual no expone una API para listar cuentas aprobadas.",
+          empty: "No hay cuentas que coincidan con la busqueda.",
         },
         activeSessions: {
           title: "Sesiones activas",
           description:
             "Sesiones beta vigentes con creacion, actividad reciente y expiracion.",
-          empty:
-            "El backend actual no expone una API para listar sesiones activas.",
+          empty: "No hay sesiones activas.",
+        },
+        auditEvents: {
+          title: "Auditoria reciente",
+          description:
+            "Eventos operativos de identidad y acceso ordenados del mas reciente al mas antiguo.",
+          empty: "Todavia no hay eventos de auditoria.",
         },
       },
       table: {
@@ -213,6 +233,10 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         sessionCreated: "Sesion creada",
         lastSeen: "Ultima actividad",
         expiresAt: "Expira",
+        event: "Evento",
+        actor: "Actor",
+        target: "Objetivo",
+        createdAt: "Creado",
         status: "Estado",
         actions: "Acciones",
       },
@@ -226,6 +250,13 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         promoteToAdmin: "Promover a admin",
         demoteAdmin: "Quitar admin",
         terminateSession: "Terminar sesion",
+        terminateAllSessions: "Terminar sesiones",
+        reactivateAccount: "Reactivar cuenta",
+        actionMenu: "Acciones",
+        running: "Procesando...",
+      },
+      search: {
+        accounts: "Buscar por nombre o email",
       },
       gaps: {
         approvedAccountsDerived:
@@ -320,15 +351,19 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
           title: "Approved Accounts",
           description:
             "Operational inventory of approved beta accounts and roles.",
-          empty:
-            "The current backend does not expose an API to list approved accounts.",
+          empty: "No accounts match the current search.",
         },
         activeSessions: {
           title: "Active Sessions",
           description:
             "Current beta sessions with creation, recent activity, and expiration.",
-          empty:
-            "The current backend does not expose an API to list active sessions.",
+          empty: "There are no active sessions.",
+        },
+        auditEvents: {
+          title: "Recent Audit",
+          description:
+            "Identity and access operations ordered from newest to oldest.",
+          empty: "No audit events have been recorded yet.",
         },
       },
       table: {
@@ -343,6 +378,10 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         sessionCreated: "Session Created",
         lastSeen: "Last Seen",
         expiresAt: "Expires At",
+        event: "Event",
+        actor: "Actor",
+        target: "Target",
+        createdAt: "Created",
         status: "Status",
         actions: "Actions",
       },
@@ -356,6 +395,13 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         promoteToAdmin: "Promote to Admin",
         demoteAdmin: "Demote Admin",
         terminateSession: "Terminate Session",
+        terminateAllSessions: "Terminate Sessions",
+        reactivateAccount: "Reactivate Account",
+        actionMenu: "Actions",
+        running: "Processing...",
+      },
+      search: {
+        accounts: "Search by name or email",
       },
       gaps: {
         approvedAccountsDerived:

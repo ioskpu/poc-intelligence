@@ -10,10 +10,14 @@ import {
   getPrivateBetaAdminSnapshotWithSession as getStoredPrivateBetaAdminSnapshotWithSession,
   PrivateBetaNotFoundError,
   recordPrivateBetaEvent as recordStoredPrivateBetaEvent,
+  terminatePrivateBetaAccountSessions as terminateStoredPrivateBetaAccountSessions,
+  terminatePrivateBetaSession as terminateStoredPrivateBetaSession,
+  updatePrivateBetaAccount as updateStoredPrivateBetaAccount,
   updatePrivateBetaRequestStatus as updateStoredPrivateBetaRequestStatus,
   type PrivateBetaRequestInput,
   type PrivateBetaRequestRecord,
 } from "@/services/api/private-beta-storage";
+import type { PrivateBetaAccountAction } from "@/services/api/private-beta-backend";
 
 export type PrivateBetaSubmissionInput = {
   name: string;
@@ -49,6 +53,29 @@ export async function changePrivateBetaRequestStatus(
 ) {
   const nextStatus = parseStatus(status);
   return updateStoredPrivateBetaRequestStatus(requestId, nextStatus, sessionToken);
+}
+
+export async function changePrivateBetaAccount(
+  accountId: string,
+  action: unknown,
+  sessionToken?: string | null,
+) {
+  const nextAction = parseAccountAction(action);
+  return updateStoredPrivateBetaAccount(accountId, nextAction, sessionToken);
+}
+
+export async function terminatePrivateBetaSession(
+  sessionId: string,
+  sessionToken?: string | null,
+) {
+  return terminateStoredPrivateBetaSession(sessionId, sessionToken);
+}
+
+export async function terminatePrivateBetaAccountSessions(
+  accountId: string,
+  sessionToken?: string | null,
+) {
+  return terminateStoredPrivateBetaAccountSessions(accountId, sessionToken);
 }
 
 export async function trackPrivateBetaLandingVisit(input: unknown) {
@@ -112,6 +139,21 @@ function parseStatus(value: unknown): PrivateBetaStatus {
   }
 
   throw new PrivateBetaValidationError("Status must be Pending, Approved, or Rejected");
+}
+
+function parseAccountAction(value: unknown): PrivateBetaAccountAction {
+  const text = readText(value);
+
+  if (
+    text === "revoke" ||
+    text === "reactivate" ||
+    text === "promote" ||
+    text === "demote"
+  ) {
+    return text;
+  }
+
+  throw new PrivateBetaValidationError("Unsupported account action");
 }
 
 function parseVisitPayload(input: unknown) {

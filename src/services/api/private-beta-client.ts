@@ -23,6 +23,33 @@ export async function changePrivateBetaRequestStatus(
   });
 }
 
+export async function changePrivateBetaAccount(
+  accountId: string,
+  payload: Record<string, unknown>,
+) {
+  return fetchPrivateBetaApi(`/api/private-beta/admin/accounts/${accountId}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function terminatePrivateBetaSession(sessionId: string) {
+  return fetchPrivateBetaApi(`/api/private-beta/admin/sessions/${sessionId}`, {
+    method: "POST",
+    body: {},
+  });
+}
+
+export async function terminatePrivateBetaAccountSessions(accountId: string) {
+  return fetchPrivateBetaApi(
+    `/api/private-beta/admin/accounts/${accountId}/sessions`,
+    {
+      method: "POST",
+      body: {},
+    },
+  );
+}
+
 export async function trackPrivateBetaLandingVisit(
   payload: Record<string, unknown>,
 ) {

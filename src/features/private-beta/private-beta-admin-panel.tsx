@@ -14,7 +14,9 @@ import {
   getPrivateBetaExperienceOptions,
   getPrivateBetaStatusLabel,
 } from "@/lib/private-beta-content";
+import { PrivateBetaAccountTable } from "@/features/private-beta/private-beta-account-table";
 import { PrivateBetaRequestActions } from "@/features/private-beta/private-beta-request-actions";
+import { PrivateBetaSessionTable } from "@/features/private-beta/private-beta-session-table";
 import type { PrivateBetaAdminSnapshot } from "@/services/api/private-beta";
 
 type PrivateBetaAdminPanelProps = {
@@ -35,6 +37,10 @@ export function PrivateBetaAdminPanel({
   );
   const pendingRequests = snapshot.requests.filter(
     (request) => request.status === "Pending",
+  );
+  const activeSessions = snapshot.sessions.filter((session) => !session.revokedAt);
+  const revokedAccounts = snapshot.accounts.filter(
+    (account) => account.status === "Revoked",
   );
 
   return (
@@ -63,18 +69,15 @@ export function PrivateBetaAdminPanel({
           />
           <AdminMetric
             label={copy.admin.metrics.approvedAccounts}
-            value={snapshot.counts.approved}
-            note={copy.admin.gaps.approvedAccountsDerived}
+            value={snapshot.accounts.length}
           />
           <AdminMetric
             label={copy.admin.metrics.activeSessions}
-            value="N/A"
-            note={copy.admin.gaps.sessionsApiMissing}
+            value={activeSessions.length}
           />
           <AdminMetric
             label={copy.admin.metrics.revokedAccounts}
-            value="N/A"
-            note={copy.admin.gaps.accountsApiMissing}
+            value={revokedAccounts.length}
           />
         </section>
 
@@ -156,36 +159,10 @@ export function PrivateBetaAdminPanel({
               {copy.admin.sections.approvedAccounts.description}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{copy.admin.table.name}</TableHead>
-                  <TableHead>{copy.admin.table.email}</TableHead>
-                  <TableHead>{copy.admin.table.role}</TableHead>
-                  <TableHead>{copy.admin.table.approvedAt}</TableHead>
-                  <TableHead>{copy.admin.table.lastLogin}</TableHead>
-                  <TableHead>{copy.admin.table.status}</TableHead>
-                  <TableHead>{copy.admin.table.actions}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <GapMessage
-                      title={copy.admin.sections.approvedAccounts.empty}
-                      description={copy.admin.gaps.accountsApiMissing}
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            <DisabledActionList
-              actions={[
-                copy.admin.actions.revokeAccess,
-                copy.admin.actions.promoteToAdmin,
-                copy.admin.actions.demoteAdmin,
-              ]}
+          <CardContent>
+            <PrivateBetaAccountTable
+              locale={locale}
+              accounts={snapshot.accounts}
             />
           </CardContent>
         </Card>
@@ -197,29 +174,54 @@ export function PrivateBetaAdminPanel({
               {copy.admin.sections.activeSessions.description}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{copy.admin.table.email}</TableHead>
-                  <TableHead>{copy.admin.table.sessionCreated}</TableHead>
-                  <TableHead>{copy.admin.table.lastSeen}</TableHead>
-                  <TableHead>{copy.admin.table.expiresAt}</TableHead>
-                  <TableHead>{copy.admin.table.actions}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={5}>
-                    <GapMessage
-                      title={copy.admin.sections.activeSessions.empty}
-                      description={copy.admin.gaps.sessionsApiMissing}
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            <DisabledActionList actions={[copy.admin.actions.terminateSession]} />
+          <CardContent>
+            <PrivateBetaSessionTable
+              locale={locale}
+              sessions={activeSessions}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{copy.admin.sections.auditEvents.title}</CardTitle>
+            <CardDescription>
+              {copy.admin.sections.auditEvents.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {snapshot.auditEvents.length === 0 ? (
+              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
+                {copy.admin.sections.auditEvents.empty}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{copy.admin.table.event}</TableHead>
+                    <TableHead>{copy.admin.table.actor}</TableHead>
+                    <TableHead>{copy.admin.table.target}</TableHead>
+                    <TableHead>{copy.admin.table.createdAt}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {snapshot.auditEvents.slice(0, 20).map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="font-medium">
+                        {formatAuditEventType(event.eventType)}
+                      </TableCell>
+                      <TableCell>{event.actorEmail ?? "-"}</TableCell>
+                      <TableCell>
+                        {event.targetEmail ?? event.targetSessionId ?? "-"}
+                      </TableCell>
+                      <TableCell>
+                        {event.createdAt ? formatDate(event.createdAt, locale) : "-"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </section>
@@ -251,36 +253,6 @@ function AdminMetric({
   );
 }
 
-function GapMessage({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-      <p className="font-medium text-foreground">{title}</p>
-      <p className="mt-1 leading-6">{description}</p>
-    </div>
-  );
-}
-
-function DisabledActionList({ actions }: { actions: string[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {actions.map((action) => (
-        <span
-          key={action}
-          className="inline-flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground"
-        >
-          {action}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
   if (status === "Approved") {
     return "positive";
@@ -291,4 +263,11 @@ function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
   }
 
   return "info";
+}
+
+function formatAuditEventType(value: string) {
+  return value
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
