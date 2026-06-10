@@ -80,12 +80,11 @@ const copy = {
     dashboard: {
       intelligenceBrief: {
         title: "Resumen Ejecutivo",
-        description:
-          "Observaciones actuales de Futures Lab resumidas en una síntesis breve.",
+        description: "Lectura rápida de lo que importa ahora.",
       },
       changeAwareness: {
         title: "Qué Cambió",
-        description: "Ventana actual vs. ventana base.",
+        description: "Lo que cambió desde la última revisión.",
       },
       marketSummary: {
         marketsShown: "Mercados mostrados",
@@ -96,7 +95,7 @@ const copy = {
       rankingGuide: {
         title: "Guía del Ranking",
         description:
-          "Futures Lab rankea los mercados de futuros activos por fortaleza cuantitativa actual.",
+          "Cómo leer por qué un mercado quedó arriba y qué significa su puntaje.",
         scoreNote:
           "Los puntajes van de 0 a 100. Un valor más alto indica evidencia de scanner más fuerte.",
         sourceNote:
@@ -105,14 +104,14 @@ const copy = {
       },
       marketRankings: {
         title: "Ranking de Mercados",
-        description:
-          "Salida real del scanner de Futures Lab ordenada por ranking.",
+        description: "Mercados que destacan ahora, con la razón visible junto a cada símbolo.",
         empty:
           "Todavía no hay ranking de mercados disponible. Futures Lab puede estar esperando su siguiente corrida.",
+        reasonLabel: "Por qué rankea",
         headers: {
           rank: "Posición",
           context: "Contexto",
-          direction: "Dirección",
+          direction: "Sesgo direccional",
           regime: "Régimen",
           metrics: "Métricas de apoyo",
           score: "Puntaje",
@@ -137,21 +136,19 @@ const copy = {
       },
       setupMemory: {
         title: "Memoria de Setups",
-        description:
-          "Observaciones históricas de Futures Lab sobre patrones de setup recurrentes.",
+        description: "Lo que este Setup ha mostrado con el tiempo.",
         empty: "No hay registros de memoria de setups disponibles.",
         metrics: {
           trades: "Operaciones",
           winRate: "Tasa de acierto",
-          health: "Salud",
+          health: "Puntaje de salud",
           pnl: "PnL",
           averagePnl: "PnL promedio",
         },
       },
       ghostTracking: {
         title: "Seguimiento Fantasma",
-        description:
-          "Observaciones post-evaluación de oportunidades rechazadas por Futures Lab.",
+        description: "Qué pasó después de oportunidades rechazadas.",
         empty: "No hay registros de ghost tracking disponibles.",
         metrics: {
           settled: "Liquidados",
@@ -257,12 +254,11 @@ const copy = {
     dashboard: {
       intelligenceBrief: {
         title: "Intelligence Brief",
-        description:
-          "Current Futures Lab observations, summarized as a concise brief.",
+        description: "A quick read on what matters now.",
       },
       changeAwareness: {
         title: "What Changed",
-        description: "Current window vs. baseline window.",
+        description: "What moved since the last review.",
       },
       marketSummary: {
         marketsShown: "Markets shown",
@@ -272,8 +268,7 @@ const copy = {
       },
       rankingGuide: {
         title: "Ranking Guide",
-        description:
-          "Futures Lab ranks active futures markets by current quantitative strength.",
+        description: "How to read why a market ranks higher and what its score means.",
         scoreNote:
           "Scores run from 0 to 100. Higher scores indicate stronger scanner evidence.",
         sourceNote:
@@ -282,13 +277,14 @@ const copy = {
       },
       marketRankings: {
         title: "Market Rankings",
-        description: "Real Futures Lab scanner output ordered by rank.",
+        description: "Markets standing out now, with the reason visible beside each symbol.",
         empty:
           "No market rankings are available yet. Futures Lab may still be waiting for its next scanner run.",
+        reasonLabel: "Why ranked",
         headers: {
           rank: "Rank",
           context: "Market context",
-          direction: "Direction",
+          direction: "Directional Bias",
           regime: "Regime",
           metrics: "Supporting metrics",
           score: "Score",
@@ -313,21 +309,19 @@ const copy = {
       },
       setupMemory: {
         title: "Setup Memory",
-        description:
-          "Historical Futures Lab observations for recurring setup patterns.",
+        description: "What this Setup has shown over time.",
         empty: "No setup memory records are available from Futures Lab.",
         metrics: {
           trades: "Trades",
           winRate: "Win rate",
-          health: "Health",
+          health: "Health Score",
           pnl: "PnL",
           averagePnl: "Avg PnL",
         },
       },
       ghostTracking: {
         title: "Ghost Tracking",
-        description:
-          "Post-evaluation observations from rejected Futures Lab opportunities.",
+        description: "What happened after rejected opportunities.",
         empty: "No ghost tracking records are available from Futures Lab.",
         metrics: {
           settled: "Settled",

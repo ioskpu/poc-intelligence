@@ -1,11 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { TooltipLabel } from "@/components/ui/tooltip-label";
 import {
   formatDate,
   formatNumber,
   translateFreshnessLabel,
   type Locale,
 } from "@/lib/i18n";
+import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import type { FreshnessStatus } from "@/types/intelligence";
 
 type FreshnessStripProps = {
@@ -18,6 +20,8 @@ export function FreshnessStrip({ freshness, locale }: FreshnessStripProps) {
     return null;
   }
 
+  const humanization = getDashboardHumanization(locale);
+
   return (
     <Card>
       <CardContent className="grid gap-2 p-3 md:grid-cols-3">
@@ -28,7 +32,12 @@ export function FreshnessStrip({ freshness, locale }: FreshnessStripProps) {
           >
             <div className="min-w-0">
               <div className="text-sm font-medium">
-                {translateFreshnessLabel(status.label, locale)}
+                <TooltipLabel
+                  label={translateFreshnessLabel(status.label, locale)}
+                  tooltip={getFreshnessTooltip(status.label, humanization.tooltips)}
+                  className="text-inherit"
+                  labelClassName="text-inherit"
+                />
               </div>
               <div className="truncate text-xs text-muted-foreground">
                 {formatFreshness(status, locale)}
@@ -81,4 +90,16 @@ function formatFreshness(status: FreshnessStatus, locale: Locale) {
   }
 
   return `${age} - ${formatDate(status.timestamp, locale)}`;
+}
+
+function getFreshnessTooltip(label: string, tooltips: ReturnType<typeof getDashboardHumanization>["tooltips"]) {
+  if (label === "Scanner") {
+    return tooltips.freshnessScanner;
+  }
+
+  if (label === "Decisions") {
+    return tooltips.freshnessDecisions;
+  }
+
+  return tooltips.freshnessObservations;
 }

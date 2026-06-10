@@ -1,6 +1,7 @@
-import { CircleHelp, ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatNumber, type Locale } from "@/lib/i18n";
 
 type MetricOptions = {
@@ -239,23 +240,18 @@ function FieldPill({
   return (
     <div className="rounded-md border bg-background px-2 py-1 text-xs">
       <span className="inline-flex items-center gap-1 text-muted-foreground">
-        {label}
-        {tooltip ? <TooltipBadge tooltip={tooltip} /> : null}
+        {tooltip ? (
+          <TooltipLabel
+            label={label}
+            tooltip={tooltip}
+            className="text-inherit"
+            labelClassName="text-inherit"
+          />
+        ) : (
+          label
+        )}
       </span>{" "}
       <span className="font-medium text-foreground">{value}</span>
     </div>
-  );
-}
-
-function TooltipBadge({ tooltip }: { tooltip: string }) {
-  return (
-    <button
-      type="button"
-      title={tooltip}
-      aria-label={tooltip}
-      className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-muted-foreground/30 text-[10px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-    >
-      <CircleHelp className="h-3 w-3" aria-hidden="true" />
-    </button>
   );
 }

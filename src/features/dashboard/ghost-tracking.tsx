@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatDate, formatNumber, getCopy, type Locale } from "@/lib/i18n";
+import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import type { GhostTracking as GhostTrackingData } from "@/types/intelligence";
 
 type GhostTrackingProps = {
@@ -10,11 +12,19 @@ type GhostTrackingProps = {
 
 export function GhostTracking({ ghostTracking, locale }: GhostTrackingProps) {
   const copy = getCopy(locale);
+  const humanization = getDashboardHumanization(locale);
 
   return (
     <Card id="ghost-tracking">
       <CardHeader>
-        <CardTitle>{copy.dashboard.ghostTracking.title}</CardTitle>
+        <CardTitle className="flex items-center gap-1">
+          <TooltipLabel
+            label={copy.dashboard.ghostTracking.title}
+            tooltip={humanization.tooltips.ghostTracking}
+            className="text-inherit"
+            labelClassName="text-inherit"
+          />
+        </CardTitle>
         <CardDescription>{copy.dashboard.ghostTracking.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -51,7 +61,13 @@ export function GhostTracking({ ghostTracking, locale }: GhostTrackingProps) {
                   </div>
                   {record.profitFactor !== null ? (
                     <Badge tone={getProfitFactorTone(record.profitFactor)}>
-                      PF {formatNumber(record.profitFactor, locale)}
+                      <TooltipLabel
+                        label="PF"
+                        tooltip={humanization.tooltips.profitFactor}
+                        className="text-inherit"
+                        labelClassName="text-inherit"
+                      />{" "}
+                      {formatNumber(record.profitFactor, locale)}
                     </Badge>
                   ) : null}
                 </div>

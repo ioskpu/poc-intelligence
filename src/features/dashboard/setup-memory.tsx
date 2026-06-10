@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatDate, formatNumber, getCopy, translateSide, type Locale } from "@/lib/i18n";
+import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import type { SetupMemory as SetupMemoryRecord } from "@/types/intelligence";
 
 type SetupMemoryProps = {
@@ -10,6 +12,7 @@ type SetupMemoryProps = {
 
 export function SetupMemory({ records, locale }: SetupMemoryProps) {
   const copy = getCopy(locale);
+  const humanization = getDashboardHumanization(locale);
 
   return (
     <Card id="setup-memory">
@@ -53,7 +56,13 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 {toMetric(copy.dashboard.setupMemory.metrics.trades, record.tradeCount, locale)}
                 {toMetric(copy.dashboard.setupMemory.metrics.winRate, record.winRate, locale, "%")}
-                {toMetric(copy.dashboard.setupMemory.metrics.health, record.healthScore, locale)}
+                {toMetric(
+                  copy.dashboard.setupMemory.metrics.health,
+                  record.healthScore,
+                  locale,
+                  "",
+                  humanization.tooltips.healthScore,
+                )}
                 {toMetric(copy.dashboard.setupMemory.metrics.pnl, record.pnlTotal, locale)}
                 {toMetric(copy.dashboard.setupMemory.metrics.averagePnl, record.averagePnl, locale)}
               </div>
@@ -79,7 +88,13 @@ function getHealthTone(label: string) {
   return "neutral";
 }
 
-function toMetric(label: string, value: number | null, locale: Locale, suffix = "") {
+function toMetric(
+  label: string,
+  value: number | null,
+  locale: Locale,
+  suffix = "",
+  tooltip?: string,
+) {
   if (value === null) {
     return null;
   }
@@ -89,7 +104,17 @@ function toMetric(label: string, value: number | null, locale: Locale, suffix = 
 
   return (
     <span className="rounded-md border px-2 py-1" key={label}>
-      {label}: {displayValue}
+      {tooltip ? (
+        <TooltipLabel
+          label={label}
+          tooltip={tooltip}
+          className="text-inherit"
+          labelClassName="text-muted-foreground"
+        />
+      ) : (
+        <span className="text-muted-foreground">{label}</span>
+      )}{" "}
+      {displayValue}
     </span>
   );
 }
