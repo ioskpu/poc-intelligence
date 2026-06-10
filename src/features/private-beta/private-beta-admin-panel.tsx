@@ -39,8 +39,14 @@ export function PrivateBetaAdminPanel({
     (request) => request.status === "Pending",
   );
   const activeSessions = snapshot.sessions.filter((session) => !session.revokedAt);
-  const revokedAccounts = snapshot.accounts.filter(
-    (account) => account.status === "Revoked",
+  const invitationsSent = snapshot.accounts.filter(
+    (account) => account.invitationSentAt,
+  );
+  const invitationsUsed = snapshot.accounts.filter(
+    (account) => account.invitationUsedAt,
+  );
+  const firstLoginsCompleted = snapshot.accounts.filter(
+    (account) => account.firstLoginCompletedAt,
   );
 
   return (
@@ -62,7 +68,7 @@ export function PrivateBetaAdminPanel({
           </div>
         </div>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <AdminMetric
             label={copy.admin.metrics.pendingRequests}
             value={pendingRequests.length}
@@ -72,12 +78,16 @@ export function PrivateBetaAdminPanel({
             value={snapshot.accounts.length}
           />
           <AdminMetric
-            label={copy.admin.metrics.activeSessions}
-            value={activeSessions.length}
+            label={copy.admin.metrics.invitationsSent}
+            value={invitationsSent.length}
           />
           <AdminMetric
-            label={copy.admin.metrics.revokedAccounts}
-            value={revokedAccounts.length}
+            label={copy.admin.metrics.invitationsUsed}
+            value={invitationsUsed.length}
+          />
+          <AdminMetric
+            label={copy.admin.metrics.firstLoginsCompleted}
+            value={firstLoginsCompleted.length}
           />
         </section>
 

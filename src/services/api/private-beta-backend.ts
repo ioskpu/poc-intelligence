@@ -37,6 +37,14 @@ export type PrivateBetaAccountRecord = {
   revokedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string | null;
+  invitationSentAt: string | null;
+  invitationOpenedAt: string | null;
+  invitationUsedAt: string | null;
+  firstLoginCompletedAt: string | null;
+  invitationDelivery: "email" | "log_only" | null;
+  invitationMessageId: string | null;
+  invitationFallbackReason: string | null;
+  invitationStatus: "Pending" | "Sent" | "Opened" | "Used" | "Expired";
 };
 
 export type PrivateBetaSessionRecord = {
@@ -180,6 +188,26 @@ export async function updatePrivateBetaAccountInBackend(
   }) as Promise<{ account: PrivateBetaAccountRecord }>;
 }
 
+export async function resendPrivateBetaInvitationInBackend(
+  accountId: string,
+  sessionToken?: string | null,
+) {
+  return fetchPrivateBetaApi(
+    `/private-beta/accounts/${accountId}/invitation/resend`,
+    {
+      method: "POST",
+      sessionToken,
+    },
+  ) as Promise<{
+    account: PrivateBetaAccountRecord;
+    invitation: {
+      delivery: "email" | "log_only";
+      invitationId: string;
+      magicLink?: string;
+    };
+  }>;
+}
+
 export async function terminatePrivateBetaSessionInBackend(
   sessionId: string,
   sessionToken?: string | null,
@@ -236,6 +264,7 @@ export async function verifyPrivateBetaMagicTokenInBackend(token: string) {
   }) as Promise<
     BetaSession & {
       sessionToken: string;
+      firstLogin?: boolean;
     }
   >;
 }

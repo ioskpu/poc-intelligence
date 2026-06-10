@@ -53,8 +53,9 @@ type PrivateBetaLocaleCopy = {
       submissions: string;
       pendingRequests: string;
       approvedAccounts: string;
-      activeSessions: string;
-      revokedAccounts: string;
+      invitationsSent: string;
+      invitationsUsed: string;
+      firstLoginsCompleted: string;
     };
     sections: {
       summary: {
@@ -91,6 +92,7 @@ type PrivateBetaLocaleCopy = {
       role: string;
       approvedAt: string;
       lastLogin: string;
+      invitation: string;
       sessionCreated: string;
       lastSeen: string;
       expiresAt: string;
@@ -112,6 +114,7 @@ type PrivateBetaLocaleCopy = {
       demoteAdmin: string;
       terminateSession: string;
       terminateAllSessions: string;
+      resendInvitation: string;
       reactivateAccount: string;
       actionMenu: string;
       running: string;
@@ -187,8 +190,9 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         submissions: "Submissions",
         pendingRequests: "Solicitudes pendientes",
         approvedAccounts: "Cuentas aprobadas",
-        activeSessions: "Sesiones activas",
-        revokedAccounts: "Cuentas revocadas",
+        invitationsSent: "Invitaciones enviadas",
+        invitationsUsed: "Invitaciones usadas",
+        firstLoginsCompleted: "Primeros logins",
       },
       sections: {
         summary: {
@@ -230,6 +234,7 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         role: "Rol",
         approvedAt: "Aprobado",
         lastLogin: "Ultimo login",
+        invitation: "Invitacion",
         sessionCreated: "Sesion creada",
         lastSeen: "Ultima actividad",
         expiresAt: "Expira",
@@ -251,6 +256,7 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         demoteAdmin: "Quitar admin",
         terminateSession: "Terminar sesion",
         terminateAllSessions: "Terminar sesiones",
+        resendInvitation: "Reenviar invitacion",
         reactivateAccount: "Reactivar cuenta",
         actionMenu: "Acciones",
         running: "Procesando...",
@@ -332,8 +338,9 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         submissions: "Submissions",
         pendingRequests: "Pending requests",
         approvedAccounts: "Approved accounts",
-        activeSessions: "Active sessions",
-        revokedAccounts: "Revoked accounts",
+        invitationsSent: "Invitations sent",
+        invitationsUsed: "Invitations used",
+        firstLoginsCompleted: "First logins",
       },
       sections: {
         summary: {
@@ -375,6 +382,7 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         role: "Role",
         approvedAt: "Approved At",
         lastLogin: "Last Login",
+        invitation: "Invitation",
         sessionCreated: "Session Created",
         lastSeen: "Last Seen",
         expiresAt: "Expires At",
@@ -396,6 +404,7 @@ const copy: Record<Locale, PrivateBetaLocaleCopy> = {
         demoteAdmin: "Demote Admin",
         terminateSession: "Terminate Session",
         terminateAllSessions: "Terminate Sessions",
+        resendInvitation: "Resend Invitation",
         reactivateAccount: "Reactivate Account",
         actionMenu: "Actions",
         running: "Processing...",

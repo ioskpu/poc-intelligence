@@ -33,6 +33,16 @@ export async function changePrivateBetaAccount(
   });
 }
 
+export async function resendPrivateBetaInvitation(accountId: string) {
+  return fetchPrivateBetaApi(
+    `/api/private-beta/admin/accounts/${accountId}/invitation`,
+    {
+      method: "POST",
+      body: {},
+    },
+  );
+}
+
 export async function terminatePrivateBetaSession(sessionId: string) {
   return fetchPrivateBetaApi(`/api/private-beta/admin/sessions/${sessionId}`, {
     method: "POST",

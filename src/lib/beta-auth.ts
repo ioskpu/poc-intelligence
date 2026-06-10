@@ -1,5 +1,7 @@
 export const BETA_SESSION_COOKIE_NAME = "poc-beta-session";
 
+export const BETA_ONBOARDING_COOKIE_NAME = "poc-beta-onboarding";
+
 export const BETA_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
 export type BetaAccessRole = "user" | "admin";

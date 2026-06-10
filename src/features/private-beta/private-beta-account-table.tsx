@@ -16,6 +16,7 @@ import { formatDate, type Locale } from "@/lib/i18n";
 import { getPrivateBetaCopy } from "@/lib/private-beta-content";
 import {
   changePrivateBetaAccount,
+  resendPrivateBetaInvitation,
   terminatePrivateBetaAccountSessions,
 } from "@/services/api/private-beta-client";
 import type { PrivateBetaAdminSnapshot } from "@/services/api/private-beta";
@@ -67,6 +68,7 @@ export function PrivateBetaAccountTable({
               <TableHead>{copy.admin.table.role}</TableHead>
               <TableHead>{copy.admin.table.approvedAt}</TableHead>
               <TableHead>{copy.admin.table.lastLogin}</TableHead>
+              <TableHead>{copy.admin.table.invitation}</TableHead>
               <TableHead>{copy.admin.table.status}</TableHead>
               <TableHead>{copy.admin.table.actions}</TableHead>
             </TableRow>
@@ -83,6 +85,16 @@ export function PrivateBetaAccountTable({
                 </TableCell>
                 <TableCell>{formatOptionalDate(account.approvedAt, locale)}</TableCell>
                 <TableCell>{formatOptionalDate(account.lastLoginAt, locale)}</TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    <Badge tone={toneForInvitation(account.invitationStatus)}>
+                      {account.invitationStatus}
+                    </Badge>
+                    <p className="text-xs text-muted-foreground">
+                      {formatOptionalDate(account.invitationSentAt, locale)}
+                    </p>
+                  </div>
+                </TableCell>
                 <TableCell>
                   <Badge tone={account.status === "Active" ? "positive" : "warning"}>
                     {account.status}
@@ -134,6 +146,21 @@ function AccountActions({
     startTransition(async () => {
       try {
         await terminatePrivateBetaAccountSessions(account.id);
+        router.refresh();
+      } catch (actionError) {
+        setError(readActionError(actionError, locale));
+      } finally {
+        setPendingAction(null);
+      }
+    });
+  }
+
+  function runResendInvitation() {
+    setPendingAction("invitation");
+    setError(null);
+    startTransition(async () => {
+      try {
+        await resendPrivateBetaInvitation(account.id);
         router.refresh();
       } catch (actionError) {
         setError(readActionError(actionError, locale));
@@ -200,6 +227,15 @@ function AccountActions({
           >
             {copy.admin.actions.terminateAllSessions}
           </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={isPending || account.status !== "Active"}
+            onClick={runResendInvitation}
+          >
+            {copy.admin.actions.resendInvitation}
+          </Button>
         </div>
       </details>
       {error ? <p className="text-xs text-rose-500">{error}</p> : null}
@@ -209,6 +245,18 @@ function AccountActions({
 
 function formatOptionalDate(value: string | null, locale: Locale) {
   return value ? formatDate(value, locale) : "-";
+}
+
+function toneForInvitation(status: PrivateBetaAccount["invitationStatus"]) {
+  if (status === "Used") {
+    return "positive";
+  }
+
+  if (status === "Opened" || status === "Sent") {
+    return "info";
+  }
+
+  return "warning";
 }
 
 function readActionError(error: unknown, locale: Locale) {

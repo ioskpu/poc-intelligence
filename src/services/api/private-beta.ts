@@ -10,6 +10,7 @@ import {
   getPrivateBetaAdminSnapshotWithSession as getStoredPrivateBetaAdminSnapshotWithSession,
   PrivateBetaNotFoundError,
   recordPrivateBetaEvent as recordStoredPrivateBetaEvent,
+  resendPrivateBetaInvitation as resendStoredPrivateBetaInvitation,
   terminatePrivateBetaAccountSessions as terminateStoredPrivateBetaAccountSessions,
   terminatePrivateBetaSession as terminateStoredPrivateBetaSession,
   updatePrivateBetaAccount as updateStoredPrivateBetaAccount,
@@ -62,6 +63,13 @@ export async function changePrivateBetaAccount(
 ) {
   const nextAction = parseAccountAction(action);
   return updateStoredPrivateBetaAccount(accountId, nextAction, sessionToken);
+}
+
+export async function resendPrivateBetaInvitation(
+  accountId: string,
+  sessionToken?: string | null,
+) {
+  return resendStoredPrivateBetaInvitation(accountId, sessionToken);
 }
 
 export async function terminatePrivateBetaSession(
