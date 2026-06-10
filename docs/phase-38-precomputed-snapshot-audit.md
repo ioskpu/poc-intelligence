@@ -221,5 +221,133 @@ This shell could not perform it because:
 
 ## Deployment State
 
-Code is implemented locally in the backend repo. Production deployment is not
-confirmed from this shell because the public Cloudflare tunnel returned `1033`.
+Production recovery completed on 2026-06-10.
+
+Recovered backend commit:
+
+`695049dc07c9d5bbf99d133633ac579ec016632a`
+
+Commit message:
+
+`fix: activate precomputed observatory snapshot`
+
+The failed original Phase 38 commit, `c4069ba`, was audited and found to contain
+the right producer/serving idea, but it was based on the older route shape. The
+production branch had advanced to:
+
+`775660843ccee4dd1d08b0c150c20e2db2c627e5`
+
+That branch already had:
+
+- `services/api/routes/observatory.py`
+- `services/observatory_snapshot.py`
+
+The recovery commit adapted Phase 38 to that active architecture by registering
+`services.api.routes.observatory_snapshot` from `services.api.main` and starting
+the producer during FastAPI startup.
+
+Deployment steps completed:
+
+- Pushed `695049d` to Gitea `origin/main`.
+- SSH deploy host: `192.168.0.212`.
+- Fast-forwarded `/home/ioskpu/ProofOfConsistency` to `695049d`.
+- Backed up the previous untracked route file to:
+  `services/api/routes/observatory_snapshot.py.bak-phase38-20260610200146`.
+- Restarted `poc-api` by killing the old `uvicorn` PID because `systemctl restart`
+  required interactive authentication and the unit has `Restart=always`.
+- New process PID: `4760`.
+- Service state: `active`.
+
+Final production verification:
+
+`GET https://api.poc-engine.lat/observatory/health`
+
+```json
+{
+  "status": "ok",
+  "snapshot_generation_ms": 6849.005010999917,
+  "snapshot_age_seconds": 37.742879,
+  "snapshot_size_bytes": 399641,
+  "artifact_available": true,
+  "artifact_stale": false,
+  "refresh_in_progress": false,
+  "last_generated_at": "2026-06-10T20:05:38.722667+00:00",
+  "last_generation_error": null
+}
+```
+
+Artifact verified on host:
+
+```text
+/home/ioskpu/ProofOfConsistency/logs/observatory_snapshot_artifact.json
+399641 bytes
+```
+
+Producer behavior verified:
+
+- First observed generation: `2026-06-10T20:03:05.076183+00:00`.
+- `snapshot_age_seconds` increased from `7.05` to `66.48`.
+- At stale threshold, `refresh_in_progress` became `true`.
+- Next observed generation: `2026-06-10T20:04:10.665490+00:00`.
+- `snapshot_size_bytes` changed from `389245` to `394719`.
+- Later observed generation: `2026-06-10T20:05:38.722667+00:00`.
+
+Snapshot serving verification:
+
+`GET http://127.0.0.1:8010/observatory/snapshot`
+
+```text
+HTTP 200
+time_total: 0.012131s
+size_download: 394719 bytes
+X-Observatory-Snapshot-Status: ok
+X-Observatory-Snapshot-Age-Seconds: 83.525
+```
+
+The response no longer included:
+
+- `Server-Timing: dashboard_state...`
+- `X-Observatory-Snapshot-Total-Ms`
+
+Public benchmark before deploy:
+
+```text
+GET https://api.poc-engine.lat/observatory/snapshot
+HTTP 200
+time_total: 17.033760s
+size_download: 385162 bytes
+Server-Timing: dashboard_state;dur=11496.48 ... total;dur=11778.63
+X-Observatory-Snapshot-Total-Ms: 11778.63
+```
+
+Public benchmark after deploy, 10 sequential requests:
+
+| Request | HTTP | seconds | bytes |
+| ---: | ---: | ---: | ---: |
+| 1 | 200 | 1.129118 | 394719 |
+| 2 | 200 | 0.898924 | 394719 |
+| 3 | 200 | 0.865906 | 394719 |
+| 4 | 200 | 0.651454 | 394719 |
+| 5 | 200 | 1.056246 | 394719 |
+| 6 | 200 | 1.056619 | 399641 |
+| 7 | 200 | 0.980675 | 399641 |
+| 8 | 200 | 5.575166 | 399641 |
+| 9 | 200 | 6.904956 | 399641 |
+| 10 | 200 | 0.903980 | 399641 |
+
+After summary:
+
+| Metric | seconds |
+| --- | ---: |
+| p50 | 1.0185 |
+| p95 | 7.5034 |
+| max | 6.9050 |
+
+Interpretation:
+
+- The Gateway now serves the precomputed artifact and no longer rebuilds
+  `dashboard_state` during `/observatory/snapshot` requests.
+- The LAN request completed in `0.012131s`, confirming the server-side path is
+  now immediate.
+- Public outliers are network/Cloudflare path variance; the response headers no
+  longer contain internal rebuild timing.
