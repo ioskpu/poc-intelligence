@@ -424,19 +424,37 @@ export function translateSignalStatus(value: string, locale: Locale) {
 }
 
 export function translateSide(value: string, locale: Locale) {
-  if (locale === "en") {
+  const normalized = value
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (locale === "es") {
+    if (normalized === "long" || normalized === "long_bias") {
+      return "Largo";
+    }
+
+    if (normalized === "short" || normalized === "short_bias") {
+      return "Corto";
+    }
+
+    if (normalized === "neutral") {
+      return "Neutral";
+    }
+
     return value;
   }
 
-  if (value === "Long") {
-    return "Largo";
+  if (normalized === "long" || normalized === "long_bias") {
+    return "Long";
   }
 
-  if (value === "Short") {
-    return "Corto";
+  if (normalized === "short" || normalized === "short_bias") {
+    return "Short";
   }
 
-  if (value === "Neutral") {
+  if (normalized === "neutral") {
     return "Neutral";
   }
 
