@@ -8,6 +8,7 @@ import {
 } from "@/services/api/market-rankings";
 import { createPublicDemoSnapshot } from "@/services/api/public-demo-snapshot";
 import { getSetupMemoryFromState } from "@/services/api/setup-memory";
+import { buildBetaLiveInsights, isBetaLiveModeEnabled } from "@/services/api/beta-live";
 import {
   mockOpportunityRankings,
   mockPatternDiscovery,
@@ -15,7 +16,9 @@ import {
 } from "@/services/api/mock-data";
 
 export async function getIntelligenceSnapshot() {
-  if (shouldUsePublicDemoSnapshot()) {
+  const betaLiveMode = isBetaLiveModeEnabled();
+
+  if (shouldUsePublicDemoSnapshot(betaLiveMode)) {
     return createPublicDemoSnapshot();
   }
 
@@ -43,13 +46,14 @@ export async function getIntelligenceSnapshot() {
     marketSummary: marketRankings.summary,
     marketRankings: marketRankings.rankings,
     setupMemory,
-    opportunityRankings: mockOpportunityRankings,
-    patternDiscovery: mockPatternDiscovery,
-    regimeAnalysis: mockRegimeAnalysis,
+    betaLiveInsights: betaLiveMode ? buildBetaLiveInsights(dashboardState) : null,
+    opportunityRankings: betaLiveMode ? [] : mockOpportunityRankings,
+    patternDiscovery: betaLiveMode ? [] : mockPatternDiscovery,
+    regimeAnalysis: betaLiveMode ? [] : mockRegimeAnalysis,
   };
 }
 
-function shouldUsePublicDemoSnapshot() {
+function shouldUsePublicDemoSnapshot(betaLiveMode: boolean) {
   const baseUrl = process.env.FUTURES_LAB_API_BASE_URL?.trim();
   const apiKey = process.env.FUTURES_LAB_INTERNAL_API_KEY?.trim();
   const databaseUrl = process.env.FUTURES_LAB_DATABASE_URL?.trim();
@@ -63,6 +67,12 @@ function shouldUsePublicDemoSnapshot() {
     Boolean(dashboardStatePath);
 
   if (!hasAnyPrivateConfig) {
+    if (betaLiveMode) {
+      throw new Error(
+        "Beta Live mode requires private Futures Lab configuration. Provide the live runtime variables before enabling the flag.",
+      );
+    }
+
     return true;
   }
 

@@ -18,14 +18,20 @@ export type FuturesFreshnessEntry = {
 };
 
 type FuturesScannerRow = {
+  last_price?: unknown;
+  long_short_balance?: unknown;
+  order_valid?: unknown;
   funding_rate?: unknown;
   price_change_pct?: unknown;
   rank_position?: unknown;
+  quote_volume?: unknown;
+  range_pct?: unknown;
   direction_hint?: unknown;
   ranking_reason?: unknown;
   regime_bias?: unknown;
   realized_volatility_pct?: unknown;
   score?: unknown;
+  scan_batch_id?: unknown;
   scanned_at?: unknown;
   symbol?: unknown;
   trend_strength_pct?: unknown;
@@ -172,6 +178,12 @@ function toMarketRanking(row: FuturesScannerRow): MarketRanking {
     trendStrengthPct: readOptionalNumber(row.trend_strength_pct),
     fundingRate: readOptionalNumber(row.funding_rate),
     scannedAt: readTimestamp(row.scanned_at) ?? new Date(0).toISOString(),
+    scanBatchId: readText(row.scan_batch_id) || null,
+    lastPrice: readOptionalNumber(row.last_price),
+    quoteVolume: readOptionalNumber(row.quote_volume),
+    rangePct: readOptionalNumber(row.range_pct),
+    longShortBalance: readOptionalNumber(row.long_short_balance),
+    orderValid: readBoolean(row.order_valid),
   };
 }
 
@@ -293,6 +305,36 @@ function readTimestamp(value: unknown) {
   }
 
   return parsed.toISOString();
+}
+
+function readBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+
+    if (["true", "t", "1", "yes", "y"].includes(normalized)) {
+      return true;
+    }
+
+    if (["false", "f", "0", "no", "n"].includes(normalized)) {
+      return false;
+    }
+  }
+
+  if (typeof value === "number") {
+    if (value === 1) {
+      return true;
+    }
+
+    if (value === 0) {
+      return false;
+    }
+  }
+
+  return null;
 }
 
 function toStatusErrorMessage(status: number) {

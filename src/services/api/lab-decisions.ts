@@ -15,20 +15,37 @@ type DecisionDashboardState = FuturesDashboardState & {
 
 type FuturesDecisionRow = {
   decision_snapshot?: {
+    scan_batch_id?: unknown;
+    setup_key?: unknown;
+    setup_key_version?: unknown;
     estimated_rr_ratio?: unknown;
     selected_side?: unknown;
     signal_ok?: unknown;
+    oracle_recommendation?: unknown;
+    trend_alignment_label?: unknown;
+    trend_supports_direction?: unknown;
   };
+  auto_entry_enabled?: unknown;
+  auto_exit_enabled?: unknown;
+  capital_profile?: unknown;
   decision_type?: unknown;
   direction_hint?: unknown;
   estimated_rr_ratio?: unknown;
+  environment?: unknown;
+  leverage?: unknown;
   observed_at?: unknown;
   reason?: unknown;
   reason_label?: unknown;
   selected_side?: unknown;
   setup_key?: unknown;
+  setup_key_version?: unknown;
   signal_ok?: unknown;
+  stop_loss_pct?: unknown;
+  stop_loss_usdt?: unknown;
   symbol?: unknown;
+  take_profit_pct?: unknown;
+  take_profit_usdt?: unknown;
+  operating_capital?: unknown;
 };
 
 const RECENT_DECISION_LIMIT = 5;
@@ -76,6 +93,30 @@ function toLabDecision(row: FuturesDecisionRow): LabDecision {
     ),
     setupKey: readText(row.setup_key),
     observedAt: readTimestamp(row.observed_at) ?? new Date(0).toISOString(),
+    scanBatchId: readText(row.decision_snapshot?.scan_batch_id),
+    setupKeyVersion: readText(
+      row.setup_key_version ?? row.decision_snapshot?.setup_key_version,
+    ),
+    environment: readText(row.environment),
+    directionHint: readText(row.direction_hint),
+    capitalProfile: readText(row.capital_profile),
+    operatingCapital: readOptionalNumber(row.operating_capital),
+    autoEntryEnabled: readBoolean(row.auto_entry_enabled),
+    autoExitEnabled: readBoolean(row.auto_exit_enabled),
+    takeProfitPct: readOptionalNumber(row.take_profit_pct),
+    stopLossPct: readOptionalNumber(row.stop_loss_pct),
+    takeProfitUsdt: readOptionalNumber(row.take_profit_usdt),
+    stopLossUsdt: readOptionalNumber(row.stop_loss_usdt),
+    leverage: readOptionalNumber(row.leverage),
+    oracleRecommendation: readText(
+      row.decision_snapshot?.oracle_recommendation,
+    ),
+    trendAlignmentLabel: readText(
+      row.decision_snapshot?.trend_alignment_label,
+    ),
+    trendSupportsDirection: readBoolean(
+      row.decision_snapshot?.trend_supports_direction,
+    ),
   };
 }
 
@@ -123,4 +164,34 @@ function readTimestamp(value: unknown) {
   }
 
   return parsed.toISOString();
+}
+
+function readBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+
+    if (["true", "t", "1", "yes", "y"].includes(normalized)) {
+      return true;
+    }
+
+    if (["false", "f", "0", "no", "n"].includes(normalized)) {
+      return false;
+    }
+  }
+
+  if (typeof value === "number") {
+    if (value === 1) {
+      return true;
+    }
+
+    if (value === 0) {
+      return false;
+    }
+  }
+
+  return null;
 }

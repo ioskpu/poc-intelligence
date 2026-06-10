@@ -19,6 +19,7 @@ type FuturesGhostTracking = {
   last_settled_at?: unknown;
   pending_count?: unknown;
   positive_rate?: unknown;
+  rr_threshold_simulation?: unknown;
   profit_factor_by_reason?: FuturesGhostProfitFactorRow[];
   reason_breakdown?: FuturesGhostReasonRow[];
   settled_count?: unknown;
@@ -67,6 +68,7 @@ export function getGhostTrackingFromState(
     averageMaePct: readOptionalNumber(ghost.avg_mae_pct),
     lastSettledAt: readTimestamp(ghost.last_settled_at),
     records: toGhostRecords(ghost),
+    rrThresholdSimulation: toRrThresholdSimulation(ghost.rr_threshold_simulation),
   };
 }
 
@@ -80,6 +82,7 @@ function emptyGhostTracking(): GhostTracking {
     averageMaePct: null,
     lastSettledAt: null,
     records: [],
+    rrThresholdSimulation: [],
   };
 }
 
@@ -110,6 +113,28 @@ function toGhostRecords(ghost: FuturesGhostTracking): GhostTrackingRecord[] {
       profitFactor: readOptionalNumber(profitFactor?.profit_factor),
     };
   });
+}
+
+function toRrThresholdSimulation(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((row): row is Record<string, unknown> => typeof row === "object" && row !== null)
+    .map((row) => ({
+      threshold: readOptionalNumber(row.threshold) ?? 0,
+      includedCount: readOptionalNumber(row.included_count) ?? 0,
+      positiveCount: readOptionalNumber(row.positive_count) ?? 0,
+      positiveRate: readOptionalNumber(row.positive_rate) ?? 0,
+      avgHypotheticalPnlPct: readOptionalNumber(row.avg_hypothetical_pnl_pct) ?? 0,
+      grossWinsPct: readOptionalNumber(row.gross_wins_pct) ?? 0,
+      grossLossesPct: readOptionalNumber(row.gross_losses_pct) ?? 0,
+      profitFactor: readOptionalNumber(row.profit_factor) ?? 0,
+      maxDrawdownPct: readOptionalNumber(row.max_drawdown_pct) ?? 0,
+      variance: readOptionalNumber(row.variance) ?? 0,
+      avgMaePct: readOptionalNumber(row.avg_mae_pct) ?? 0,
+    }));
 }
 
 function humanizeText(value: string) {

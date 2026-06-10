@@ -1,19 +1,27 @@
 import Link from "next/link";
-import { BarChart3, Compass, LayoutDashboard } from "lucide-react";
+import { BarChart3, Compass, LayoutDashboard, type LucideIcon } from "lucide-react";
 import { getCopy, type Locale } from "@/lib/i18n";
 
-const navItems = [
-  { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
-  { href: "/dashboard#markets", key: "markets", icon: BarChart3 },
-  { href: "/dashboard#opportunities", key: "opportunities", icon: Compass },
-] as const;
+type SidebarKey = "dashboard" | "markets" | "opportunities" | "betaLiveDepth";
 
 type AppSidebarProps = {
   locale: Locale;
+  betaLive?: boolean;
 };
 
-export function AppSidebar({ locale }: AppSidebarProps) {
+function getNavItems(betaLive: boolean) {
+  return [
+    { href: "/dashboard", key: "dashboard" as const, icon: LayoutDashboard },
+    { href: "/dashboard#markets", key: "markets" as const, icon: BarChart3 },
+    betaLive
+      ? { href: "/dashboard#beta-live-depth", key: "betaLiveDepth" as const, icon: Compass }
+      : { href: "/dashboard#opportunities", key: "opportunities" as const, icon: Compass },
+  ] as Array<{ href: string; key: SidebarKey; icon: LucideIcon }>;
+}
+
+export function AppSidebar({ locale, betaLive = false }: AppSidebarProps) {
   const copy = getCopy(locale);
+  const navItems = getNavItems(betaLive);
 
   return (
     <aside className="hidden min-h-screen w-64 shrink-0 border-r bg-card px-4 py-5 lg:block">

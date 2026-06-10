@@ -15,11 +15,15 @@ const copy = {
       title: "Demostración pública",
       message:
         "Esta es una demostración pública que utiliza datos de ejemplo para evaluación del producto.",
+      betaTitle: "Beta Live interna",
+      betaMessage:
+        "Este panel expone datos reales de Futures Lab para validar profundidad de producto con usuarios aprobados.",
     },
     topBar: {
       snapshot: "Resumen de inteligencia",
       generated: "Generado",
       publicDemo: "Demostración pública",
+      betaLive: "Beta Live",
       overview: "Inicio",
       language: "Idioma",
     },
@@ -27,6 +31,7 @@ const copy = {
       dashboard: "Panel",
       markets: "Mercados",
       opportunities: "Oportunidades",
+      betaLiveDepth: "Profundidad Beta Live",
       patterns: "Patrones",
       regimes: "Regímenes",
     },
@@ -187,11 +192,15 @@ const copy = {
       title: "Public demo",
       message:
         "This public demonstration uses sample research data for product evaluation.",
+      betaTitle: "Internal Beta Live",
+      betaMessage:
+        "This panel exposes real Futures Lab data to validate product depth with approved users.",
     },
     topBar: {
       snapshot: "Intelligence snapshot",
       generated: "Generated",
       publicDemo: "Public demo",
+      betaLive: "Beta Live",
       overview: "Overview",
       language: "Language",
     },
@@ -199,6 +208,7 @@ const copy = {
       dashboard: "Dashboard",
       markets: "Markets",
       opportunities: "Opportunities",
+      betaLiveDepth: "Beta Live Depth",
       patterns: "Patterns",
       regimes: "Regimes",
     },

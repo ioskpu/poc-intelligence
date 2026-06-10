@@ -2,6 +2,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
 import { TopBar } from "@/components/layout/top-bar";
 import { ChangeAwareness } from "@/features/dashboard/change-awareness";
+import { BetaLiveDepth } from "@/features/dashboard/beta-live-depth";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
 import { GhostTracking } from "@/features/dashboard/ghost-tracking";
 import { IntelligenceBrief } from "@/features/dashboard/intelligence-brief";
@@ -20,12 +21,14 @@ type DashboardShellProps = {
 };
 
 export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
+  const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
+
   return (
     <main className="flex min-h-screen bg-background text-foreground">
-      <AppSidebar locale={locale} />
+      <AppSidebar locale={locale} betaLive={betaLiveEnabled} />
       <div className="min-w-0 flex-1">
-        <PublicDemoBanner locale={locale} />
-        <TopBar generatedAt={snapshot.generatedAt} locale={locale} />
+        <PublicDemoBanner locale={locale} betaLive={betaLiveEnabled} />
+        <TopBar generatedAt={snapshot.generatedAt} locale={locale} betaLive={betaLiveEnabled} />
         <div className="space-y-5 p-4 lg:p-5">
           <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
             <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
@@ -45,9 +48,13 @@ export function DashboardShell({ locale, snapshot }: DashboardShellProps) {
           <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
           <SetupMemory records={snapshot.setupMemory} locale={locale} />
           <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
-          <section className="space-y-6">
-            <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
-          </section>
+          {betaLiveEnabled ? (
+            <BetaLiveDepth betaLive={snapshot.betaLiveInsights!} locale={locale} />
+          ) : (
+            <section className="space-y-6">
+              <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
+            </section>
+          )}
         </div>
       </div>
     </main>
