@@ -39,6 +39,11 @@ function toErrorResponse(error: unknown) {
   }
 
   if (error instanceof Error) {
+    const status = (error as Error & { status?: number }).status;
+    if (status === 401 || status === 403) {
+      return NextResponse.json({ error: error.message }, { status });
+    }
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

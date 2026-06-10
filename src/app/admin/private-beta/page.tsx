@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ButtonLink } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { PrivateBetaAdminPanel } from "@/features/private-beta/private-beta-admin-panel";
 import { getPrivateBetaAdminDataWithSession } from "@/services/api/private-beta";
 import {
   getCurrentBetaSessionToken,
-  requireCurrentAdminSession,
+  getCurrentBetaSession,
 } from "@/services/api/beta-auth";
 import { LOCALE_COOKIE_NAME, resolveLocale } from "@/lib/i18n";
 
@@ -36,7 +37,13 @@ export default async function PrivateBetaAdminPage({
   const locale = resolveLocale(
     resolvedSearchParams?.lang ?? cookieStore.get(LOCALE_COOKIE_NAME)?.value,
   );
-  await requireCurrentAdminSession();
+  const session = await getCurrentBetaSession();
+  if (!session) {
+    redirect("/beta/login?next=/admin/private-beta");
+  }
+  if (session.account.role !== "admin") {
+    redirect("/dashboard");
+  }
   const sessionToken = await getCurrentBetaSessionToken();
   if (!sessionToken) {
     throw new Error("Admin session is required");
