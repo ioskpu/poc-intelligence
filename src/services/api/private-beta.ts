@@ -8,6 +8,7 @@ import {
   getPrivateBetaHealth as getStoredPrivateBetaHealth,
   getPrivateBetaAdminSnapshot as getStoredPrivateBetaAdminSnapshot,
   getPrivateBetaAdminSnapshotWithSession as getStoredPrivateBetaAdminSnapshotWithSession,
+  getPrivateBetaAnalyticsWithSession as getStoredPrivateBetaAnalyticsWithSession,
   PrivateBetaNotFoundError,
   recordPrivateBetaEvent as recordStoredPrivateBetaEvent,
   resendPrivateBetaInvitation as resendStoredPrivateBetaInvitation,
@@ -29,6 +30,10 @@ export type PrivateBetaSubmissionInput = {
 
 export type PrivateBetaAdminSnapshot = Awaited<
   ReturnType<typeof getStoredPrivateBetaAdminSnapshot>
+>;
+
+export type PrivateBetaAnalytics = Awaited<
+  ReturnType<typeof getStoredPrivateBetaAnalyticsWithSession>
 >;
 
 export class PrivateBetaValidationError extends Error {
@@ -103,6 +108,12 @@ export async function getPrivateBetaAdminDataWithSession(
   sessionToken: string,
 ): Promise<PrivateBetaAdminSnapshot> {
   return getStoredPrivateBetaAdminSnapshotWithSession(sessionToken);
+}
+
+export async function getPrivateBetaAnalyticsWithSession(
+  sessionToken: string,
+): Promise<PrivateBetaAnalytics> {
+  return getStoredPrivateBetaAnalyticsWithSession(sessionToken);
 }
 
 export async function getPrivateBetaHealth() {

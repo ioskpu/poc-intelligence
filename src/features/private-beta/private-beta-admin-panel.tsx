@@ -17,16 +17,21 @@ import {
 import { PrivateBetaAccountTable } from "@/features/private-beta/private-beta-account-table";
 import { PrivateBetaRequestActions } from "@/features/private-beta/private-beta-request-actions";
 import { PrivateBetaSessionTable } from "@/features/private-beta/private-beta-session-table";
-import type { PrivateBetaAdminSnapshot } from "@/services/api/private-beta";
+import type {
+  PrivateBetaAdminSnapshot,
+  PrivateBetaAnalytics,
+} from "@/services/api/private-beta";
 
 type PrivateBetaAdminPanelProps = {
   locale: Locale;
   snapshot: PrivateBetaAdminSnapshot;
+  analytics: PrivateBetaAnalytics;
 };
 
 export function PrivateBetaAdminPanel({
   locale,
   snapshot,
+  analytics,
 }: PrivateBetaAdminPanelProps) {
   const copy = getPrivateBetaCopy(locale);
   const experienceLabels = new Map(
@@ -90,6 +95,170 @@ export function PrivateBetaAdminPanel({
             value={firstLoginsCompleted.length}
           />
         </section>
+
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">
+              {locale === "es" ? "Salud de la beta" : "Beta Health"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {locale === "es"
+                ? "Indicadores operativos actuales para cuentas, solicitudes y sesiones."
+                : "Current operational indicators for accounts, requests, and sessions."}
+            </p>
+          </div>
+          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <AdminMetric
+              label={locale === "es" ? "Usuarios totales" : "Total users"}
+              value={analytics.overview.totalAccounts}
+            />
+            <AdminMetric
+              label={locale === "es" ? "Usuarios activos" : "Active users"}
+              value={analytics.overview.activeAccounts}
+            />
+            <AdminMetric
+              label={copy.admin.metrics.pendingRequests}
+              value={analytics.overview.pendingRequests}
+            />
+            <AdminMetric
+              label={copy.admin.sections.activeSessions.title}
+              value={analytics.overview.activeSessions}
+            />
+          </section>
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {locale === "es" ? "Embudo de adopcion" : "Adoption Funnel"}
+              </CardTitle>
+              <CardDescription>
+                {locale === "es"
+                  ? "Progreso desde solicitud hasta primer login usando datos de operacion existentes."
+                  : "Progress from request to first login using existing operations data."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      {locale === "es" ? "Etapa" : "Stage"}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {locale === "es" ? "Total" : "Total"}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <FunnelRow
+                    label={locale === "es" ? "Solicitudes" : "Requests"}
+                    value={snapshot.counts.total}
+                  />
+                  <FunnelRow
+                    label={locale === "es" ? "Aprobaciones" : "Approvals"}
+                    value={analytics.overview.approvedRequests}
+                  />
+                  <FunnelRow
+                    label={copy.admin.metrics.invitationsSent}
+                    value={analytics.overview.invitationsSent}
+                    note={formatRate(analytics.adoption.invitationOpenRate)}
+                  />
+                  <FunnelRow
+                    label={locale === "es" ? "Invitaciones abiertas" : "Invitations opened"}
+                    value={analytics.overview.invitationsOpened}
+                    note={formatRate(analytics.adoption.invitationUseRate)}
+                  />
+                  <FunnelRow
+                    label={copy.admin.metrics.firstLoginsCompleted}
+                    value={analytics.overview.firstLogins}
+                    note={formatRate(analytics.adoption.activationRate)}
+                  />
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {locale === "es" ? "Crecimiento de cuentas" : "Account Growth"}
+              </CardTitle>
+              <CardDescription>
+                {locale === "es"
+                  ? "Altas recientes y actividad de login."
+                  : "Recent account creation and login activity."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+                <InlineMetric
+                  label={locale === "es" ? "Creadas en 7 dias" : "Created in 7 days"}
+                  value={analytics.overview.accountsCreatedLast7Days}
+                />
+                <InlineMetric
+                  label={locale === "es" ? "Creadas en 30 dias" : "Created in 30 days"}
+                  value={analytics.overview.accountsCreatedLast30Days}
+                />
+                <InlineMetric
+                  label={locale === "es" ? "Logins en 24h" : "Logins in 24h"}
+                  value={analytics.overview.loginsLast24Hours}
+                />
+                <InlineMetric
+                  label={locale === "es" ? "Logins en 30 dias" : "Logins in 30 days"}
+                  value={analytics.overview.loginsLast30Days}
+                  note={`${locale === "es" ? "Admin ratio" : "Admin ratio"} ${formatRate(analytics.adoption.adminRatio)}`}
+                />
+              </section>
+            </CardContent>
+          </Card>
+        </section>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {locale === "es" ? "Actividad reciente" : "Recent Activity"}
+            </CardTitle>
+            <CardDescription>
+              {locale === "es"
+                ? "Linea de tiempo derivada de eventos de auditoria."
+                : "Timeline derived from audit events."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {analytics.activity.length === 0 ? (
+              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
+                {copy.admin.sections.auditEvents.empty}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{copy.admin.table.event}</TableHead>
+                    <TableHead>{copy.admin.table.actor}</TableHead>
+                    <TableHead>{copy.admin.table.target}</TableHead>
+                    <TableHead>{copy.admin.table.createdAt}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {analytics.activity.slice(0, 12).map((event, index) => (
+                    <TableRow key={`${event.timestamp}-${event.eventType}-${index}`}>
+                      <TableCell className="font-medium">
+                        {formatAuditEventType(event.eventType)}
+                      </TableCell>
+                      <TableCell>{event.actorEmail ?? "-"}</TableCell>
+                      <TableCell>{event.targetEmail ?? "-"}</TableCell>
+                      <TableCell>
+                        {event.timestamp ? formatDate(event.timestamp, locale) : "-"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
@@ -263,6 +432,50 @@ function AdminMetric({
   );
 }
 
+function InlineMetric({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: number | string;
+  note?: string;
+}) {
+  return (
+    <div className="rounded-md border bg-muted/20 p-4">
+      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 text-2xl font-semibold">{value}</p>
+      {note ? (
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{note}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function FunnelRow({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: number;
+  note?: string;
+}) {
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{label}</TableCell>
+      <TableCell className="text-right">
+        <span>{value}</span>
+        {note ? (
+          <span className="ml-2 text-xs text-muted-foreground">{note}</span>
+        ) : null}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
   if (status === "Approved") {
     return "positive";
@@ -273,6 +486,10 @@ function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
   }
 
   return "info";
+}
+
+function formatRate(value: number) {
+  return `${Math.round(value * 100)}%`;
 }
 
 function formatAuditEventType(value: string) {

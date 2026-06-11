@@ -5,6 +5,7 @@ import type {
 import {
   checkPrivateBetaBackendReachability,
   createPrivateBetaRequestInBackend,
+  fetchPrivateBetaAnalyticsFromBackendWithSession,
   fetchPrivateBetaAdminSnapshotFromBackend,
   fetchPrivateBetaAdminSnapshotFromBackendWithSession,
   recordPrivateBetaEventInBackend,
@@ -14,6 +15,7 @@ import {
   updatePrivateBetaAccountInBackend,
   updatePrivateBetaRequestStatusInBackend,
   type PrivateBetaAccountAction,
+  type PrivateBetaAnalytics,
 } from "@/services/api/private-beta-backend";
 
 export type PrivateBetaRequestInput = {
@@ -132,6 +134,12 @@ export async function getPrivateBetaAdminSnapshot() {
 
 export async function getPrivateBetaAdminSnapshotWithSession(sessionToken: string) {
   return fetchPrivateBetaAdminSnapshotFromBackendWithSession(sessionToken);
+}
+
+export async function getPrivateBetaAnalyticsWithSession(
+  sessionToken: string,
+): Promise<PrivateBetaAnalytics> {
+  return fetchPrivateBetaAnalyticsFromBackendWithSession(sessionToken);
 }
 
 export async function getPrivateBetaHealth() {

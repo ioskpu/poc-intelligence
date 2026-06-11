@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { SessionNavigation } from "@/components/layout/session-navigation";
 import { PrivateBetaAdminPanel } from "@/features/private-beta/private-beta-admin-panel";
-import { getPrivateBetaAdminDataWithSession } from "@/services/api/private-beta";
+import {
+  getPrivateBetaAdminDataWithSession,
+  getPrivateBetaAnalyticsWithSession,
+} from "@/services/api/private-beta";
 import {
   getCurrentBetaSessionToken,
   getCurrentBetaSession,
@@ -48,7 +51,10 @@ export default async function PrivateBetaAdminPage({
   if (!sessionToken) {
     throw new Error("Admin session is required");
   }
-  const snapshot = await getPrivateBetaAdminDataWithSession(sessionToken);
+  const [snapshot, analytics] = await Promise.all([
+    getPrivateBetaAdminDataWithSession(sessionToken),
+    getPrivateBetaAnalyticsWithSession(sessionToken),
+  ]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -67,7 +73,11 @@ export default async function PrivateBetaAdminPage({
         </div>
       </header>
 
-      <PrivateBetaAdminPanel locale={locale} snapshot={snapshot} />
+      <PrivateBetaAdminPanel
+        locale={locale}
+        snapshot={snapshot}
+        analytics={analytics}
+      />
     </div>
   );
 }

@@ -69,6 +69,48 @@ export type PrivateBetaAuditEventRecord = {
   createdAt: string | null;
 };
 
+export type PrivateBetaAnalyticsOverview = {
+  totalAccounts: number;
+  activeAccounts: number;
+  revokedAccounts: number;
+  adminAccounts: number;
+  pendingRequests: number;
+  approvedRequests: number;
+  rejectedRequests: number;
+  invitationsSent: number;
+  invitationsOpened: number;
+  invitationsUsed: number;
+  firstLogins: number;
+  activeSessions: number;
+  accountsCreatedLast7Days: number;
+  accountsCreatedLast30Days: number;
+  loginsLast24Hours: number;
+  loginsLast7Days: number;
+  loginsLast30Days: number;
+};
+
+export type PrivateBetaAnalyticsActivity = {
+  timestamp: string | null;
+  eventType: string;
+  actorEmail: string | null;
+  targetEmail: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type PrivateBetaAnalyticsAdoption = {
+  invitationOpenRate: number;
+  invitationUseRate: number;
+  activationRate: number;
+  activeUserRate: number;
+  adminRatio: number;
+};
+
+export type PrivateBetaAnalytics = {
+  overview: PrivateBetaAnalyticsOverview;
+  activity: PrivateBetaAnalyticsActivity[];
+  adoption: PrivateBetaAnalyticsAdoption;
+};
+
 export type PrivateBetaAccountAction =
   | "revoke"
   | "reactivate"
@@ -138,6 +180,24 @@ export async function fetchPrivateBetaAdminSnapshotFromBackendWithSession(
   return fetchPrivateBetaApi("/private-beta/requests", {
     sessionToken,
   }) as Promise<PrivateBetaAdminSnapshotPayload>;
+}
+
+export async function fetchPrivateBetaAnalyticsFromBackendWithSession(
+  sessionToken: string,
+): Promise<PrivateBetaAnalytics> {
+  const [overview, activity, adoption] = await Promise.all([
+    fetchPrivateBetaApi("/private-beta/analytics/overview", {
+      sessionToken,
+    }) as Promise<PrivateBetaAnalyticsOverview>,
+    fetchPrivateBetaApi("/private-beta/analytics/activity", {
+      sessionToken,
+    }) as Promise<PrivateBetaAnalyticsActivity[]>,
+    fetchPrivateBetaApi("/private-beta/analytics/adoption", {
+      sessionToken,
+    }) as Promise<PrivateBetaAnalyticsAdoption>,
+  ]);
+
+  return { overview, activity, adoption };
 }
 
 export async function createPrivateBetaRequestInBackend(
