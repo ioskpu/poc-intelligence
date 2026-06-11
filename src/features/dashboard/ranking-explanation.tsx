@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate, getCopy, type Locale } from "@/lib/i18n";
+import { formatDate, formatUtcDate, getCopy, type Locale } from "@/lib/i18n";
 
 type RankingExplanationProps = {
   lastUpdatedAt: string;
@@ -24,7 +24,9 @@ export function RankingExplanation({ lastUpdatedAt, locale }: RankingExplanation
           <p className="text-xs uppercase tracking-wide">
             {copy.dashboard.rankingGuide.latestScan}
           </p>
-          <p className="mt-1 text-foreground">{formatDate(lastUpdatedAt, locale)}</p>
+          <p className="mt-1 text-foreground" title={formatUtcDate(lastUpdatedAt, locale)}>
+            {formatDate(lastUpdatedAt, locale)}
+          </p>
         </div>
       </CardContent>
     </Card>

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
-import { formatDate, formatNumber, getCopy, type Locale } from "@/lib/i18n";
+import { formatDate, formatNumber, formatUtcDate, getCopy, type Locale } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import { insufficientDataLabel } from "@/lib/observatory-empty-states";
 import type { GhostTracking as GhostTrackingData } from "@/types/intelligence";
@@ -92,7 +92,10 @@ export function GhostTracking({ ghostTracking, locale }: GhostTrackingProps) {
           </div>
         )}
         {ghostTracking.lastSettledAt ? (
-          <p className="text-xs text-muted-foreground">
+          <p
+            className="text-xs text-muted-foreground"
+            title={formatUtcDate(ghostTracking.lastSettledAt, locale)}
+          >
             {copy.dashboard.ghostTracking.lastSettled}: {formatDate(ghostTracking.lastSettledAt, locale)}
           </p>
         ) : null}

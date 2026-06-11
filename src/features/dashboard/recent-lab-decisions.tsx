@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   formatDate,
+  formatUtcDate,
   formatNumber,
   getCopy,
   translateSide,
@@ -49,7 +50,10 @@ export function RecentLabDecisions({ decisions, locale }: RecentLabDecisionsProp
                     {decision.reason}
                   </p>
                 </div>
-                <div className="text-right text-xs text-muted-foreground">
+                <div
+                  className="text-right text-xs text-muted-foreground"
+                  title={formatUtcDate(decision.observedAt, locale)}
+                >
                   {formatDate(decision.observedAt, locale)}
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
-import { formatDate, formatNumber, getCopy, translateSide, type Locale } from "@/lib/i18n";
+import { formatDate, formatNumber, formatUtcDate, getCopy, translateSide, type Locale } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import {
   formatDisplayText,
@@ -65,7 +65,10 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
                     </p>
                   ) : null}
                 </div>
-                <div className="text-right text-xs text-muted-foreground">
+                <div
+                  className="text-right text-xs text-muted-foreground"
+                  title={formatUtcDate(record.lastSeenAt, locale)}
+                >
                   {formatDate(record.lastSeenAt, locale)}
                 </div>
               </div>

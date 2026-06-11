@@ -39,7 +39,7 @@ export function FreshnessStrip({ freshness, locale }: FreshnessStripProps) {
                   labelClassName="text-inherit"
                 />
               </div>
-              <div className="truncate text-xs text-muted-foreground">
+              <div className="text-xs leading-5 text-muted-foreground">
                 {formatFreshness(status, locale)}
               </div>
             </div>

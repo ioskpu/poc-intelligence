@@ -1,6 +1,6 @@
 import { Clock, Hash, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate, getCopy, type Locale } from "@/lib/i18n";
+import { formatDate, formatUtcDate, getCopy, type Locale } from "@/lib/i18n";
 import { emptyHistoryLabel, formatDisplayText } from "@/lib/observatory-empty-states";
 import type { MarketSummary } from "@/types/intelligence";
 
@@ -30,6 +30,8 @@ export function MarketSummaryCards({ summary, locale }: MarketSummaryCardsProps)
     {
       label: copy.dashboard.marketSummary.lastUpdated,
       value: formatDate(summary.lastUpdatedAt, locale),
+      title: formatUtcDate(summary.lastUpdatedAt, locale),
+      valueClassName: "text-base leading-snug",
       icon: Clock,
     },
   ];
@@ -43,7 +45,12 @@ export function MarketSummaryCards({ summary, locale }: MarketSummaryCardsProps)
               <p className="text-sm text-muted-foreground">{card.label}</p>
               <card.icon className="h-4 w-4 text-secondary" aria-hidden="true" />
             </div>
-            <p className="mt-2 truncate text-3xl font-semibold">{card.value}</p>
+            <p
+              className={`mt-2 font-semibold ${card.valueClassName ?? "truncate text-3xl"}`}
+              title={card.title}
+            >
+              {card.value}
+            </p>
           </CardContent>
         </Card>
       ))}

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { SessionNavigation } from "@/components/layout/session-navigation";
-import { formatDate, getCopy, type Locale } from "@/lib/i18n";
+import { formatDate, formatUtcDate, getCopy, type Locale } from "@/lib/i18n";
 import type { BetaSession } from "@/lib/beta-auth";
 
 type TopBarProps = {
@@ -21,6 +21,7 @@ export function TopBar({
 }: TopBarProps) {
   const copy = getCopy(locale);
   const formattedDate = formatDate(generatedAt, locale);
+  const utcDate = formatUtcDate(generatedAt, locale);
 
   return (
     <header className="flex min-h-16 items-center justify-between border-b bg-background px-5">
@@ -28,7 +29,7 @@ export function TopBar({
         <p className="text-xs uppercase tracking-wide text-muted-foreground">
           {copy.topBar.snapshot}
         </p>
-        <p className="text-sm text-foreground">
+        <p className="text-sm text-foreground" title={utcDate}>
           {copy.topBar.generated} {formattedDate}
         </p>
       </div>

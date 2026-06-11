@@ -1,4 +1,4 @@
-import { formatNumber, type Locale } from "@/lib/i18n";
+import { formatDate, formatNumber, type Locale } from "@/lib/i18n";
 
 export function emptyHistoryLabel(locale: Locale) {
   return locale === "es" ? "Sin historial suficiente" : "Insufficient history";
@@ -46,11 +46,7 @@ export function formatObservatoryDate(
     return fallback ?? emptyHistoryLabel(locale);
   }
 
-  const date = new Date(value as string | number);
-  return new Intl.DateTimeFormat(locale === "es" ? "es-CO" : "en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  return formatDate(value, locale);
 }
 
 export function formatDisplayText(
