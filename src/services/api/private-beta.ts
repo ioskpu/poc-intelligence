@@ -20,6 +20,10 @@ import {
   type PrivateBetaRequestRecord,
 } from "@/services/api/private-beta-storage";
 import type { PrivateBetaAccountAction } from "@/services/api/private-beta-backend";
+import {
+  fetchProductAnalyticsSummaryFromBackend,
+} from "@/services/api/product-analytics-client";
+import type { ProductAnalyticsSummary } from "@/services/api/product-analytics";
 
 export type PrivateBetaSubmissionInput = {
   name: string;
@@ -35,6 +39,8 @@ export type PrivateBetaAdminSnapshot = Awaited<
 export type PrivateBetaAnalytics = Awaited<
   ReturnType<typeof getStoredPrivateBetaAnalyticsWithSession>
 >;
+
+export type PrivateBetaProductAnalytics = ProductAnalyticsSummary;
 
 export class PrivateBetaValidationError extends Error {
   constructor(message: string) {
@@ -114,6 +120,16 @@ export async function getPrivateBetaAnalyticsWithSession(
   sessionToken: string,
 ): Promise<PrivateBetaAnalytics> {
   return getStoredPrivateBetaAnalyticsWithSession(sessionToken);
+}
+
+export async function getPrivateBetaProductAnalyticsWithSession(
+  sessionToken: string,
+): Promise<PrivateBetaProductAnalytics | null> {
+  try {
+    return await fetchProductAnalyticsSummaryFromBackend(sessionToken);
+  } catch {
+    return null;
+  }
 }
 
 export async function getPrivateBetaHealth() {

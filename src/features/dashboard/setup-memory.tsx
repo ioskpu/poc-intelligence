@@ -34,7 +34,14 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold">{record.symbol}</p>
+                    <p
+                      className="text-sm font-semibold"
+                      data-analytics-module="setup-memory"
+                      data-analytics-ranking="setup-memory"
+                      data-analytics-symbol={record.symbol}
+                    >
+                      {record.symbol}
+                    </p>
                     <Badge tone="info">{translateSide(record.side, locale)}</Badge>
                     <Badge tone={getHealthTone(record.healthLabel)}>
                       {record.healthLabel}

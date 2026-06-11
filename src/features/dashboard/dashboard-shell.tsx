@@ -12,6 +12,7 @@ import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
+import { ProductAnalyticsTracker } from "@/features/product-analytics/product-analytics-tracker";
 import type { BetaSession } from "@/lib/beta-auth";
 import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
@@ -34,6 +35,43 @@ export function DashboardShell({
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
+      <ProductAnalyticsTracker
+        enabled={session?.account.status === "Active"}
+        pageViewEvent="dashboard_view"
+        pageViewMetadata={{ module: "dashboard" }}
+        events={[
+          {
+            eventType: "awareness_view",
+            selector: "#change-awareness",
+            metadata: { module: "change-awareness" },
+          },
+          {
+            eventType: "ranking_view",
+            selector: "#markets",
+            metadata: { module: "rankings", ranking: "market-rankings" },
+          },
+          {
+            eventType: "setup_memory_view",
+            selector: "#setup-memory",
+            metadata: { module: "setup-memory" },
+          },
+          {
+            eventType: "ghost_tracking_view",
+            selector: "#ghost-tracking",
+            metadata: { module: "ghost-tracking" },
+          },
+          {
+            eventType: "ranking_view",
+            selector: "#opportunities",
+            metadata: { module: "rankings", ranking: "opportunity-rankings" },
+          },
+          {
+            eventType: "beta_research_view",
+            selector: "#beta-research-layer",
+            metadata: { module: "beta-research", source: "beta-research" },
+          },
+        ]}
+      />
       <AppSidebar locale={locale} betaLive={showBetaResearchLayer} />
       <div className="min-w-0 flex-1">
         <PublicDemoBanner locale={locale} betaLive={showBetaResearchLayer} />

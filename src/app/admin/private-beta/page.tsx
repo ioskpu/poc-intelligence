@@ -7,6 +7,7 @@ import { PrivateBetaAdminPanel } from "@/features/private-beta/private-beta-admi
 import {
   getPrivateBetaAdminDataWithSession,
   getPrivateBetaAnalyticsWithSession,
+  getPrivateBetaProductAnalyticsWithSession,
 } from "@/services/api/private-beta";
 import {
   getCurrentBetaSessionToken,
@@ -51,9 +52,10 @@ export default async function PrivateBetaAdminPage({
   if (!sessionToken) {
     throw new Error("Admin session is required");
   }
-  const [snapshot, analytics] = await Promise.all([
+  const [snapshot, analytics, productAnalytics] = await Promise.all([
     getPrivateBetaAdminDataWithSession(sessionToken),
     getPrivateBetaAnalyticsWithSession(sessionToken),
+    getPrivateBetaProductAnalyticsWithSession(sessionToken),
   ]);
 
   return (
@@ -77,6 +79,7 @@ export default async function PrivateBetaAdminPage({
         locale={locale}
         snapshot={snapshot}
         analytics={analytics}
+        productAnalytics={productAnalytics}
       />
     </div>
   );

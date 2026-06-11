@@ -28,7 +28,12 @@ export function OpportunityRankings({ rankings, locale }: OpportunityRankingsPro
           <article key={ranking.label} className="rounded-md border bg-background p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold">
+                <p
+                  className="text-sm font-semibold"
+                  data-analytics-module="rankings"
+                  data-analytics-ranking="opportunity-rankings"
+                  data-analytics-symbol={ranking.symbol}
+                >
                   {ranking.symbol} · {ranking.label}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">

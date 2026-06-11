@@ -17,21 +17,25 @@ import {
 import { PrivateBetaAccountTable } from "@/features/private-beta/private-beta-account-table";
 import { PrivateBetaRequestActions } from "@/features/private-beta/private-beta-request-actions";
 import { PrivateBetaSessionTable } from "@/features/private-beta/private-beta-session-table";
+import { ProductAnalyticsTracker } from "@/features/product-analytics/product-analytics-tracker";
 import type {
   PrivateBetaAdminSnapshot,
   PrivateBetaAnalytics,
+  PrivateBetaProductAnalytics,
 } from "@/services/api/private-beta";
 
 type PrivateBetaAdminPanelProps = {
   locale: Locale;
   snapshot: PrivateBetaAdminSnapshot;
   analytics: PrivateBetaAnalytics;
+  productAnalytics: PrivateBetaProductAnalytics | null;
 };
 
 export function PrivateBetaAdminPanel({
   locale,
   snapshot,
   analytics,
+  productAnalytics,
 }: PrivateBetaAdminPanelProps) {
   const copy = getPrivateBetaCopy(locale);
   const experienceLabels = new Map(
@@ -56,6 +60,12 @@ export function PrivateBetaAdminPanel({
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <ProductAnalyticsTracker
+        enabled
+        pageViewEvent="admin_dashboard_view"
+        pageViewMetadata={{ module: "admin" }}
+        events={[]}
+      />
       <section className="mx-auto max-w-7xl space-y-6 px-6 py-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
@@ -262,6 +272,87 @@ export function PrivateBetaAdminPanel({
 
         <Card>
           <CardHeader>
+            <CardTitle>
+              {locale === "es" ? "Analítica de producto" : "Product Analytics"}
+            </CardTitle>
+            <CardDescription>
+              {locale === "es"
+                ? "Uso real de modulos por cuentas autenticadas de la beta privada."
+                : "Real module usage from authenticated private beta accounts."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {productAnalytics ? (
+              <section className="space-y-4">
+                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <InlineMetric
+                    label={locale === "es" ? "Cuentas aprobadas" : "Approved accounts"}
+                    value={productAnalytics.adoption.approvedAccounts}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Cuentas activadas" : "Activated accounts"}
+                    value={productAnalytics.adoption.activatedAccounts}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Primer login" : "First login"}
+                    value={productAnalytics.adoption.firstLoginCount}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Activos 7 dias" : "Active 7 days"}
+                    value={productAnalytics.engagement.activeUsersLast7Days}
+                  />
+                  <InlineMetric
+                    label="D1 retention"
+                    value={formatRate(productAnalytics.retention.d1Retention)}
+                  />
+                  <InlineMetric
+                    label="D7 retention"
+                    value={formatRate(productAnalytics.retention.d7Retention)}
+                  />
+                  <InlineMetric
+                    label="D30 retention"
+                    value={formatRate(productAnalytics.retention.d30Retention)}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Sesiones / usuario" : "Sessions / user"}
+                    value={formatMetric(productAnalytics.engagement.sessionsPerUser)}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Dias entre visitas" : "Days between visits"}
+                    value={
+                      productAnalytics.engagement.averageDaysBetweenVisits === null
+                        ? "-"
+                        : formatMetric(productAnalytics.engagement.averageDaysBetweenVisits)
+                    }
+                  />
+                </section>
+                <section className="grid gap-4 xl:grid-cols-3">
+                  <ProductUsageTable
+                    title={locale === "es" ? "Modulos mas usados" : "Top modules used"}
+                    rows={productAnalytics.featureUsage.topModulesUsed}
+                  />
+                  <ProductUsageTable
+                    title={locale === "es" ? "Simbolos mas vistos" : "Top symbols viewed"}
+                    rows={productAnalytics.featureUsage.topSymbolsViewed}
+                  />
+                  <ProductUsageTable
+                    title={locale === "es" ? "Reportes mas abiertos" : "Top research reports opened"}
+                    rows={productAnalytics.featureUsage.topResearchReportsOpened}
+                  />
+                </section>
+              </section>
+            ) : (
+              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
+                {locale === "es"
+                  ? "El backend de analitica de producto aun no esta disponible. No se crearon tablas nuevas en el frontend."
+                  : "The product analytics backend is not available yet. No new frontend-owned tables were created."}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>{copy.admin.sections.pendingRequests.title}</CardTitle>
             <CardDescription>
               {copy.admin.sections.pendingRequests.description}
@@ -454,6 +545,40 @@ function InlineMetric({
   );
 }
 
+function ProductUsageTable({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{ name: string; count: number }>;
+}) {
+  return (
+    <div className="rounded-md border bg-muted/20 p-4">
+      <p className="text-sm font-semibold">{title}</p>
+      {rows.length === 0 ? (
+        <p className="mt-3 text-sm text-muted-foreground">-</p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead className="text-right">Count</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell className="font-medium">{row.name}</TableCell>
+                <TableCell className="text-right">{row.count}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </div>
+  );
+}
+
 function FunnelRow({
   label,
   value,
@@ -490,6 +615,10 @@ function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
 
 function formatRate(value: number) {
   return `${Math.round(value * 100)}%`;
+}
+
+function formatMetric(value: number) {
+  return Number.isFinite(value) ? value.toFixed(2) : "-";
 }
 
 function formatAuditEventType(value: string) {

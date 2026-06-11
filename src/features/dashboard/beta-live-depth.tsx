@@ -64,7 +64,12 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                 <article key={`${item.scanBatchId ?? "batch"}-${item.symbol}`} className="rounded-md border bg-background p-3">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold">
+                      <p
+                        className="text-sm font-semibold"
+                        data-analytics-module="beta-research"
+                        data-analytics-ranking="beta-scanner"
+                        data-analytics-symbol={item.symbol}
+                      >
                         #{item.rank} {item.symbol}
                       </p>
                     </div>
@@ -114,7 +119,14 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                 <article key={`${item.symbol}-${item.observedAt}-${item.setupKey}`} className="rounded-md border bg-background p-3">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold">{item.symbol}</p>
+                      <p
+                        className="text-sm font-semibold"
+                        data-analytics-module="beta-research"
+                        data-analytics-ranking="beta-decisions"
+                        data-analytics-symbol={item.symbol}
+                      >
+                        {item.symbol}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {formatDate(item.observedAt, locale)}
                       </p>
@@ -171,7 +183,14 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                 <article key={`${item.setupKey}-${item.symbol}-${item.side}`} className="rounded-md border bg-background p-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold">{item.symbol}</p>
+                      <p
+                        className="text-sm font-semibold"
+                        data-analytics-module="beta-research"
+                        data-analytics-ranking="beta-setup-depth"
+                        data-analytics-symbol={item.symbol}
+                      >
+                        {item.symbol}
+                      </p>
                       <p className="text-xs text-muted-foreground">{translateSide(item.side, locale)} {locale === "es" ? "Setup" : "Setup"}</p>
                     </div>
                     <Badge tone={getHealthTone(item.healthLabel, locale)}>

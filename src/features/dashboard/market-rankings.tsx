@@ -88,7 +88,14 @@ export function MarketRankings({ rankings, locale }: MarketRankingsProps) {
                       #{ranking.rank || "-"}
                     </TableCell>
                     <TableCell className="max-w-[340px]">
-                      <div className="font-medium">{ranking.symbol}</div>
+                      <div
+                        className="font-medium"
+                        data-analytics-module="rankings"
+                        data-analytics-ranking="market-rankings"
+                        data-analytics-symbol={ranking.symbol}
+                      >
+                        {ranking.symbol}
+                      </div>
                       <div className="mt-1 text-xs text-muted-foreground">
                         {ranking.market}
                       </div>
