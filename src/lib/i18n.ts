@@ -398,6 +398,10 @@ export function formatDate(value: string, locale: Locale) {
 }
 
 export function formatNumber(value: number, locale: Locale, options?: Intl.NumberFormatOptions) {
+  if (!Number.isFinite(value)) {
+    return locale === "es" ? "Datos insuficientes" : "Insufficient data";
+  }
+
   return new Intl.NumberFormat(locale === "es" ? "es-CO" : "en-US", {
     maximumFractionDigits: 4,
     ...options,

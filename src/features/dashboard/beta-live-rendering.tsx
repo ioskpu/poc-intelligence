@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatNumber, type Locale } from "@/lib/i18n";
-import { formatDisplayText } from "@/lib/observatory-empty-states";
+import { formatDisplayText, insufficientDataLabel } from "@/lib/observatory-empty-states";
 
 type MetricOptions = {
   suffix?: string;
@@ -106,12 +106,19 @@ export function renderMetric(
   locale: Locale,
   options: MetricOptions = {},
 ) {
-  if (value === null) {
+  if (options.advanced && !options.advancedView) {
     return null;
   }
 
-  if (options.advanced && !options.advancedView) {
-    return null;
+  if (value === null || !Number.isFinite(value)) {
+    return (
+      <FieldPill
+        key={label}
+        label={label}
+        tooltip={options.tooltip}
+        value={insufficientDataLabel(locale)}
+      />
+    );
   }
 
   const suffix = options.suffix ?? "";
@@ -133,12 +140,19 @@ export function renderTextMetric(
   value: string | null,
   options: MetricOptions = {},
 ) {
-  if (!value) {
+  if (options.advanced && !options.advancedView) {
     return null;
   }
 
-  if (options.advanced && !options.advancedView) {
-    return null;
+  if (!value) {
+    return (
+      <FieldPill
+        key={label}
+        label={label}
+        tooltip={options.tooltip}
+        value={formatDisplayText(value, options.locale ?? "es")}
+      />
+    );
   }
 
   return (

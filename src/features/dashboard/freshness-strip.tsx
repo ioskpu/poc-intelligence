@@ -74,7 +74,7 @@ function getFreshnessLabel(isFresh: boolean | null, locale: Locale) {
     return locale === "es" ? "Antiguo" : "Stale";
   }
 
-  return locale === "es" ? "Desconocido" : "Unknown";
+  return locale === "es" ? "Sin estado" : "No status";
 }
 
 function formatFreshness(status: FreshnessStatus, locale: Locale) {

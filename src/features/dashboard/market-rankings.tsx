@@ -16,6 +16,11 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
+import {
+  formatDisplayText,
+  insufficientDataLabel,
+  pendingClassificationLabel,
+} from "@/lib/observatory-empty-states";
 import type { MarketRanking } from "@/types/intelligence";
 
 type MarketRankingsProps = {
@@ -85,7 +90,7 @@ export function MarketRankings({ rankings, locale }: MarketRankingsProps) {
                 return (
                   <TableRow key={ranking.symbol}>
                     <TableCell className="font-mono text-muted-foreground">
-                      #{ranking.rank || "-"}
+                      {ranking.rank > 0 ? `#${ranking.rank}` : pendingClassificationLabel(locale)}
                     </TableCell>
                     <TableCell className="max-w-[340px]">
                       <div
@@ -110,7 +115,7 @@ export function MarketRankings({ rankings, locale }: MarketRankingsProps) {
                             />
                           </p>
                           <p className="text-sm leading-5 text-foreground">
-                            {ranking.rankingReason}
+                            {formatDisplayText(ranking.rankingReason, locale, insufficientDataLabel(locale))}
                           </p>
                         </div>
                       ) : null}

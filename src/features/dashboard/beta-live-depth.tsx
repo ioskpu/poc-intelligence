@@ -88,9 +88,7 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                           ? locale === "es"
                             ? "Válida"
                             : "Valid"
-                          : locale === "es"
-                            ? "Desconocida"
-                            : "Unknown"}
+                          : pendingEvaluationLabel(locale)}
                     </Badge>
                   </div>
                   <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
@@ -104,7 +102,7 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                     {renderMetric(copy.fields.fundingRate, item.fundingRate, locale, { tooltip: tooltips.fundingRate })}
                   </div>
                   <p className="mt-3 text-sm leading-6 text-foreground">
-                    {copy.fields.rankingReason}: {item.rankingReason || "-"}
+                    {copy.fields.rankingReason}: {formatDisplayText(item.rankingReason, locale, insufficientDataLabel(locale))}
                   </p>
                 </article>
               ))}
@@ -326,7 +324,7 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
           <div className="space-y-4">
             <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {renderMetric(copy.fields.opportunityStarvation, betaLive.diagnostics.opportunityStarvation.hoursSinceEligibleSetup, locale, { tooltip: tooltips.opportunityStarvation })}
-              {renderTextMetric(copy.fields.dominantRejectionReason, betaLive.diagnostics.dominantRejectionReason || "-", { tooltip: tooltips.dominantRejectionReason })}
+              {renderTextMetric(copy.fields.dominantRejectionReason, betaLive.diagnostics.dominantRejectionReason, { tooltip: tooltips.dominantRejectionReason, locale })}
             </div>
             {advancedView ? (
               <>
