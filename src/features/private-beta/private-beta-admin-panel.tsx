@@ -286,58 +286,80 @@ export function PrivateBetaAdminPanel({
               <section className="space-y-4">
                 <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                   <InlineMetric
-                    label={locale === "es" ? "Cuentas aprobadas" : "Approved accounts"}
-                    value={productAnalytics.adoption.approvedAccounts}
+                    label="DAU"
+                    value={productAnalytics.dau}
                   />
                   <InlineMetric
-                    label={locale === "es" ? "Cuentas activadas" : "Activated accounts"}
-                    value={productAnalytics.adoption.activatedAccounts}
+                    label="WAU"
+                    value={productAnalytics.wau}
                   />
                   <InlineMetric
-                    label={locale === "es" ? "Primer login" : "First login"}
-                    value={productAnalytics.adoption.firstLoginCount}
+                    label="MAU"
+                    value={productAnalytics.mau}
                   />
                   <InlineMetric
                     label={locale === "es" ? "Activos 7 dias" : "Active 7 days"}
-                    value={productAnalytics.engagement.activeUsersLast7Days}
-                  />
-                  <InlineMetric
-                    label="D1 retention"
-                    value={formatRate(productAnalytics.retention.d1Retention)}
-                  />
-                  <InlineMetric
-                    label="D7 retention"
-                    value={formatRate(productAnalytics.retention.d7Retention)}
-                  />
-                  <InlineMetric
-                    label="D30 retention"
-                    value={formatRate(productAnalytics.retention.d30Retention)}
+                    value={productAnalytics.activeUsers7d}
                   />
                   <InlineMetric
                     label={locale === "es" ? "Sesiones / usuario" : "Sessions / user"}
-                    value={formatMetric(productAnalytics.engagement.sessionsPerUser)}
+                    value={formatMetric(productAnalytics.sessionsPerUser)}
                   />
                   <InlineMetric
                     label={locale === "es" ? "Dias entre visitas" : "Days between visits"}
-                    value={
-                      productAnalytics.engagement.averageDaysBetweenVisits === null
-                        ? "-"
-                        : formatMetric(productAnalytics.engagement.averageDaysBetweenVisits)
-                    }
+                    value={formatMetric(productAnalytics.avgDaysBetweenVisits)}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Primer login" : "First login"}
+                    value={productAnalytics.funnel.firstLogin}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Recurrentes" : "Recurrent"}
+                    value={productAnalytics.funnel.recurrent}
                   />
                 </section>
                 <section className="grid gap-4 xl:grid-cols-3">
+                  <ProductFunnelTable
+                    title={locale === "es" ? "Embudo real" : "Real funnel"}
+                    label={locale === "es" ? "Etapa" : "Stage"}
+                    rows={[
+                      {
+                        name: locale === "es" ? "Invitados" : "Invited",
+                        count: productAnalytics.funnel.invited,
+                      },
+                      {
+                        name: locale === "es" ? "Aprobados" : "Approved",
+                        count: productAnalytics.funnel.approved,
+                      },
+                      {
+                        name: locale === "es" ? "Primer login" : "First login",
+                        count: productAnalytics.funnel.firstLogin,
+                      },
+                      {
+                        name: locale === "es" ? "Segundo login" : "Second login",
+                        count: productAnalytics.funnel.secondLogin,
+                      },
+                      {
+                        name: locale === "es" ? "Recurrentes" : "Recurrent",
+                        count: productAnalytics.funnel.recurrent,
+                      },
+                    ]}
+                  />
                   <ProductUsageTable
                     title={locale === "es" ? "Modulos mas usados" : "Top modules used"}
-                    rows={productAnalytics.featureUsage.topModulesUsed}
+                    label={locale === "es" ? "Modulo" : "Module"}
+                    rows={productAnalytics.topModules.map((row) => ({
+                      name: row.module,
+                      count: row.count,
+                    }))}
                   />
                   <ProductUsageTable
                     title={locale === "es" ? "Simbolos mas vistos" : "Top symbols viewed"}
-                    rows={productAnalytics.featureUsage.topSymbolsViewed}
-                  />
-                  <ProductUsageTable
-                    title={locale === "es" ? "Reportes mas abiertos" : "Top research reports opened"}
-                    rows={productAnalytics.featureUsage.topResearchReportsOpened}
+                    label={locale === "es" ? "Simbolo" : "Symbol"}
+                    rows={productAnalytics.topSymbols.map((row) => ({
+                      name: row.symbol,
+                      count: row.count,
+                    }))}
                   />
                 </section>
               </section>
@@ -547,9 +569,11 @@ function InlineMetric({
 
 function ProductUsageTable({
   title,
+  label,
   rows,
 }: {
   title: string;
+  label: string;
   rows: Array<{ name: string; count: number }>;
 }) {
   return (
@@ -561,7 +585,7 @@ function ProductUsageTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>{label}</TableHead>
               <TableHead className="text-right">Count</TableHead>
             </TableRow>
           </TableHeader>
@@ -577,6 +601,18 @@ function ProductUsageTable({
       )}
     </div>
   );
+}
+
+function ProductFunnelTable({
+  title,
+  label,
+  rows,
+}: {
+  title: string;
+  label: string;
+  rows: Array<{ name: string; count: number }>;
+}) {
+  return <ProductUsageTable title={title} label={label} rows={rows} />;
 }
 
 function FunnelRow({

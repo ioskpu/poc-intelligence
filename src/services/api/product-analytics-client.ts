@@ -48,13 +48,7 @@ async function fetchPrivateBetaApi(path: string, options?: PrivateBetaApiOptions
 }
 
 export async function recordProductAnalyticsEventInBackend(
-  input: ProductAnalyticsEventInput & {
-    accountId: string;
-    email: string;
-    role: string;
-    status: string;
-    timestamp: string;
-  },
+  input: ProductAnalyticsEventInput,
   sessionToken: string,
 ) {
   await fetchPrivateBetaApi("/private-beta/product-events", {

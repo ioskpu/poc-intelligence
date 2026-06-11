@@ -36,11 +36,6 @@ export async function POST(request: Request) {
   await recordProductAnalyticsEventInBackend(
     {
       eventType,
-      accountId: session.account.id,
-      email: session.account.email,
-      role: session.account.role,
-      status: session.account.status,
-      timestamp: new Date().toISOString(),
       metadata: sanitizeProductAnalyticsMetadata((body as Record<string, unknown>).metadata),
     },
     sessionToken,

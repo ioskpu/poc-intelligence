@@ -18,30 +18,30 @@ export type ProductAnalyticsEventInput = {
 };
 
 export type ProductAnalyticsSummary = {
-  adoption: {
-    approvedAccounts: number;
-    activatedAccounts: number;
-    firstLoginCount: number;
-  };
-  retention: {
-    d1Retention: number;
-    d7Retention: number;
-    d30Retention: number;
-  };
-  engagement: {
-    sessionsPerUser: number;
-    averageDaysBetweenVisits: number | null;
-    activeUsersLast7Days: number;
-  };
-  featureUsage: {
-    topModulesUsed: ProductAnalyticsCount[];
-    topSymbolsViewed: ProductAnalyticsCount[];
-    topResearchReportsOpened: ProductAnalyticsCount[];
+  dau: number;
+  wau: number;
+  mau: number;
+  activeUsers7d: number;
+  sessionsPerUser: number;
+  avgDaysBetweenVisits: number;
+  topModules: ProductAnalyticsTopModule[];
+  topSymbols: ProductAnalyticsTopSymbol[];
+  funnel: {
+    invited: number;
+    approved: number;
+    firstLogin: number;
+    secondLogin: number;
+    recurrent: number;
   };
 };
 
-export type ProductAnalyticsCount = {
-  name: string;
+export type ProductAnalyticsTopModule = {
+  module: string;
+  count: number;
+};
+
+export type ProductAnalyticsTopSymbol = {
+  symbol: string;
   count: number;
 };
 
