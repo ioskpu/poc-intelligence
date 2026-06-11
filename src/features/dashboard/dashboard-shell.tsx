@@ -12,6 +12,7 @@ import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
+import { DashboardFeedbackController } from "@/features/feedback/feedback-prompt";
 import { ProductAnalyticsTracker } from "@/features/product-analytics/product-analytics-tracker";
 import type { BetaSession } from "@/lib/beta-auth";
 import type { Locale } from "@/lib/i18n";
@@ -72,6 +73,9 @@ export function DashboardShell({
           },
         ]}
       />
+      {session?.account.status === "Active" ? (
+        <DashboardFeedbackController locale={locale} />
+      ) : null}
       <AppSidebar locale={locale} betaLive={showBetaResearchLayer} />
       <div className="min-w-0 flex-1">
         <PublicDemoBanner locale={locale} betaLive={showBetaResearchLayer} />

@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { BetaLiveDepth } from "@/features/dashboard/beta-live-depth";
+import { BetaResearchFeedbackPrompt } from "@/features/feedback/feedback-prompt";
 import { getCopy, type Locale } from "@/lib/i18n";
 import type { BetaLiveInsights } from "@/types/intelligence";
 
@@ -27,6 +28,7 @@ export function BetaResearchLayer({ betaLive, locale }: BetaResearchLayerProps) 
         </p>
       </div>
       <BetaLiveDepth betaLive={betaLive} locale={locale} />
+      <BetaResearchFeedbackPrompt locale={locale} />
     </section>
   );
 }

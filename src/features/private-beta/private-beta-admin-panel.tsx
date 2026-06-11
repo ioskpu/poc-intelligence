@@ -21,6 +21,7 @@ import { ProductAnalyticsTracker } from "@/features/product-analytics/product-an
 import type {
   PrivateBetaAdminSnapshot,
   PrivateBetaAnalytics,
+  PrivateBetaFeedbackAnalyticsSummary,
   PrivateBetaProductAnalytics,
 } from "@/services/api/private-beta";
 
@@ -29,6 +30,7 @@ type PrivateBetaAdminPanelProps = {
   snapshot: PrivateBetaAdminSnapshot;
   analytics: PrivateBetaAnalytics;
   productAnalytics: PrivateBetaProductAnalytics | null;
+  feedbackAnalytics: PrivateBetaFeedbackAnalyticsSummary | null;
 };
 
 export function PrivateBetaAdminPanel({
@@ -36,6 +38,7 @@ export function PrivateBetaAdminPanel({
   snapshot,
   analytics,
   productAnalytics,
+  feedbackAnalytics,
 }: PrivateBetaAdminPanelProps) {
   const copy = getPrivateBetaCopy(locale);
   const experienceLabels = new Map(
@@ -375,6 +378,67 @@ export function PrivateBetaAdminPanel({
 
         <Card>
           <CardHeader>
+            <CardTitle>
+              {locale === "es" ? "Feedback Intelligence" : "Feedback Intelligence"}
+            </CardTitle>
+            <CardDescription>
+              {locale === "es"
+                ? "Valor percibido por usuarios autenticados de la beta privada."
+                : "Perceived value from authenticated private beta users."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {feedbackAnalytics ? (
+              <section className="space-y-4">
+                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <InlineMetric
+                    label={locale === "es" ? "Respuestas totales" : "Total responses"}
+                    value={feedbackAnalytics.totalResponses}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Utilidad: si" : "Usefulness: yes"}
+                    value={formatFeedbackPercentage(feedbackAnalytics.moduleUsefulness, "yes")}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Retencion semanal: si" : "Weekly retention: yes"}
+                    value={formatFeedbackPercentage(feedbackAnalytics.weeklyRetention, "yes")}
+                  />
+                  <InlineMetric
+                    label={locale === "es" ? "Retencion: inseguro" : "Retention: unsure"}
+                    value={formatFeedbackPercentage(feedbackAnalytics.weeklyRetention, "unsure")}
+                  />
+                </section>
+                <section className="grid gap-4 xl:grid-cols-4">
+                  <FeedbackBreakdownTable
+                    title={locale === "es" ? "Utilidad por modulo" : "Module usefulness"}
+                    rows={feedbackAnalytics.moduleUsefulness}
+                  />
+                  <FeedbackBreakdownTable
+                    title={locale === "es" ? "Valor de sesion" : "Session value"}
+                    rows={feedbackAnalytics.sessionValue}
+                  />
+                  <FeedbackBreakdownTable
+                    title={locale === "es" ? "Retencion semanal" : "Weekly retention"}
+                    rows={feedbackAnalytics.weeklyRetention}
+                  />
+                  <TopUsefulModulesTable
+                    title={locale === "es" ? "Top modulos utiles" : "Top useful modules"}
+                    rows={feedbackAnalytics.topUsefulModules}
+                  />
+                </section>
+              </section>
+            ) : (
+              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
+                {locale === "es"
+                  ? "El backend de feedback aun no esta disponible."
+                  : "The feedback backend is not available yet."}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>{copy.admin.sections.pendingRequests.title}</CardTitle>
             <CardDescription>
               {copy.admin.sections.pendingRequests.description}
@@ -615,6 +679,80 @@ function ProductFunnelTable({
   return <ProductUsageTable title={title} label={label} rows={rows} />;
 }
 
+function FeedbackBreakdownTable({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{ value: string; count: number; percentage: number }>;
+}) {
+  return (
+    <div className="rounded-md border bg-muted/20 p-4">
+      <p className="text-sm font-semibold">{title}</p>
+      {rows.length === 0 ? (
+        <p className="mt-3 text-sm text-muted-foreground">-</p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Value</TableHead>
+              <TableHead className="text-right">Count</TableHead>
+              <TableHead className="text-right">%</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.value}>
+                <TableCell className="font-medium">{formatFeedbackValue(row.value)}</TableCell>
+                <TableCell className="text-right">{row.count}</TableCell>
+                <TableCell className="text-right">{formatRate(row.percentage)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </div>
+  );
+}
+
+function TopUsefulModulesTable({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{ module: string; yes: number; no: number; yesRate: number; total: number }>;
+}) {
+  return (
+    <div className="rounded-md border bg-muted/20 p-4">
+      <p className="text-sm font-semibold">{title}</p>
+      {rows.length === 0 ? (
+        <p className="mt-3 text-sm text-muted-foreground">-</p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Module</TableHead>
+              <TableHead className="text-right">Yes</TableHead>
+              <TableHead className="text-right">No</TableHead>
+              <TableHead className="text-right">%</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.module}>
+                <TableCell className="font-medium">{formatFeedbackValue(row.module)}</TableCell>
+                <TableCell className="text-right">{row.yes}</TableCell>
+                <TableCell className="text-right">{row.no}</TableCell>
+                <TableCell className="text-right">{formatRate(row.yesRate)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </div>
+  );
+}
+
 function FunnelRow({
   label,
   value,
@@ -655,6 +793,21 @@ function formatRate(value: number) {
 
 function formatMetric(value: number) {
   return Number.isFinite(value) ? value.toFixed(2) : "-";
+}
+
+function formatFeedbackPercentage(
+  rows: Array<{ value: string; percentage: number }>,
+  value: string,
+) {
+  const row = rows.find((item) => item.value === value);
+  return row ? formatRate(row.percentage) : "0%";
+}
+
+function formatFeedbackValue(value: string) {
+  return value
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function formatAuditEventType(value: string) {
