@@ -4,16 +4,19 @@ import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { PublicDemoBanner } from "@/components/layout/public-demo-banner";
+import { SessionNavigation } from "@/components/layout/session-navigation";
 import { getCopy, type Locale } from "@/lib/i18n";
+import type { BetaSession } from "@/lib/beta-auth";
 import { getTerminologyEntries } from "@/lib/terminology";
 import { LandingBenefitVisual, LandingBrandSlot, LandingProductMockup } from "@/features/landing/landing-visuals";
 import { PrivateBetaSection } from "@/features/private-beta/private-beta-section";
 
 type LandingPageProps = {
   locale: Locale;
+  session: BetaSession | null;
 };
 
-export function LandingPage({ locale }: LandingPageProps) {
+export function LandingPage({ locale, session }: LandingPageProps) {
   const copy = getCopy(locale);
   const terminologyEntries = getTerminologyEntries(locale);
 
@@ -32,10 +35,7 @@ export function LandingPage({ locale }: LandingPageProps) {
               {copy.banner.title}
             </div>
             <LanguageSwitcher locale={locale} />
-            <ButtonLink href="/dashboard" size="sm">
-              {copy.landing.primaryAction}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </ButtonLink>
+            <SessionNavigation locale={locale} session={session} compact />
           </div>
         </div>
       </header>

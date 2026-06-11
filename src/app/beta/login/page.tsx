@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ButtonLink } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { BetaLoginForm } from "@/features/private-beta/beta-login-form";
 import { LOCALE_COOKIE_NAME, resolveLocale } from "@/lib/i18n";
@@ -34,23 +35,21 @@ export default async function BetaLoginPage({ searchParams }: BetaLoginPageProps
     resolvedSearchParams?.lang ?? cookieStore.get(LOCALE_COOKIE_NAME)?.value,
   );
   const nextPath = readSafeNextPath(resolvedSearchParams?.next);
+  const copy = getLoginCopy(locale);
 
   return (
     <main className="min-h-screen bg-background px-5 py-10 text-foreground">
       <section className="mx-auto max-w-lg space-y-5">
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <ButtonLink href="/dashboard" variant="ghost" size="sm">
+            {copy.openObservatory}
+          </ButtonLink>
           <LanguageSwitcher locale={locale} />
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>
-              {locale === "es" ? "Acceso Beta Research" : "Beta Research Access"}
-            </CardTitle>
-            <CardDescription>
-              {locale === "es"
-                ? "Ingresa con el email aprobado para recibir un magic link."
-                : "Sign in with an approved email to receive a magic link."}
-            </CardDescription>
+            <CardTitle>{copy.title}</CardTitle>
+            <CardDescription>{copy.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {resolvedSearchParams?.error ? (
@@ -62,15 +61,50 @@ export default async function BetaLoginPage({ searchParams }: BetaLoginPageProps
             ) : null}
             <BetaLoginForm locale={locale} nextPath={nextPath} />
             <p className="text-xs leading-5 text-muted-foreground">
-              {locale === "es"
-                ? "Solo los usuarios aprobados manualmente pueden activar Beta Research."
-                : "Only manually approved users can activate Beta Research."}
+              {copy.approvedOnly}
             </p>
+            <div className="grid gap-2 rounded-md border bg-muted/20 p-3 text-xs leading-5 text-muted-foreground">
+              <p>{copy.emailAccess}</p>
+              <p>{copy.magicLink}</p>
+              <p>{copy.noPassword}</p>
+            </div>
           </CardContent>
         </Card>
       </section>
     </main>
   );
+}
+
+function getLoginCopy(locale: "es" | "en") {
+  if (locale === "es") {
+    return {
+      openObservatory: "Abrir observatorio",
+      title: "Ingresar a Beta Research",
+      description:
+        "Usa el email aprobado para recibir un enlace seguro de acceso.",
+      approvedOnly:
+        "Solo las cuentas aprobadas pueden activar Beta Research; el Observatorio publico sigue disponible sin iniciar sesion.",
+      emailAccess:
+        "Si tu cuenta fue aprobada, enviaremos el enlace al email registrado.",
+      magicLink:
+        "El acceso usa magic link seguro y expira automaticamente.",
+      noPassword: "No necesitas crear ni recordar una contrasena.",
+    };
+  }
+
+  return {
+    openObservatory: "Open Observatory",
+    title: "Sign in to Beta Research",
+    description:
+      "Use your approved email to receive a secure access link.",
+    approvedOnly:
+      "Only approved accounts can activate Beta Research; the public Observatory remains available without signing in.",
+    emailAccess:
+      "If your account has been approved, the link will be sent to your registered email.",
+    magicLink:
+      "Access uses a secure magic link and expires automatically.",
+    noPassword: "No password is required or stored.",
+  };
 }
 
 function readSafeNextPath(value: string | undefined) {

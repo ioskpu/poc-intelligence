@@ -2,15 +2,23 @@ import { Activity, CircleHelp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { SessionNavigation } from "@/components/layout/session-navigation";
 import { formatDate, getCopy, type Locale } from "@/lib/i18n";
+import type { BetaSession } from "@/lib/beta-auth";
 
 type TopBarProps = {
   generatedAt: string;
   locale: Locale;
   betaLive?: boolean;
+  session?: BetaSession | null;
 };
 
-export function TopBar({ generatedAt, locale, betaLive = false }: TopBarProps) {
+export function TopBar({
+  generatedAt,
+  locale,
+  betaLive = false,
+  session = null,
+}: TopBarProps) {
   const copy = getCopy(locale);
   const formattedDate = formatDate(generatedAt, locale);
 
@@ -30,11 +38,7 @@ export function TopBar({ generatedAt, locale, betaLive = false }: TopBarProps) {
           {betaLive ? copy.topBar.betaLive : copy.topBar.publicDemo}
         </Badge>
         <LanguageSwitcher locale={locale} />
-        {betaLive ? (
-          <ButtonLink href="/api/beta-auth/logout" variant="outline" size="sm">
-            {locale === "es" ? "Salir" : "Logout"}
-          </ButtonLink>
-        ) : null}
+        <SessionNavigation locale={locale} session={session} compact />
         <ButtonLink href="/" variant="ghost" size="sm">
           <CircleHelp className="h-4 w-4" aria-hidden="true" />
           {copy.topBar.overview}

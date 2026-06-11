@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ButtonLink } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { SessionNavigation } from "@/components/layout/session-navigation";
 import { PrivateBetaAdminPanel } from "@/features/private-beta/private-beta-admin-panel";
 import { getPrivateBetaAdminDataWithSession } from "@/services/api/private-beta";
 import {
@@ -62,9 +62,7 @@ export default async function PrivateBetaAdminPage({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <LanguageSwitcher locale={locale} />
-            <ButtonLink href="/" variant="outline" size="sm">
-              Home
-            </ButtonLink>
+            <SessionNavigation locale={locale} session={session} compact />
           </div>
         </div>
       </header>

@@ -35,6 +35,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         locale={locale}
         snapshot={snapshot}
         betaResearchEnabled={betaResearchEnabled}
+        session={betaSession}
       />
     </>
   );

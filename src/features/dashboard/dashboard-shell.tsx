@@ -12,6 +12,7 @@ import { OpportunityRankings } from "@/features/dashboard/opportunity-rankings";
 import { RankingExplanation } from "@/features/dashboard/ranking-explanation";
 import { RecentLabDecisions } from "@/features/dashboard/recent-lab-decisions";
 import { SetupMemory } from "@/features/dashboard/setup-memory";
+import type { BetaSession } from "@/lib/beta-auth";
 import type { Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
@@ -19,12 +20,14 @@ type DashboardShellProps = {
   locale: Locale;
   snapshot: IntelligenceSnapshot;
   betaResearchEnabled?: boolean;
+  session?: BetaSession | null;
 };
 
 export function DashboardShell({
   locale,
   snapshot,
   betaResearchEnabled: sessionBetaResearchEnabled = false,
+  session = null,
 }: DashboardShellProps) {
   const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
   const showBetaResearchLayer = sessionBetaResearchEnabled && betaLiveEnabled;
@@ -34,7 +37,12 @@ export function DashboardShell({
       <AppSidebar locale={locale} betaLive={showBetaResearchLayer} />
       <div className="min-w-0 flex-1">
         <PublicDemoBanner locale={locale} betaLive={showBetaResearchLayer} />
-        <TopBar generatedAt={snapshot.generatedAt} locale={locale} betaLive={showBetaResearchLayer} />
+        <TopBar
+          generatedAt={snapshot.generatedAt}
+          locale={locale}
+          betaLive={showBetaResearchLayer}
+          session={session}
+        />
         <div className="space-y-5 p-4 lg:p-5">
           <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
             <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
