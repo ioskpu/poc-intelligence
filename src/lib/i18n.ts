@@ -382,10 +382,19 @@ export function getCopy(locale: Locale) {
 }
 
 export function formatDate(value: string, locale: Locale) {
+  if (!value || value === "0") {
+    return locale === "es" ? "Sin historial suficiente" : "Insufficient history";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime()) || date.getUTCFullYear() <= 1970) {
+    return locale === "es" ? "Sin historial suficiente" : "Insufficient history";
+  }
+
   return new Intl.DateTimeFormat(locale === "es" ? "es-CO" : "en-US", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function formatNumber(value: number, locale: Locale, options?: Intl.NumberFormatOptions) {

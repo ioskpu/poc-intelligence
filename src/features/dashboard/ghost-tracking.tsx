@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatDate, formatNumber, getCopy, type Locale } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
+import { insufficientDataLabel } from "@/lib/observatory-empty-states";
 import type { GhostTracking as GhostTrackingData } from "@/types/intelligence";
 
 type GhostTrackingProps = {
@@ -13,6 +14,10 @@ type GhostTrackingProps = {
 export function GhostTracking({ ghostTracking, locale }: GhostTrackingProps) {
   const copy = getCopy(locale);
   const humanization = getDashboardHumanization(locale);
+  const hasGhostHistory =
+    ghostTracking.records.length > 0 ||
+    (ghostTracking.settledCount ?? 0) > 0 ||
+    (ghostTracking.pendingCount ?? 0) > 0;
 
   return (
     <Card id="ghost-tracking">
@@ -29,12 +34,12 @@ export function GhostTracking({ ghostTracking, locale }: GhostTrackingProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.settled, ghostTracking.settledCount, locale)}
-          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.pending, ghostTracking.pendingCount, locale)}
-          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.positiveRate, ghostTracking.positiveRate, locale, "%")}
+          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.settled, hasGhostHistory ? ghostTracking.settledCount : null, locale)}
+          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.pending, hasGhostHistory ? ghostTracking.pendingCount : null, locale)}
+          {toSummaryMetric(copy.dashboard.ghostTracking.metrics.positiveRate, hasGhostHistory ? ghostTracking.positiveRate : null, locale, "%")}
           {toSummaryMetric(
             copy.dashboard.ghostTracking.metrics.averageHypotheticalPnl,
-            ghostTracking.averageHypotheticalPnlPct,
+            hasGhostHistory ? ghostTracking.averageHypotheticalPnlPct : null,
             locale,
             "%",
           )}
@@ -109,7 +114,7 @@ function toSummaryMetric(label: string, value: number | null, locale: Locale, su
     <div className="rounded-md border bg-background p-3" key={label}>
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm font-semibold">
-        {value === null ? "-" : formatMetricValue(value, locale, suffix)}
+        {value === null ? insufficientDataLabel(locale) : formatMetricValue(value, locale, suffix)}
       </p>
     </div>
   );

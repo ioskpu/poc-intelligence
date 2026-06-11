@@ -1,6 +1,7 @@
 import { Clock, Hash, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate, getCopy, type Locale } from "@/lib/i18n";
+import { emptyHistoryLabel, formatDisplayText } from "@/lib/observatory-empty-states";
 import type { MarketSummary } from "@/types/intelligence";
 
 type MarketSummaryCardsProps = {
@@ -18,7 +19,7 @@ export function MarketSummaryCards({ summary, locale }: MarketSummaryCardsProps)
     },
     {
       label: copy.dashboard.marketSummary.topSymbol,
-      value: summary.topSymbol,
+      value: formatDisplayText(summary.topSymbol, locale, emptyHistoryLabel(locale)),
       icon: Star,
     },
     {

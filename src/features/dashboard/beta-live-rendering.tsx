@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatNumber, type Locale } from "@/lib/i18n";
+import { formatDisplayText } from "@/lib/observatory-empty-states";
 
 type MetricOptions = {
   suffix?: string;
@@ -10,6 +11,7 @@ type MetricOptions = {
   tooltip?: string;
   advanced?: boolean;
   advancedView?: boolean;
+  locale?: Locale;
 };
 
 export function BetaAdvancedToggle({
@@ -139,7 +141,14 @@ export function renderTextMetric(
     return null;
   }
 
-  return <FieldPill key={label} label={label} tooltip={options.tooltip} value={value} />;
+  return (
+    <FieldPill
+      key={label}
+      label={label}
+      tooltip={options.tooltip}
+      value={formatDisplayText(value, options.locale ?? "es")}
+    />
+  );
 }
 
 export function renderBooleanMetric(

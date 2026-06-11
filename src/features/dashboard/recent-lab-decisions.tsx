@@ -8,6 +8,7 @@ import {
   translateSignalStatus,
   type Locale,
 } from "@/lib/i18n";
+import { formatDisplayText } from "@/lib/observatory-empty-states";
 import type { LabDecision } from "@/types/intelligence";
 
 type RecentLabDecisionsProps = {
@@ -54,7 +55,7 @@ export function RecentLabDecisions({ decisions, locale }: RecentLabDecisionsProp
               </div>
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="rounded-md border px-2 py-1">
-                  {copy.dashboard.recentDecisions.fields.type}: {decision.decisionType}
+                  {copy.dashboard.recentDecisions.fields.type}: {formatDisplayText(decision.decisionType, locale)}
                 </span>
                 {decision.rewardRisk !== null ? (
                   <span className="rounded-md border px-2 py-1">
@@ -63,7 +64,7 @@ export function RecentLabDecisions({ decisions, locale }: RecentLabDecisionsProp
                 ) : null}
                 {decision.setupKey ? (
                   <span className="max-w-full truncate rounded-md border px-2 py-1">
-                    {copy.dashboard.recentDecisions.fields.setup}: {decision.setupKey}
+                    {copy.dashboard.recentDecisions.fields.setup}: {formatDisplayText(decision.setupKey, locale)}
                   </span>
                 ) : null}
               </div>

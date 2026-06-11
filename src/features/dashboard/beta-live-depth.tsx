@@ -6,6 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { type Locale, formatDate, formatNumber, translateSide } from "@/lib/i18n";
 import { getBetaLiveCopy } from "@/lib/beta-live-copy";
 import {
+  formatDisplayText,
+  hasObservations,
+  insufficientDataLabel,
+  pendingEvaluationLabel,
+} from "@/lib/observatory-empty-states";
+import {
   BetaAdvancedToggle,
   BetaDetailsCard,
   EmptyState,
@@ -142,17 +148,17 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                     {item.reason}
                   </p>
                   <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                    {renderTextMetric(copy.fields.decisionType, humanizeDecisionType(item.decisionType, locale))}
-                    {renderTextMetric(copy.fields.selectedSide, item.selectedSide)}
-                    {renderTextMetric(copy.fields.signalOk, humanizeSignalStatus(item.signalStatus, locale))}
+                    {renderTextMetric(copy.fields.decisionType, humanizeDecisionType(item.decisionType, locale), { locale })}
+                    {renderTextMetric(copy.fields.selectedSide, item.selectedSide, { locale })}
+                    {renderTextMetric(copy.fields.signalOk, humanizeSignalStatus(item.signalStatus, locale), { locale })}
                     {renderMetric(copy.fields.estimatedRrRatio, item.rewardRisk, locale, { tooltip: tooltips.estimatedRrRatio })}
-                    {renderTextMetric(copy.fields.trendAlignmentLabel, item.trendAlignmentLabel, { tooltip: tooltips.trendAlignmentLabel })}
+                    {renderTextMetric(copy.fields.trendAlignmentLabel, item.trendAlignmentLabel, { tooltip: tooltips.trendAlignmentLabel, locale })}
                     {renderBooleanMetric(copy.fields.trendSupportsDirection, item.trendSupportsDirection, locale, { tooltip: tooltips.trendSupportsDirection })}
-                    {renderTextMetric(copy.fields.setupKey, item.setupKey, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.setupKeyVersion, item.setupKeyVersion, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.environment, item.environment, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.directionHint, item.directionHint, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.capitalProfile, item.capitalProfile, { advanced: true, advancedView })}
+                    {renderTextMetric(copy.fields.setupKey, item.setupKey, { advanced: true, advancedView, locale })}
+                    {renderTextMetric(copy.fields.setupKeyVersion, item.setupKeyVersion, { advanced: true, advancedView, locale })}
+                    {renderTextMetric(copy.fields.environment, item.environment, { advanced: true, advancedView, locale })}
+                    {renderTextMetric(copy.fields.directionHint, item.directionHint, { advanced: true, advancedView, locale })}
+                    {renderTextMetric(copy.fields.capitalProfile, item.capitalProfile, { advanced: true, advancedView, locale })}
                     {renderMetric(copy.fields.operatingCapital, item.operatingCapital, locale, { advanced: true, advancedView })}
                     {renderBooleanMetric(copy.fields.autoEntryEnabled, item.autoEntryEnabled, locale, { advanced: true, advancedView })}
                     {renderBooleanMetric(copy.fields.autoExitEnabled, item.autoExitEnabled, locale, { advanced: true, advancedView })}
@@ -161,8 +167,8 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                     {renderMetric(copy.fields.stopLossPct, item.stopLossPct, locale, { suffix: "%", multiplyPercent: false, advanced: true, advancedView })}
                     {renderMetric(copy.fields.takeProfitUsdt, item.takeProfitUsdt, locale, { advanced: true, advancedView })}
                     {renderMetric(copy.fields.stopLossUsdt, item.stopLossUsdt, locale, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.oracleRecommendation, item.oracleRecommendation, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.scanBatchId, item.scanBatchId, { advanced: true, advancedView })}
+                    {renderTextMetric(copy.fields.oracleRecommendation, item.oracleRecommendation, { advanced: true, advancedView, locale })}
+                    {renderTextMetric(copy.fields.scanBatchId, item.scanBatchId, { advanced: true, advancedView, locale })}
                   </div>
                 </article>
               ))}
@@ -179,8 +185,11 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
             <EmptyState locale={locale} />
           ) : (
             <div className="grid gap-3 xl:grid-cols-2">
-              {betaLive.setupDepth.map((item) => (
-                <article key={`${item.setupKey}-${item.symbol}-${item.side}`} className="rounded-md border bg-background p-3">
+              {betaLive.setupDepth.map((item) => {
+                const hasHistory = hasObservations(item.tradeCount);
+
+                return (
+                <article key={`${item.symbol}-${item.side}-${item.lastSeenAt}-${item.lastObservedAt}`} className="rounded-md border bg-background p-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p
@@ -193,35 +202,44 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
                       </p>
                       <p className="text-xs text-muted-foreground">{translateSide(item.side, locale)} {locale === "es" ? "Setup" : "Setup"}</p>
                     </div>
-                    <Badge tone={getHealthTone(item.healthLabel, locale)}>
-                      {item.healthLabel}
+                    <Badge tone={hasHistory ? getHealthTone(item.healthLabel, locale) : "neutral"}>
+                      {hasHistory ? formatDisplayText(item.healthLabel, locale) : pendingEvaluationLabel(locale)}
                     </Badge>
                   </div>
                   <div className="mt-3 grid gap-2 md:grid-cols-2">
-                    {renderMetric(copy.fields.tradeCount, item.tradeCount, locale)}
-                    {renderMetric(copy.fields.winRate, item.winRate, locale, { suffix: "%" })}
-                    {renderMetric(copy.fields.pnlTotal, item.pnlTotal, locale, { tooltip: tooltips.pnlTotal })}
-                    {renderMetric(copy.fields.averagePnlPct, item.averagePnlPct, locale, { suffix: "%", tooltip: tooltips.averagePnlPct })}
-                    {renderMetric(copy.fields.healthScore, item.healthScore, locale, { tooltip: tooltips.healthScore })}
-                    {renderTextMetric(copy.fields.lastCloseReason, item.lastCloseReason, { tooltip: tooltips.lastCloseReason })}
-                    {renderTextMetric(copy.fields.lastObservedAt, formatDate(item.lastObservedAt, locale))}
-                    {renderMetric(copy.fields.winCount, item.winCount, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.averagePnl, item.averagePnl, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.averageCapitalReference, item.averageCapitalReference, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.averageHoldTicks, item.averageHoldTicks, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.averageWinPnl, item.averageWinPnl, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.averageLossAbs, item.averageLossAbs, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.lastRealizedPnl, item.lastRealizedPnl, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.lastRealizedPnlPct, item.lastRealizedPnlPct, locale, { suffix: "%", advanced: true, advancedView })}
-                    {renderMetric(copy.fields.cooldownMultiplier, item.cooldownMultiplier, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.suggestedTakeProfitUsdt, item.suggestedTakeProfitUsdt, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.suggestedStopLossUsdt, item.suggestedStopLossUsdt, locale, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.environment, item.environment, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.capitalProfile, item.capitalProfile, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.lane, item.lane, { advanced: true, advancedView })}
+                    {hasHistory ? (
+                      <>
+                        {renderMetric(copy.fields.tradeCount, item.tradeCount, locale)}
+                        {renderMetric(copy.fields.winRate, item.winRate, locale, { suffix: "%" })}
+                        {renderMetric(copy.fields.pnlTotal, item.pnlTotal, locale, { tooltip: tooltips.pnlTotal })}
+                        {renderMetric(copy.fields.averagePnlPct, item.averagePnlPct, locale, { suffix: "%", tooltip: tooltips.averagePnlPct })}
+                        {renderMetric(copy.fields.healthScore, item.healthScore, locale, { tooltip: tooltips.healthScore })}
+                        {renderTextMetric(copy.fields.lastCloseReason, item.lastCloseReason, { tooltip: tooltips.lastCloseReason, locale })}
+                        {renderTextMetric(copy.fields.lastObservedAt, formatDate(item.lastObservedAt, locale), { locale })}
+                        {renderMetric(copy.fields.winCount, item.winCount, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.averagePnl, item.averagePnl, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.averageCapitalReference, item.averageCapitalReference, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.averageHoldTicks, item.averageHoldTicks, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.averageWinPnl, item.averageWinPnl, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.averageLossAbs, item.averageLossAbs, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.lastRealizedPnl, item.lastRealizedPnl, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.lastRealizedPnlPct, item.lastRealizedPnlPct, locale, { suffix: "%", advanced: true, advancedView })}
+                        {renderMetric(copy.fields.cooldownMultiplier, item.cooldownMultiplier, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.suggestedTakeProfitUsdt, item.suggestedTakeProfitUsdt, locale, { advanced: true, advancedView })}
+                        {renderMetric(copy.fields.suggestedStopLossUsdt, item.suggestedStopLossUsdt, locale, { advanced: true, advancedView })}
+                        {renderTextMetric(copy.fields.environment, item.environment, { advanced: true, advancedView, locale })}
+                        {renderTextMetric(copy.fields.capitalProfile, item.capitalProfile, { advanced: true, advancedView, locale })}
+                        {renderTextMetric(copy.fields.lane, item.lane, { advanced: true, advancedView, locale })}
+                      </>
+                    ) : (
+                      <div className="rounded-md border bg-background px-2 py-1 text-xs text-muted-foreground">
+                        {insufficientDataLabel(locale)}
+                      </div>
+                    )}
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </BetaDetailsCard>

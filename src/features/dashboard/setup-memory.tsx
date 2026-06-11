@@ -3,6 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TooltipLabel } from "@/components/ui/tooltip-label";
 import { formatDate, formatNumber, getCopy, translateSide, type Locale } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
+import {
+  formatDisplayText,
+  hasObservations,
+  insufficientDataLabel,
+  pendingEvaluationLabel,
+} from "@/lib/observatory-empty-states";
 import type { SetupMemory as SetupMemoryRecord } from "@/types/intelligence";
 
 type SetupMemoryProps = {
@@ -26,11 +32,14 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
             {copy.dashboard.setupMemory.empty}
           </div>
         ) : (
-          records.map((record) => (
-            <article
-              className="rounded-md border bg-background p-3"
-              key={`${record.setupKey}-${record.symbol}-${record.side}`}
-            >
+          records.map((record) => {
+            const hasHistory = hasObservations(record.tradeCount);
+
+            return (
+              <article
+                className="rounded-md border bg-background p-3"
+                key={`${record.symbol}-${record.side}-${record.lastSeenAt}-${record.lastObservedAt}`}
+              >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -43,12 +52,12 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
                       {record.symbol}
                     </p>
                     <Badge tone="info">{translateSide(record.side, locale)}</Badge>
-                    <Badge tone={getHealthTone(record.healthLabel)}>
-                      {record.healthLabel}
+                    <Badge tone={hasHistory ? getHealthTone(record.healthLabel) : "neutral"}>
+                      {hasHistory ? formatDisplayText(record.healthLabel, locale) : pendingEvaluationLabel(locale)}
                     </Badge>
                   </div>
                   <p className="mt-2 truncate text-xs text-muted-foreground">
-                    {record.setupKey}
+                    {formatDisplayText(record.setupKey, locale)}
                   </p>
                   {record.summaryText ? (
                     <p className="mt-2 text-sm leading-5 text-foreground">
@@ -61,20 +70,29 @@ export function SetupMemory({ records, locale }: SetupMemoryProps) {
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                {toMetric(copy.dashboard.setupMemory.metrics.trades, record.tradeCount, locale)}
-                {toMetric(copy.dashboard.setupMemory.metrics.winRate, record.winRate, locale, "%")}
-                {toMetric(
-                  copy.dashboard.setupMemory.metrics.health,
-                  record.healthScore,
-                  locale,
-                  "",
-                  humanization.tooltips.healthScore,
+                {hasHistory ? (
+                  <>
+                    {toMetric(copy.dashboard.setupMemory.metrics.trades, record.tradeCount, locale)}
+                    {toMetric(copy.dashboard.setupMemory.metrics.winRate, record.winRate, locale, "%")}
+                    {toMetric(
+                      copy.dashboard.setupMemory.metrics.health,
+                      record.healthScore,
+                      locale,
+                      "",
+                      humanization.tooltips.healthScore,
+                    )}
+                    {toMetric(copy.dashboard.setupMemory.metrics.pnl, record.pnlTotal, locale)}
+                    {toMetric(copy.dashboard.setupMemory.metrics.averagePnl, record.averagePnl, locale)}
+                  </>
+                ) : (
+                  <span className="rounded-md border px-2 py-1">
+                    {insufficientDataLabel(locale)}
+                  </span>
                 )}
-                {toMetric(copy.dashboard.setupMemory.metrics.pnl, record.pnlTotal, locale)}
-                {toMetric(copy.dashboard.setupMemory.metrics.averagePnl, record.averagePnl, locale)}
               </div>
             </article>
-          ))
+            );
+          })
         )}
       </CardContent>
     </Card>
