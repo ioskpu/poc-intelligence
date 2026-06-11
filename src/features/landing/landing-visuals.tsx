@@ -3,6 +3,7 @@ import {
   ArrowUpRight,
   TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCopy, type Locale } from "@/lib/i18n";
@@ -31,9 +32,14 @@ const ghostHistory = [
 
 export function LandingBrandSlot() {
   return (
-    <div
-      className="h-10 w-10 shrink-0 rounded-md border border-dashed bg-muted/35"
-      aria-label="Reserved logo space"
+    <Image
+      src="/poc-intelligence-mark.png"
+      alt=""
+      width={40}
+      height={40}
+      aria-hidden="true"
+      className="h-10 w-10 shrink-0 rounded-md border border-border bg-black object-cover"
+      priority
     />
   );
 }
