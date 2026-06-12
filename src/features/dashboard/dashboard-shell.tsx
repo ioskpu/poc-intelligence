@@ -15,7 +15,7 @@ import { SetupMemory } from "@/features/dashboard/setup-memory";
 import { DashboardFeedbackController } from "@/features/feedback/feedback-prompt";
 import { ProductAnalyticsTracker } from "@/features/product-analytics/product-analytics-tracker";
 import type { BetaSession } from "@/lib/beta-auth";
-import type { Locale } from "@/lib/i18n";
+import { getCopy, type Locale } from "@/lib/i18n";
 import type { IntelligenceSnapshot } from "@/types/intelligence";
 
 type DashboardShellProps = {
@@ -33,6 +33,7 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const betaLiveEnabled = Boolean(snapshot.betaLiveInsights);
   const showBetaResearchLayer = sessionBetaResearchEnabled && betaLiveEnabled;
+  const copy = getCopy(locale);
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
@@ -85,33 +86,57 @@ export function DashboardShell({
           betaLive={showBetaResearchLayer}
           session={session}
         />
-        <div className="space-y-5 p-4 lg:p-5">
-          <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-            <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
-            <ChangeAwareness changeAwareness={snapshot.changeAwareness} locale={locale} />
+        <div className="space-y-8 p-4 lg:p-5">
+          <FreshnessStrip freshness={snapshot.marketSummary.freshness} locale={locale} />
+
+          <section className="rounded-xl bg-gradient-to-br from-muted/40 to-transparent p-6 md:p-8">
+            <div className="mb-6">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {copy.dashboard.intelligenceBrief.title}
+              </h1>
+            </div>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <IntelligenceBrief brief={snapshot.intelligenceBrief} locale={locale} />
+              <ChangeAwareness changeAwareness={snapshot.changeAwareness} locale={locale} />
+            </div>
           </section>
-          <section className="space-y-4">
+
+          <section className="space-y-5">
             <MarketSummaryCards summary={snapshot.marketSummary} locale={locale} />
-            <FreshnessStrip freshness={snapshot.marketSummary.freshness} locale={locale} />
-          </section>
-          <section className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-            <MarketRankings rankings={snapshot.marketRankings} locale={locale} />
             <RankingExplanation
               lastUpdatedAt={snapshot.marketSummary.lastUpdatedAt}
               locale={locale}
             />
+            <MarketRankings rankings={snapshot.marketRankings} locale={locale} />
           </section>
-          <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
-          <SetupMemory records={snapshot.setupMemory} locale={locale} />
-          <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
-          <section className="space-y-6">
+
+          <Separator className="my-8" />
+
+          <section className="space-y-5">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">
+                {locale === "es" ? "Análisis Profundo" : "Deep Analysis"}
+              </h2>
+            </div>
             <OpportunityRankings rankings={snapshot.opportunityRankings} locale={locale} />
+            <GhostTracking ghostTracking={snapshot.ghostTracking} locale={locale} />
+            <SetupMemory records={snapshot.setupMemory} locale={locale} />
+            <RecentLabDecisions decisions={snapshot.labDecisions} locale={locale} />
+            {showBetaResearchLayer ? (
+              <BetaResearchLayer betaLive={snapshot.betaLiveInsights!} locale={locale} />
+            ) : null}
           </section>
-          {showBetaResearchLayer ? (
-            <BetaResearchLayer betaLive={snapshot.betaLiveInsights!} locale={locale} />
-          ) : null}
         </div>
       </div>
     </main>
+  );
+}
+
+function Separator({ className = "" }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`h-px w-full bg-border ${className}`}
+    />
   );
 }
