@@ -74,7 +74,7 @@ export function IntelligenceBrief({ brief, locale }: IntelligenceBriefProps) {
                 </div>
                 
                 <div className="mb-2">
-                  <Badge variant="secondary" className="font-semibold text-xs py-0.5 px-2 bg-secondary/50 hover:bg-secondary/70">
+                  <Badge tone="neutral" className="font-semibold text-xs py-0.5 px-2">
                     {formatBriefValue(item.value, item.detail, locale)}
                   </Badge>
                 </div>
