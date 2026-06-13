@@ -5,6 +5,7 @@ import { ChangeAwareness } from "@/features/dashboard/change-awareness";
 import { FreshnessStrip } from "@/features/dashboard/freshness-strip";
 import { GhostTracking } from "@/features/dashboard/ghost-tracking";
 import { IntelligenceBrief } from "@/features/dashboard/intelligence-brief";
+import { InsightCards } from "@/features/dashboard/insight-cards";
 import { MarketSummaryCards } from "@/features/dashboard/market-summary-cards";
 import { MarketRankings } from "@/features/dashboard/market-rankings";
 import { BetaResearchLayer } from "@/features/dashboard/beta-research-layer";
@@ -88,6 +89,8 @@ export function DashboardShell({
         />
         <div className="space-y-8 p-4 lg:p-5">
           <FreshnessStrip freshness={snapshot.marketSummary.freshness} locale={locale} />
+          
+          <InsightCards snapshot={snapshot} locale={locale} />
 
           <section className="rounded-xl bg-gradient-to-br from-muted/40 to-transparent p-6 md:p-8">
             <div className="mb-6">

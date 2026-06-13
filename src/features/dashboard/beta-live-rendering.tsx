@@ -123,12 +123,16 @@ export function renderMetric(
 
   const suffix = options.suffix ?? "";
   const multiplyPercent = options.multiplyPercent ?? suffix === "%";
+  
+  // Use 2 decimal places for percentages, 4 for other small numbers, and 0 for large ones if they are integers
   const formatted =
     suffix === "%"
       ? multiplyPercent
-        ? `${formatNumber(value * 100, locale, { maximumFractionDigits: 2 })}%`
-        : `${formatNumber(value, locale, { maximumFractionDigits: 2 })}%`
-      : formatNumber(value, locale, { maximumFractionDigits: 4 });
+        ? `${formatNumber(value * 100, locale, { maximumFractionDigits: 2, minimumFractionDigits: 1 })}%`
+        : `${formatNumber(value, locale, { maximumFractionDigits: 2, minimumFractionDigits: 1 })}%`
+      : Math.abs(value) > 1000 && Number.isInteger(value)
+        ? formatNumber(value, locale, { maximumFractionDigits: 0 })
+        : formatNumber(value, locale, { maximumFractionDigits: 4, minimumFractionDigits: 0 });
 
   return (
     <FieldPill key={label} label={label} tooltip={options.tooltip} value={formatted} />

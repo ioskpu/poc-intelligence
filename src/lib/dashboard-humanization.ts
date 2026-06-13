@@ -22,6 +22,7 @@ type DashboardHumanization = {
     maxAdverseExcursion: string;
     healthScore: string;
   };
+  insights: Record<string, string>;
 };
 
 const copy: Record<Locale, DashboardHumanization> = {
@@ -51,6 +52,19 @@ const copy: Record<Locale, DashboardHumanization> = {
         "Máximo retroceso adverso observado después de que apareció el Setup.",
       healthScore: "Señal resumida de la salud histórica del Setup.",
     },
+    insights: {
+      short_bias: "Presión bajista predominante",
+      long_bias: "Presión alcista predominante",
+      funding_flat: "El mercado no muestra desequilibrios relevantes",
+      lab_disabled: "El motor descartó esta oportunidad",
+      align_no_support: "No existe suficiente confirmación entre señales",
+      neutral: "Condiciones mixtas",
+      fragile: "Condiciones inestables",
+      strong: "Condiciones favorables",
+      "no historical memory": "Sin historial suficiente",
+      "insufficient history": "Sin historial suficiente",
+      "no observations recorded": "Sin observaciones registradas",
+    },
   },
   en: {
     tooltips: {
@@ -78,9 +92,41 @@ const copy: Record<Locale, DashboardHumanization> = {
         "The strongest adverse move seen after the Setup appeared.",
       healthScore: "A compact signal for the historical health of the Setup.",
     },
+    insights: {
+      short_bias: "Predominant bearish pressure",
+      long_bias: "Predominant bullish pressure",
+      funding_flat: "Market shows no relevant imbalances",
+      lab_disabled: "Engine discarded this opportunity",
+      align_no_support: "Insufficient confirmation between signals",
+      neutral: "Mixed conditions",
+      fragile: "Unstable conditions",
+      strong: "Favorable conditions",
+      "no historical memory": "Insufficient history",
+      "insufficient history": "Insufficient history",
+      "no observations recorded": "No observations recorded",
+    },
   },
 };
 
 export function getDashboardHumanization(locale: Locale) {
   return copy[locale];
+}
+
+export function humanizeInsight(value: string, locale: Locale): string {
+  const humanization = getDashboardHumanization(locale);
+  const normalized = value.trim().toLowerCase();
+  
+  // Try exact match first
+  if (humanization.insights[normalized]) {
+    return humanization.insights[normalized];
+  }
+
+  // Handle common technical patterns
+  let result = value;
+  Object.entries(humanization.insights).forEach(([code, humanText]) => {
+    const regex = new RegExp(`\\b${code}\\b`, "gi");
+    result = result.replace(regex, humanText);
+  });
+
+  return result;
 }

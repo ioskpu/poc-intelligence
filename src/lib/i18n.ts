@@ -535,3 +535,34 @@ export function translateFreshnessLabel(value: string, locale: Locale) {
 
   return value;
 }
+
+export function formatHumanDuration(minutes: number | null | undefined, locale: Locale) {
+  if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) {
+    return locale === "es" ? "Tiempo desconocido" : "Unknown time";
+  }
+
+  if (minutes < 1) {
+    return locale === "es" ? "Menos de un minuto" : "Less than a minute";
+  }
+
+  if (minutes < 60) {
+    const rounded = Math.round(minutes);
+    return locale === "es" 
+      ? `Hace ${rounded} ${rounded === 1 ? "minuto" : "minutos"}` 
+      : `${rounded} ${rounded === 1 ? "minute" : "minutes"} ago`;
+  }
+
+  const hours = minutes / 60;
+  if (hours < 24) {
+    const rounded = Math.round(hours);
+    return locale === "es" 
+      ? `Hace ${rounded} ${rounded === 1 ? "hora" : "horas"}` 
+      : `${rounded} ${rounded === 1 ? "hour" : "hours"} ago`;
+  }
+
+  const days = hours / 24;
+  const rounded = Math.round(days);
+  return locale === "es" 
+    ? `Hace ${rounded} ${rounded === 1 ? "día" : "días"}` 
+    : `${rounded} ${rounded === 1 ? "day" : "days"} ago`;
+}

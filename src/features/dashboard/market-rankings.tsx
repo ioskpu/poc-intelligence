@@ -3,7 +3,6 @@ import {
   TrendingDown, 
   Minus, 
   Activity, 
-  AlertTriangle, 
   BarChart3,
   Search,
   Zap
@@ -121,11 +120,18 @@ export function MarketRankings({ rankings, locale }: MarketRankingsProps) {
                         </span>
                       </div>
                       
-                      {ranking.rankingReason ? (
-                        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-1 group-hover:line-clamp-none transition-all">
-                          {formatDisplayText(ranking.rankingReason, locale, insufficientDataLabel(locale))}
+                      <div className="mt-1.5 space-y-1">
+                        {ranking.rankingReason ? (
+                          <p className="text-xs leading-relaxed text-foreground/80 font-medium">
+                            {formatDisplayText(ranking.rankingReason, locale, insufficientDataLabel(locale))}
+                          </p>
+                        ) : null}
+                        <p className="text-[11px] leading-relaxed text-muted-foreground italic">
+                          {locale === "es" 
+                            ? `Actualmente predomina ${translateDirection(ranking.direction, locale).toLowerCase()} en un contexto de ${ranking.regime.toLowerCase()}.`
+                            : `Currently ${translateDirection(ranking.direction, locale).toLowerCase()} bias prevails within a ${ranking.regime.toLowerCase()} context.`}
                         </p>
-                      ) : null}
+                      </div>
                     </div>
                   </TableCell>
                   
@@ -196,7 +202,8 @@ export function MarketRankings({ rankings, locale }: MarketRankingsProps) {
                     <div className="flex flex-col items-end">
                       <span className="text-xl font-black tracking-tighter text-foreground">
                         {formatNumber(ranking.consistencyScore, locale, {
-                          maximumFractionDigits: 0,
+                          maximumFractionDigits: 1,
+                          minimumFractionDigits: 1,
                         })}
                       </span>
                       <span className="text-[9px] uppercase tracking-widest text-muted-foreground/50 font-bold">

@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
 import {
   formatDate,
-  formatNumber,
+  formatHumanDuration,
   translateFreshnessLabel,
   type Locale,
 } from "@/lib/i18n";
@@ -78,18 +78,13 @@ function getFreshnessLabel(isFresh: boolean | null, locale: Locale) {
 }
 
 function formatFreshness(status: FreshnessStatus, locale: Locale) {
-  const age =
-    status.ageMinutes === null
-      ? locale === "es"
-        ? "edad no disponible"
-        : "age unavailable"
-      : `${formatNumber(status.ageMinutes, locale)} ${locale === "es" ? "min de antigüedad" : "min old"}`;
+  const age = formatHumanDuration(status.ageMinutes, locale);
 
   if (!status.timestamp) {
     return age;
   }
 
-  return `${age} - ${formatDate(status.timestamp, locale)}`;
+  return `${age} (${formatDate(status.timestamp, locale)})`;
 }
 
 function getFreshnessTooltip(label: string, tooltips: ReturnType<typeof getDashboardHumanization>["tooltips"]) {

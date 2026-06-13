@@ -1,4 +1,4 @@
-import { Brain, Sparkles, CheckCircle2, AlertCircle, Info } from "lucide-react";
+import { Brain, Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getCopy, type Locale } from "@/lib/i18n";
@@ -6,6 +6,7 @@ import {
   insufficientDataLabel,
   pendingEvaluationLabel,
   pendingClassificationLabel,
+  formatDisplayText,
 } from "@/lib/observatory-empty-states";
 import type { IntelligenceBrief as IntelligenceBriefData } from "@/types/intelligence";
 
@@ -49,13 +50,13 @@ export function IntelligenceBrief({ brief, locale }: IntelligenceBriefProps) {
       <CardContent className="space-y-6">
         <div className="rounded-lg bg-primary/5 p-4 border border-primary/10">
           <p className="text-base font-medium leading-relaxed text-foreground/90">
-            {brief.headline}
+            {humanizeHeadline(brief.headline, locale)}
           </p>
         </div>
 
         <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {brief.items.map((item) => {
-            const isWarning = /unknown|pending/i.test(item.value) || /0 times/i.test(item.detail);
+            const isWarning = /unknown|pending|0 times/i.test(item.value) || /observed 0 times/i.test(item.detail);
             
             return (
               <li 
@@ -80,7 +81,7 @@ export function IntelligenceBrief({ brief, locale }: IntelligenceBriefProps) {
                 </div>
 
                 <p className="text-xs leading-5 text-muted-foreground line-clamp-2 italic">
-                  {formatBriefDetail(item.detail, locale)}
+                  {formatDisplayText(item.detail, locale, insufficientDataLabel(locale))}
                 </p>
               </li>
             );
@@ -91,19 +92,29 @@ export function IntelligenceBrief({ brief, locale }: IntelligenceBriefProps) {
   );
 }
 
+function humanizeHeadline(headline: string, locale: Locale): string {
+  if (!headline) return "";
+
+  // Example: "VELVETUSDT leads the current Futures Lab ranking at 97.06"
+  // Desired: "VELVETUSDT destaca actualmente por presentar condiciones más sólidas que el resto de mercados observados."
+  
+  const leadsRegex = /([\w]+)\s+leads the current Futures Lab ranking at\s+([\d.]+)/i;
+  const match = headline.match(leadsRegex);
+
+  if (match && locale === "es") {
+    return `${match[1]} destaca actualmente por presentar condiciones más sólidas que el resto de mercados observados.`;
+  }
+  
+  if (match && locale === "en") {
+    return `${match[1]} currently stands out with stronger conditions than other observed markets.`;
+  }
+
+  return formatDisplayText(headline, locale);
+}
+
 function formatBriefValue(value: string, detail: string, locale: Locale) {
   if (/observed 0 times/i.test(detail)) {
     return pendingEvaluationLabel(locale);
   }
-  return formatBriefDetail(value, locale);
-}
-
-function formatBriefDetail(value: string, locale: Locale) {
-  if (!value.trim()) {
-    return insufficientDataLabel(locale);
-  }
-
-  return value
-    .replace(/\bunknown\b/gi, pendingClassificationLabel(locale))
-    .replace(/observed 0 times/gi, locale === "es" ? "sin observaciones registradas" : "no observations recorded");
+  return formatDisplayText(value, locale, pendingClassificationLabel(locale));
 }

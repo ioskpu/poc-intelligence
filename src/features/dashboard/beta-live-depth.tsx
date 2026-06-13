@@ -67,43 +67,44 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
           ) : (
             <div className="space-y-3">
               {betaLive.scannerDetails.map((item) => (
-                <article key={`${item.scanBatchId ?? "batch"}-${item.symbol}`} className="rounded-md border bg-background p-3">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                      <p
-                        className="text-sm font-semibold"
-                        data-analytics-module="beta-research"
-                        data-analytics-ranking="beta-scanner"
-                        data-analytics-symbol={item.symbol}
-                      >
-                        #{item.rank} {item.symbol}
-                      </p>
+                <article key={`${item.scanBatchId ?? "batch"}-${item.symbol}`} className="rounded-md border bg-background p-3 transition-all hover:border-primary/20">
+                  <div className="flex flex-wrap items-start justify-between gap-4 border-b pb-3 mb-3">
+                    <div className="flex items-center gap-3">
+                      <p className="text-sm font-bold">#{item.rank} {item.symbol}</p>
+                      <Badge tone={item.orderValid === false ? "warning" : item.orderValid === true ? "positive" : "neutral"}>
+                        {item.orderValid === false ? (locale === "es" ? "No válida" : "Invalid") : item.orderValid === true ? (locale === "es" ? "Válida" : "Valid") : pendingEvaluationLabel(locale)}
+                      </Badge>
                     </div>
-                    <Badge tone={item.orderValid === false ? "warning" : item.orderValid === true ? "positive" : "neutral"}>
-                      {item.orderValid === false
-                        ? locale === "es"
-                          ? "No válida"
-                          : "Invalid"
-                        : item.orderValid === true
-                          ? locale === "es"
-                            ? "Válida"
-                            : "Valid"
-                          : pendingEvaluationLabel(locale)}
-                    </Badge>
+                    <div className="flex flex-col items-end">
+                      <span className="text-lg font-black tracking-tighter text-foreground">
+                        {formatNumber(item.consistencyScore, locale, { maximumFractionDigits: 1, minimumFractionDigits: 1 })}
+                      </span>
+                    </div>
                   </div>
-                  <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-                    {renderMetric(copy.fields.lastPrice, item.lastPrice, locale)}
-                    {renderMetric(copy.fields.quoteVolume, item.quoteVolume, locale, { tooltip: tooltips.quoteVolume })}
-                    {renderMetric(copy.fields.rangePct, item.rangePct, locale, { suffix: "%", multiplyPercent: false, tooltip: tooltips.rangePct })}
-                    {renderMetric(copy.fields.longShortBalance, item.longShortBalance, locale, { tooltip: tooltips.longShortBalance })}
-                    {renderMetric(copy.fields.priceChangePct, item.priceChangePct, locale, { suffix: "%", multiplyPercent: false, tooltip: tooltips.priceChangePct })}
-                    {renderMetric(copy.fields.trendStrengthPct, item.trendStrengthPct, locale, { suffix: "%", multiplyPercent: false, tooltip: tooltips.trendStrengthPct })}
-                    {renderMetric(copy.fields.realizedVolatilityPct, item.realizedVolatilityPct, locale, { suffix: "%", multiplyPercent: false, tooltip: tooltips.realizedVolatilityPct })}
-                    {renderMetric(copy.fields.fundingRate, item.fundingRate, locale, { tooltip: tooltips.fundingRate })}
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-foreground">
-                    {copy.fields.rankingReason}: {formatDisplayText(item.rankingReason, locale, insufficientDataLabel(locale))}
+                  
+                  {/* Nivel 1: Explicación humana */}
+                  <p className="text-sm leading-relaxed text-foreground font-medium">
+                    {formatDisplayText(item.rankingReason, locale, insufficientDataLabel(locale))}
                   </p>
+
+                  {/* Nivel 2: Métricas de mercado (expandible opcionalmente o siempre visibles si no es avanzado) */}
+                  <div className="mt-4 grid gap-2 grid-cols-2 sm:grid-cols-4">
+                    {renderMetric(copy.fields.lastPrice, item.lastPrice, locale)}
+                    {renderMetric(copy.fields.priceChangePct, item.priceChangePct, locale, { suffix: "%", multiplyPercent: false })}
+                    {renderMetric(copy.fields.trendStrengthPct, item.trendStrengthPct, locale, { suffix: "%", multiplyPercent: false })}
+                    {renderMetric(copy.fields.realizedVolatilityPct, item.realizedVolatilityPct, locale, { suffix: "%", multiplyPercent: false })}
+                  </div>
+
+                  {/* Nivel 3: Detalles técnicos (Solo en vista avanzada) */}
+                  {advancedView && (
+                    <div className="mt-3 pt-3 border-t grid gap-2 grid-cols-2 sm:grid-cols-4 bg-muted/20 rounded p-2">
+                      {renderMetric(copy.fields.quoteVolume, item.quoteVolume, locale, { tooltip: tooltips.quoteVolume })}
+                      {renderMetric(copy.fields.rangePct, item.rangePct, locale, { suffix: "%", multiplyPercent: false, tooltip: tooltips.rangePct })}
+                      {renderMetric(copy.fields.longShortBalance, item.longShortBalance, locale, { tooltip: tooltips.longShortBalance })}
+                      {renderMetric(copy.fields.fundingRate, item.fundingRate, locale, { tooltip: tooltips.fundingRate })}
+                      {renderTextMetric(copy.fields.scanBatchId, item.scanBatchId, { locale })}
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
@@ -120,54 +121,47 @@ export function BetaLiveDepth({ betaLive, locale }: BetaLiveDepthProps) {
           ) : (
             <div className="space-y-3">
               {betaLive.decisionContext.map((item) => (
-                <article key={`${item.symbol}-${item.observedAt}-${item.setupKey}`} className="rounded-md border bg-background p-3">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                <article key={`${item.symbol}-${item.observedAt}-${item.setupKey}`} className="rounded-md border bg-background p-3 transition-all hover:border-primary/20">
+                  <div className="flex flex-wrap items-start justify-between gap-3 border-b pb-3 mb-3">
                     <div>
-                      <p
-                        className="text-sm font-semibold"
-                        data-analytics-module="beta-research"
-                        data-analytics-ranking="beta-decisions"
-                        data-analytics-symbol={item.symbol}
-                      >
-                        {item.symbol}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-bold">{item.symbol}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                         {formatDate(item.observedAt, locale)}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Badge tone="info">{translateSide(item.selectedSide, locale)}</Badge>
-                      <Badge tone={item.signalStatus === "Signal OK" ? "positive" : item.signalStatus === "Signal not OK" ? "warning" : "neutral"}>
+                      <Badge tone="info" className="px-2 py-0 text-[10px] uppercase">{translateSide(item.selectedSide, locale)}</Badge>
+                      <Badge tone={item.signalStatus === "Signal OK" ? "positive" : item.signalStatus === "Signal not OK" ? "warning" : "neutral"} className="px-2 py-0 text-[10px] uppercase">
                         {humanizeSignalStatus(item.signalStatus, locale)}
                       </Badge>
                     </div>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-foreground">
-                    {item.reason}
+                  
+                  {/* Nivel 1: Razón humana */}
+                  <p className="text-sm leading-relaxed text-foreground font-medium">
+                    {formatDisplayText(item.reason, locale, insufficientDataLabel(locale))}
                   </p>
-                  <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                  
+                  {/* Nivel 2: Métricas relevantes */}
+                  <div className="mt-4 grid gap-2 grid-cols-2 sm:grid-cols-4">
                     {renderTextMetric(copy.fields.decisionType, humanizeDecisionType(item.decisionType, locale), { locale })}
-                    {renderTextMetric(copy.fields.selectedSide, item.selectedSide, { locale })}
-                    {renderTextMetric(copy.fields.signalOk, humanizeSignalStatus(item.signalStatus, locale), { locale })}
                     {renderMetric(copy.fields.estimatedRrRatio, item.rewardRisk, locale, { tooltip: tooltips.estimatedRrRatio })}
                     {renderTextMetric(copy.fields.trendAlignmentLabel, item.trendAlignmentLabel, { tooltip: tooltips.trendAlignmentLabel, locale })}
                     {renderBooleanMetric(copy.fields.trendSupportsDirection, item.trendSupportsDirection, locale, { tooltip: tooltips.trendSupportsDirection })}
-                    {renderTextMetric(copy.fields.setupKey, item.setupKey, { advanced: true, advancedView, locale })}
-                    {renderTextMetric(copy.fields.setupKeyVersion, item.setupKeyVersion, { advanced: true, advancedView, locale })}
-                    {renderTextMetric(copy.fields.environment, item.environment, { advanced: true, advancedView, locale })}
-                    {renderTextMetric(copy.fields.directionHint, item.directionHint, { advanced: true, advancedView, locale })}
-                    {renderTextMetric(copy.fields.capitalProfile, item.capitalProfile, { advanced: true, advancedView, locale })}
-                    {renderMetric(copy.fields.operatingCapital, item.operatingCapital, locale, { advanced: true, advancedView })}
-                    {renderBooleanMetric(copy.fields.autoEntryEnabled, item.autoEntryEnabled, locale, { advanced: true, advancedView })}
-                    {renderBooleanMetric(copy.fields.autoExitEnabled, item.autoExitEnabled, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.leverage, item.leverage, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.takeProfitPct, item.takeProfitPct, locale, { suffix: "%", multiplyPercent: false, advanced: true, advancedView })}
-                    {renderMetric(copy.fields.stopLossPct, item.stopLossPct, locale, { suffix: "%", multiplyPercent: false, advanced: true, advancedView })}
-                    {renderMetric(copy.fields.takeProfitUsdt, item.takeProfitUsdt, locale, { advanced: true, advancedView })}
-                    {renderMetric(copy.fields.stopLossUsdt, item.stopLossUsdt, locale, { advanced: true, advancedView })}
-                    {renderTextMetric(copy.fields.oracleRecommendation, item.oracleRecommendation, { advanced: true, advancedView, locale })}
-                    {renderTextMetric(copy.fields.scanBatchId, item.scanBatchId, { advanced: true, advancedView, locale })}
                   </div>
+
+                  {/* Nivel 3: Detalles técnicos */}
+                  {advancedView && (
+                    <div className="mt-3 pt-3 border-t grid gap-2 grid-cols-2 sm:grid-cols-4 bg-muted/20 rounded p-2">
+                      {renderTextMetric(copy.fields.setupKey, item.setupKey, { locale })}
+                      {renderTextMetric(copy.fields.environment, item.environment, { locale })}
+                      {renderTextMetric(copy.fields.directionHint, item.directionHint, { locale })}
+                      {renderMetric(copy.fields.leverage, item.leverage, locale)}
+                      {renderMetric(copy.fields.takeProfitPct, item.takeProfitPct, locale, { suffix: "%", multiplyPercent: false })}
+                      {renderMetric(copy.fields.stopLossPct, item.stopLossPct, locale, { suffix: "%", multiplyPercent: false })}
+                      {renderTextMetric(copy.fields.oracleRecommendation, item.oracleRecommendation, { locale })}
+                    </div>
+                  )}
                 </article>
               ))}
             </div>

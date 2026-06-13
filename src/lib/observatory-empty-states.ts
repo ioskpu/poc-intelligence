@@ -1,4 +1,5 @@
 import { formatDate, formatNumber, type Locale } from "@/lib/i18n";
+import { humanizeInsight } from "@/lib/dashboard-humanization";
 
 export function emptyHistoryLabel(locale: Locale) {
   return locale === "es" ? "Sin historial suficiente" : "Insufficient history";
@@ -9,15 +10,15 @@ export function noObservationsLabel(locale: Locale) {
 }
 
 export function insufficientDataLabel(locale: Locale) {
-  return locale === "es" ? "Datos insuficientes" : "Insufficient data";
+  return locale === "es" ? "No existen registros suficientes todavía" : "No sufficient records exist yet";
 }
 
 export function pendingEvaluationLabel(locale: Locale) {
-  return locale === "es" ? "Pendiente de evaluación" : "Pending evaluation";
+  return locale === "es" ? "El sistema continúa observando el mercado" : "The system continues observing the market";
 }
 
 export function pendingClassificationLabel(locale: Locale) {
-  return locale === "es" ? "Clasificación pendiente" : "Classification pending";
+  return locale === "es" ? "No se detectaron registros todavía" : "No records detected yet";
 }
 
 export function hasObservations(value: number | null | undefined) {
@@ -55,11 +56,12 @@ export function formatDisplayText(
   fallback?: string,
 ) {
   const normalized = (value ?? "").trim();
-  if (!normalized || normalized.toLowerCase() === "unknown") {
+  
+  if (!normalized || /unknown|undefined|null|nan|infinity/i.test(normalized)) {
     return fallback ?? pendingClassificationLabel(locale);
   }
 
-  return normalized;
+  return humanizeInsight(normalized, locale);
 }
 
 export function formatObservedMetric(
@@ -75,5 +77,10 @@ export function formatObservedMetric(
   const multiplyPercent = options?.multiplyPercent ?? suffix === "%";
   const displayValue = suffix === "%" && multiplyPercent ? value * 100 : value;
 
-  return `${formatNumber(displayValue, locale, options)}${suffix}`;
+  const defaultOptions: Intl.NumberFormatOptions = {
+    maximumFractionDigits: suffix === "%" ? 2 : 4,
+    ...options,
+  };
+
+  return `${formatNumber(displayValue, locale, defaultOptions)}${suffix}`;
 }

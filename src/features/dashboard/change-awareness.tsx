@@ -3,19 +3,16 @@ import {
   ArrowDownRight, 
   Sparkles, 
   CheckCircle2, 
-  Clock, 
   Zap, 
   Search, 
   Eye,
-  Info,
   Activity
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipLabel } from "@/components/ui/tooltip-label";
-import { getCopy, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
 import { getDashboardHumanization } from "@/lib/dashboard-humanization";
 import type { ChangeAwareness as ChangeAwarenessData } from "@/types/intelligence";
-import { cn } from "@/lib/utils";
 
 type ChangeAwarenessProps = {
   changeAwareness: ChangeAwarenessData;
@@ -23,7 +20,6 @@ type ChangeAwarenessProps = {
 };
 
 export function ChangeAwareness({ changeAwareness, locale }: ChangeAwarenessProps) {
-  const copy = getCopy(locale);
   const humanization = getDashboardHumanization(locale);
 
   const title = locale === "es" ? "Novedades del Mercado" : "Market Updates";
