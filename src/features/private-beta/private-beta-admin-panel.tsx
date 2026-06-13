@@ -1,3 +1,23 @@
+"use client";
+
+import { useState } from "react";
+import { 
+  Users, 
+  UserPlus, 
+  Mail, 
+  Unlock, 
+  LogIn, 
+  Activity, 
+  BarChart3, 
+  PieChart, 
+  ShieldAlert,
+  ArrowUpRight,
+  MousePointer2,
+  Clock,
+  Heart,
+  TrendingUp,
+  Layout
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,6 +38,7 @@ import { PrivateBetaAccountTable } from "@/features/private-beta/private-beta-ac
 import { PrivateBetaRequestActions } from "@/features/private-beta/private-beta-request-actions";
 import { PrivateBetaSessionTable } from "@/features/private-beta/private-beta-session-table";
 import { ProductAnalyticsTracker } from "@/features/product-analytics/product-analytics-tracker";
+import { cn } from "@/lib/utils";
 import type {
   PrivateBetaAdminSnapshot,
   PrivateBetaAnalytics,
@@ -40,17 +61,12 @@ export function PrivateBetaAdminPanel({
   productAnalytics,
   feedbackAnalytics,
 }: PrivateBetaAdminPanelProps) {
+  const [activeTab, setActiveTab] = useState<"activity" | "analytics" | "perception">("activity");
   const copy = getPrivateBetaCopy(locale);
-  const experienceLabels = new Map(
-    getPrivateBetaExperienceOptions(locale).map((option) => [
-      option.value,
-      option.label,
-    ]),
-  );
+  
   const pendingRequests = snapshot.requests.filter(
     (request) => request.status === "Pending",
   );
-  const activeSessions = snapshot.sessions.filter((session) => !session.revokedAt);
   const invitationsSent = snapshot.accounts.filter(
     (account) => account.invitationSentAt,
   );
@@ -62,729 +78,320 @@ export function PrivateBetaAdminPanel({
   );
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="mx-auto max-w-[1600px] p-4 space-y-4 bg-background text-foreground min-h-screen">
       <ProductAnalyticsTracker
         enabled
         pageViewEvent="admin_dashboard_view"
         pageViewMetadata={{ module: "admin" }}
         events={[]}
       />
-      <section className="mx-auto max-w-7xl space-y-6 px-6 py-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-2">
-            <Badge tone="info" className="w-fit">
-              {copy.admin.badge}
-            </Badge>
+
+      {/* FILA 1: KPIs Compactos */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <KPICard 
+          label={copy.admin.metrics.pendingRequests} 
+          value={pendingRequests.length} 
+          icon={<UserPlus className="h-4 w-4" />} 
+          color="text-amber-500"
+        />
+        <KPICard 
+          label={copy.admin.metrics.approvedAccounts} 
+          value={snapshot.accounts.length} 
+          icon={<Users className="h-4 w-4" />} 
+          color="text-blue-500"
+        />
+        <KPICard 
+          label={copy.admin.metrics.invitationsSent} 
+          value={invitationsSent.length} 
+          icon={<Mail className="h-4 w-4" />} 
+          color="text-purple-500"
+        />
+        <KPICard 
+          label={copy.admin.metrics.invitationsUsed} 
+          value={invitationsUsed.length} 
+          icon={<Unlock className="h-4 w-4" />} 
+          color="text-emerald-500"
+        />
+        <KPICard 
+          label={copy.admin.metrics.firstLoginsCompleted} 
+          value={firstLoginsCompleted.length} 
+          icon={<LogIn className="h-4 w-4" />} 
+          color="text-indigo-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* FILA 2 - Salud de la Beta */}
+        <Card className="shadow-none border-muted/60">
+          <CardHeader className="py-3 px-4 border-b bg-muted/5 flex flex-row items-center justify-between">
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight">
-                {copy.admin.title}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                {copy.admin.description}
-              </p>
+              <CardTitle className="text-lg font-semibold">{locale === "es" ? "Salud de la Beta" : "Beta Health"}</CardTitle>
             </div>
-          </div>
-        </div>
-
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <AdminMetric
-            label={copy.admin.metrics.pendingRequests}
-            value={pendingRequests.length}
-          />
-          <AdminMetric
-            label={copy.admin.metrics.approvedAccounts}
-            value={snapshot.accounts.length}
-          />
-          <AdminMetric
-            label={copy.admin.metrics.invitationsSent}
-            value={invitationsSent.length}
-          />
-          <AdminMetric
-            label={copy.admin.metrics.invitationsUsed}
-            value={invitationsUsed.length}
-          />
-          <AdminMetric
-            label={copy.admin.metrics.firstLoginsCompleted}
-            value={firstLoginsCompleted.length}
-          />
-        </section>
-
-        <section className="space-y-3">
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">
-              {locale === "es" ? "Salud de la beta" : "Beta Health"}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {locale === "es"
-                ? "Indicadores operativos actuales para cuentas, solicitudes y sesiones."
-                : "Current operational indicators for accounts, requests, and sessions."}
-            </p>
-          </div>
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <AdminMetric
-              label={locale === "es" ? "Usuarios totales" : "Total users"}
-              value={analytics.overview.totalAccounts}
-            />
-            <AdminMetric
-              label={locale === "es" ? "Usuarios activos" : "Active users"}
-              value={analytics.overview.activeAccounts}
-            />
-            <AdminMetric
-              label={copy.admin.metrics.pendingRequests}
-              value={analytics.overview.pendingRequests}
-            />
-            <AdminMetric
-              label={copy.admin.sections.activeSessions.title}
-              value={analytics.overview.activeSessions}
-            />
-          </section>
-        </section>
-
-        <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {locale === "es" ? "Embudo de adopcion" : "Adoption Funnel"}
-              </CardTitle>
-              <CardDescription>
-                {locale === "es"
-                  ? "Progreso desde solicitud hasta primer login usando datos de operacion existentes."
-                  : "Progress from request to first login using existing operations data."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      {locale === "es" ? "Etapa" : "Stage"}
-                    </TableHead>
-                    <TableHead className="text-right">
-                      {locale === "es" ? "Total" : "Total"}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <FunnelRow
-                    label={locale === "es" ? "Solicitudes" : "Requests"}
-                    value={snapshot.counts.total}
-                  />
-                  <FunnelRow
-                    label={locale === "es" ? "Aprobaciones" : "Approvals"}
-                    value={analytics.overview.approvedRequests}
-                  />
-                  <FunnelRow
-                    label={copy.admin.metrics.invitationsSent}
-                    value={analytics.overview.invitationsSent}
-                    note={formatRate(analytics.adoption.invitationOpenRate)}
-                  />
-                  <FunnelRow
-                    label={locale === "es" ? "Invitaciones abiertas" : "Invitations opened"}
-                    value={analytics.overview.invitationsOpened}
-                    note={formatRate(analytics.adoption.invitationUseRate)}
-                  />
-                  <FunnelRow
-                    label={copy.admin.metrics.firstLoginsCompleted}
-                    value={analytics.overview.firstLogins}
-                    note={formatRate(analytics.adoption.activationRate)}
-                  />
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {locale === "es" ? "Crecimiento de cuentas" : "Account Growth"}
-              </CardTitle>
-              <CardDescription>
-                {locale === "es"
-                  ? "Altas recientes y actividad de login."
-                  : "Recent account creation and login activity."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-                <InlineMetric
-                  label={locale === "es" ? "Creadas en 7 dias" : "Created in 7 days"}
-                  value={analytics.overview.accountsCreatedLast7Days}
-                />
-                <InlineMetric
-                  label={locale === "es" ? "Creadas en 30 dias" : "Created in 30 days"}
-                  value={analytics.overview.accountsCreatedLast30Days}
-                />
-                <InlineMetric
-                  label={locale === "es" ? "Logins en 24h" : "Logins in 24h"}
-                  value={analytics.overview.loginsLast24Hours}
-                />
-                <InlineMetric
-                  label={locale === "es" ? "Logins en 30 dias" : "Logins in 30 days"}
-                  value={analytics.overview.loginsLast30Days}
-                  note={`${locale === "es" ? "Admin ratio" : "Admin ratio"} ${formatRate(analytics.adoption.adminRatio)}`}
-                />
-              </section>
-            </CardContent>
-          </Card>
-        </section>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {locale === "es" ? "Actividad reciente" : "Recent Activity"}
-            </CardTitle>
-            <CardDescription>
-              {locale === "es"
-                ? "Linea de tiempo derivada de eventos de auditoria."
-                : "Timeline derived from audit events."}
-            </CardDescription>
+            <Activity className="h-4 w-4 text-muted-foreground/50" />
           </CardHeader>
-          <CardContent>
-            {analytics.activity.length === 0 ? (
-              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-                {copy.admin.sections.auditEvents.empty}
-              </div>
-            ) : (
+          <CardContent className="p-4 grid grid-cols-2 gap-4">
+            <HealthMetric label={locale === "es" ? "Usuarios totales" : "Total users"} value={analytics.overview.totalAccounts} />
+            <HealthMetric label={locale === "es" ? "Usuarios activos" : "Active users"} value={analytics.overview.activeAccounts} />
+            <HealthMetric label={copy.admin.metrics.pendingRequests} value={analytics.overview.pendingRequests} />
+            <HealthMetric label={copy.admin.sections.activeSessions.title} value={analytics.overview.activeSessions} />
+          </CardContent>
+        </Card>
+
+        {/* FILA 2 - Embudo de Adopción Unificado */}
+        <Card className="shadow-none border-muted/60">
+          <CardHeader className="py-3 px-4 border-b bg-muted/5 flex flex-row items-center justify-between">
+            <CardTitle className="text-lg font-semibold">{locale === "es" ? "Embudo de Adopción" : "Adoption Funnel"}</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground/50" />
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader className="bg-muted/10">
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="h-9 py-0 pl-4">{locale === "es" ? "Etapa" : "Stage"}</TableHead>
+                  <TableHead className="h-9 py-0 text-right">{locale === "es" ? "Total" : "Total"}</TableHead>
+                  <TableHead className="h-9 py-0 text-right pr-4">% Conv.</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <FunnelRow label={locale === "es" ? "Solicitudes" : "Requests"} value={snapshot.counts.total} />
+                <FunnelRow label={locale === "es" ? "Aprobaciones" : "Approvals"} value={analytics.overview.approvedRequests} />
+                <FunnelRow label={copy.admin.metrics.invitationsSent} value={analytics.overview.invitationsSent} rate={analytics.adoption.invitationOpenRate} />
+                <FunnelRow label={locale === "es" ? "Invitaciones abiertas" : "Opened"} value={analytics.overview.invitationsOpened} rate={analytics.adoption.invitationUseRate} />
+                <FunnelRow label={copy.admin.metrics.firstLoginsCompleted} value={analytics.overview.firstLogins} rate={analytics.adoption.activationRate} />
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-[0.6fr_0.4fr] gap-4">
+        {/* FILA 3 - Solicitudes Pendientes */}
+        <Card className="shadow-none border-muted/60 flex flex-col min-h-[400px]">
+          <CardHeader className="py-3 px-4 border-b bg-muted/5 flex flex-row items-center justify-between">
+            <CardTitle className="text-lg font-semibold">{copy.admin.sections.pendingRequests.title}</CardTitle>
+            <Badge tone="info" className="font-bold">{pendingRequests.length}</Badge>
+          </CardHeader>
+          <CardContent className="p-0 flex-1 overflow-hidden">
+            <div className="overflow-y-auto max-h-[500px]">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{copy.admin.table.event}</TableHead>
-                    <TableHead>{copy.admin.table.actor}</TableHead>
-                    <TableHead>{copy.admin.table.target}</TableHead>
-                    <TableHead>{copy.admin.table.createdAt}</TableHead>
+                <TableHeader className="bg-muted/10 sticky top-0 z-10">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="h-9 py-0 pl-4">{copy.admin.table.email}</TableHead>
+                    <TableHead className="h-9 py-0">{copy.admin.table.requestedAt}</TableHead>
+                    <TableHead className="h-9 py-0 text-right pr-4">{copy.admin.table.actions}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {analytics.activity.slice(0, 12).map((event, index) => (
-                    <TableRow key={`${event.timestamp}-${event.eventType}-${index}`}>
-                      <TableCell className="font-medium">
-                        {formatAuditEventType(event.eventType)}
-                      </TableCell>
-                      <TableCell>{event.actorEmail ?? "-"}</TableCell>
-                      <TableCell>{event.targetEmail ?? "-"}</TableCell>
-                      <TableCell>
-                        {event.timestamp ? formatDate(event.timestamp, locale) : "-"}
+                  {pendingRequests.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-32 text-center text-muted-foreground italic">
+                        {copy.admin.sections.pendingRequests.empty}
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    pendingRequests.map((request) => (
+                      <TableRow key={request.id} className="group py-0">
+                        <TableCell className="py-2 pl-4">
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">{request.email}</span>
+                            <span className="text-[10px] text-muted-foreground">{request.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-xs">{formatDate(request.createdAt, locale)}</TableCell>
+                        <TableCell className="py-2 text-right pr-4">
+                          <PrivateBetaRequestActions locale={locale} requestId={request.id} />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
-            )}
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {locale === "es" ? "Analítica de producto" : "Product Analytics"}
-            </CardTitle>
-            <CardDescription>
-              {locale === "es"
-                ? "Uso real de modulos por cuentas autenticadas de la beta privada."
-                : "Real module usage from authenticated private beta accounts."}
-            </CardDescription>
+        {/* FILA 3 - Tabs de Detalles */}
+        <Card className="shadow-none border-muted/60 flex flex-col min-h-[400px]">
+          <CardHeader className="p-0 border-b">
+            <div className="flex bg-muted/5">
+              <TabButton active={activeTab === "activity"} onClick={() => setActiveTab("activity")} icon={<Activity className="h-3.5 w-3.5" />}>
+                {locale === "es" ? "Actividad" : "Activity"}
+              </TabButton>
+              <TabButton active={activeTab === "analytics"} onClick={() => setActiveTab("analytics")} icon={<BarChart3 className="h-3.5 w-3.5" />}>
+                {locale === "es" ? "Analítica" : "Analytics"}
+              </TabButton>
+              <TabButton active={activeTab === "perception"} onClick={() => setActiveTab("perception")} icon={<Heart className="h-3.5 w-3.5" />}>
+                {locale === "es" ? "Percepción" : "Perception"}
+              </TabButton>
+            </div>
           </CardHeader>
-          <CardContent>
-            {productAnalytics ? (
-              <section className="space-y-4">
-                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                  <InlineMetric
-                    label="DAU"
-                    value={productAnalytics.dau}
-                  />
-                  <InlineMetric
-                    label="WAU"
-                    value={productAnalytics.wau}
-                  />
-                  <InlineMetric
-                    label="MAU"
-                    value={productAnalytics.mau}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Activos 7 dias" : "Active 7 days"}
-                    value={productAnalytics.activeUsers7d}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Sesiones / usuario" : "Sessions / user"}
-                    value={formatMetric(productAnalytics.sessionsPerUser)}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Dias entre visitas" : "Days between visits"}
-                    value={formatMetric(productAnalytics.avgDaysBetweenVisits)}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Primer login" : "First login"}
-                    value={productAnalytics.funnel.firstLogin}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Recurrentes" : "Recurrent"}
-                    value={productAnalytics.funnel.recurrent}
-                  />
-                </section>
-                <section className="grid gap-4 xl:grid-cols-3">
-                  <ProductFunnelTable
-                    title={locale === "es" ? "Embudo real" : "Real funnel"}
-                    label={locale === "es" ? "Etapa" : "Stage"}
-                    rows={[
-                      {
-                        name: locale === "es" ? "Invitados" : "Invited",
-                        count: productAnalytics.funnel.invited,
-                      },
-                      {
-                        name: locale === "es" ? "Aprobados" : "Approved",
-                        count: productAnalytics.funnel.approved,
-                      },
-                      {
-                        name: locale === "es" ? "Primer login" : "First login",
-                        count: productAnalytics.funnel.firstLogin,
-                      },
-                      {
-                        name: locale === "es" ? "Segundo login" : "Second login",
-                        count: productAnalytics.funnel.secondLogin,
-                      },
-                      {
-                        name: locale === "es" ? "Recurrentes" : "Recurrent",
-                        count: productAnalytics.funnel.recurrent,
-                      },
-                    ]}
-                  />
-                  <ProductUsageTable
-                    title={locale === "es" ? "Modulos mas usados" : "Top modules used"}
-                    label={locale === "es" ? "Modulo" : "Module"}
-                    rows={productAnalytics.topModules.map((row) => ({
-                      name: row.module,
-                      count: row.count,
-                    }))}
-                  />
-                  <ProductUsageTable
-                    title={locale === "es" ? "Simbolos mas vistos" : "Top symbols viewed"}
-                    label={locale === "es" ? "Simbolo" : "Symbol"}
-                    rows={productAnalytics.topSymbols.map((row) => ({
-                      name: row.symbol,
-                      count: row.count,
-                    }))}
-                  />
-                </section>
-              </section>
-            ) : (
-              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-                {locale === "es"
-                  ? "El backend de analitica de producto aun no esta disponible. No se crearon tablas nuevas en el frontend."
-                  : "The product analytics backend is not available yet. No new frontend-owned tables were created."}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {locale === "es" ? "Feedback Intelligence" : "Feedback Intelligence"}
-            </CardTitle>
-            <CardDescription>
-              {locale === "es"
-                ? "Valor percibido por usuarios autenticados de la beta privada."
-                : "Perceived value from authenticated private beta users."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {feedbackAnalytics ? (
-              <section className="space-y-4">
-                <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                  <InlineMetric
-                    label={locale === "es" ? "Respuestas totales" : "Total responses"}
-                    value={feedbackAnalytics.totalResponses}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Utilidad: si" : "Usefulness: yes"}
-                    value={formatFeedbackPercentage(feedbackAnalytics.moduleUsefulness, "yes")}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Retencion semanal: si" : "Weekly retention: yes"}
-                    value={formatFeedbackPercentage(feedbackAnalytics.weeklyRetention, "yes")}
-                  />
-                  <InlineMetric
-                    label={locale === "es" ? "Retencion: inseguro" : "Retention: unsure"}
-                    value={formatFeedbackPercentage(feedbackAnalytics.weeklyRetention, "unsure")}
-                  />
-                </section>
-                <section className="grid gap-4 xl:grid-cols-4">
-                  <FeedbackBreakdownTable
-                    title={locale === "es" ? "Utilidad por modulo" : "Module usefulness"}
-                    rows={feedbackAnalytics.moduleUsefulness}
-                  />
-                  <FeedbackBreakdownTable
-                    title={locale === "es" ? "Valor de sesion" : "Session value"}
-                    rows={feedbackAnalytics.sessionValue}
-                  />
-                  <FeedbackBreakdownTable
-                    title={locale === "es" ? "Retencion semanal" : "Weekly retention"}
-                    rows={feedbackAnalytics.weeklyRetention}
-                  />
-                  <TopUsefulModulesTable
-                    title={locale === "es" ? "Top modulos utiles" : "Top useful modules"}
-                    rows={feedbackAnalytics.topUsefulModules}
-                  />
-                </section>
-              </section>
-            ) : (
-              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-                {locale === "es"
-                  ? "El backend de feedback aun no esta disponible."
-                  : "The feedback backend is not available yet."}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{copy.admin.sections.pendingRequests.title}</CardTitle>
-            <CardDescription>
-              {copy.admin.sections.pendingRequests.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {pendingRequests.length === 0 ? (
-              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-                {copy.admin.sections.pendingRequests.empty}
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{copy.admin.table.name}</TableHead>
-                    <TableHead>{copy.admin.table.email}</TableHead>
-                    <TableHead>{copy.admin.table.requestedAt}</TableHead>
-                    <TableHead>{copy.admin.table.status}</TableHead>
-                    <TableHead>{copy.admin.table.actions}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingRequests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell className="font-medium">
-                        <div className="space-y-1">
-                          <p>{request.name}</p>
+          <CardContent className="p-0 flex-1 overflow-hidden bg-card">
+            <div className="p-4 overflow-y-auto max-h-[500px]">
+              {activeTab === "activity" && (
+                <div className="space-y-4">
+                  {analytics.activity.length === 0 ? (
+                    <div className="text-center py-10 text-muted-foreground italic text-sm">{copy.admin.sections.auditEvents.empty}</div>
+                  ) : (
+                    <div className="space-y-2">
+                      {analytics.activity.slice(0, 10).map((event, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-2 rounded-lg border bg-muted/5 text-xs">
+                          <div className="mt-0.5 rounded-full bg-primary/10 p-1">
+                            <Clock className="h-3 w-3 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-foreground capitalize">{formatAuditEventType(event.eventType)}</p>
+                            <p className="text-muted-foreground truncate">{event.actorEmail || "-"}</p>
+                            <p className="mt-1 text-[10px] opacity-60 font-mono">{event.timestamp ? formatDate(event.timestamp, locale) : "-"}</p>
+                          </div>
                         </div>
-                      </TableCell>
-                      <TableCell>{request.email}</TableCell>
-                      <TableCell>{formatDate(request.createdAt, locale)}</TableCell>
-                      <TableCell>
-                        <Badge tone={toneForStatus(request.status)}>
-                          {getPrivateBetaStatusLabel(request.status, locale)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="min-w-64">
-                        <div className="space-y-3">
-                          <PrivateBetaRequestActions
-                            locale={locale}
-                            requestId={request.id}
-                          />
-                          <details className="group text-sm">
-                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                              {copy.admin.actions.viewDetails}
-                            </summary>
-                            <div className="mt-2 space-y-2 rounded-md border bg-muted/20 p-3 text-xs text-muted-foreground">
-                              <p>
-                                <span className="font-medium text-foreground">
-                                  {copy.admin.table.experience}:{" "}
-                                </span>
-                                {experienceLabels.get(request.experienceLevel) ??
-                                  request.experienceLevel}
-                              </p>
-                              {request.interest ? (
-                                <p className="leading-5">{request.interest}</p>
-                              ) : null}
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "analytics" && (
+                <div className="space-y-4">
+                  {productAnalytics ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <SmallMetric label="DAU" value={productAnalytics.dau} />
+                        <SmallMetric label="WAU" value={productAnalytics.wau} />
+                        <SmallMetric label="MAU" value={productAnalytics.mau} />
+                        <SmallMetric label={locale === "es" ? "Ses./User" : "Ses./User"} value={formatMetric(productAnalytics.sessionsPerUser)} />
+                      </div>
+                      <div className="rounded-xl border bg-muted/5 p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">{locale === "es" ? "Módulos más usados" : "Top Modules"}</p>
+                        <div className="space-y-2">
+                          {productAnalytics.topModules.slice(0, 5).map((m) => (
+                            <div key={m.module} className="flex items-center justify-between text-xs">
+                              <span className="font-medium">{m.module}</span>
+                              <Badge tone="neutral" className="h-4 text-[9px]">{m.count}</Badge>
                             </div>
-                          </details>
+                          ))}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-10 text-muted-foreground text-xs">{locale === "es" ? "Sin datos de analítica" : "No analytics data"}</div>
+                  )}
+                </div>
+              )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{copy.admin.sections.approvedAccounts.title}</CardTitle>
-            <CardDescription>
-              {copy.admin.sections.approvedAccounts.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PrivateBetaAccountTable
-              locale={locale}
-              accounts={snapshot.accounts}
-            />
+              {activeTab === "perception" && (
+                <div className="space-y-4">
+                  {feedbackAnalytics ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <SmallMetric label={locale === "es" ? "Respuestas" : "Responses"} value={feedbackAnalytics.totalResponses} />
+                        <SmallMetric label={locale === "es" ? "Utilidad" : "Utility"} value={formatFeedbackPercentage(feedbackAnalytics.moduleUsefulness, "yes")} />
+                      </div>
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{locale === "es" ? "Retención Semanal" : "Weekly Retention"}</p>
+                         {feedbackAnalytics.weeklyRetention.map(row => (
+                           <div key={row.value} className="flex items-center justify-between text-xs p-2 rounded-lg border bg-muted/5">
+                             <span className="capitalize">{formatFeedbackValue(row.value)}</span>
+                             <span className="font-bold">{formatRate(row.percentage)}</span>
+                           </div>
+                         ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-10 text-muted-foreground text-xs">{locale === "es" ? "Sin datos de feedback" : "No feedback data"}</div>
+                  )}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{copy.admin.sections.activeSessions.title}</CardTitle>
-            <CardDescription>
-              {copy.admin.sections.activeSessions.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PrivateBetaSessionTable
-              locale={locale}
-              sessions={activeSessions}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{copy.admin.sections.auditEvents.title}</CardTitle>
-            <CardDescription>
-              {copy.admin.sections.auditEvents.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {snapshot.auditEvents.length === 0 ? (
-              <div className="rounded-md border border-dashed bg-muted/20 p-6 text-sm text-muted-foreground">
-                {copy.admin.sections.auditEvents.empty}
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{copy.admin.table.event}</TableHead>
-                    <TableHead>{copy.admin.table.actor}</TableHead>
-                    <TableHead>{copy.admin.table.target}</TableHead>
-                    <TableHead>{copy.admin.table.createdAt}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {snapshot.auditEvents.slice(0, 20).map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell className="font-medium">
-                        {formatAuditEventType(event.eventType)}
-                      </TableCell>
-                      <TableCell>{event.actorEmail ?? "-"}</TableCell>
-                      <TableCell>
-                        {event.targetEmail ?? event.targetSessionId ?? "-"}
-                      </TableCell>
-                      <TableCell>
-                        {event.createdAt ? formatDate(event.createdAt, locale) : "-"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </section>
+      </div>
+      
+      {/* SECCIÓN OCULTA O COMPACTA: Usuarios Aprobados y Sesiones (Solo si es necesario para mantener funcionalidad) */}
+      <details className="text-xs text-muted-foreground group">
+        <summary className="cursor-pointer hover:text-foreground p-2 border rounded-md transition-colors inline-flex items-center gap-2">
+          <Layout className="h-3 w-3" />
+          {locale === "es" ? "Ver tablas de gestión avanzadas (Cuentas y Sesiones)" : "View advanced management tables (Accounts & Sessions)"}
+        </summary>
+        <div className="mt-4 space-y-6">
+          <Card>
+            <CardHeader><CardTitle>{copy.admin.sections.approvedAccounts.title}</CardTitle></CardHeader>
+            <CardContent><PrivateBetaAccountTable locale={locale} accounts={snapshot.accounts} /></CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>{copy.admin.sections.activeSessions.title}</CardTitle></CardHeader>
+            <CardContent><PrivateBetaSessionTable locale={locale} sessions={snapshot.sessions.filter(s => !s.revokedAt)} /></CardContent>
+          </Card>
+        </div>
+      </details>
     </main>
   );
 }
 
-function AdminMetric({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: number | string;
-  note?: string;
-}) {
+function KPICard({ label, value, icon, color }: { label: string; value: number | string; icon: React.ReactNode; color: string }) {
   return (
-    <Card>
-      <CardHeader className="space-y-1 p-4">
-        <CardDescription className="text-xs uppercase tracking-[0.16em]">
-          {label}
-        </CardDescription>
-        <CardTitle className="text-2xl">{value}</CardTitle>
-        {note ? (
-          <p className="text-xs leading-5 text-muted-foreground">{note}</p>
-        ) : null}
-      </CardHeader>
+    <Card className="shadow-none border-muted/60 p-3">
+      <div className="flex items-center justify-between gap-2">
+        <div className="space-y-0.5">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground leading-none">{label}</p>
+          <p className="text-xl font-bold tracking-tighter leading-none mt-1">{value}</p>
+        </div>
+        <div className={cn("p-1.5 rounded-full bg-muted/50", color)}>
+          {icon}
+        </div>
+      </div>
     </Card>
   );
 }
 
-function InlineMetric({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: number | string;
-  note?: string;
-}) {
+function HealthMetric({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-md border bg-muted/20 p-4">
-      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-1 text-2xl font-semibold">{value}</p>
-      {note ? (
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{note}</p>
-      ) : null}
+    <div className="flex flex-col border-l-2 border-primary/20 pl-3 py-1">
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+      <p className="text-xl font-bold tracking-tight">{value}</p>
     </div>
   );
 }
 
-function ProductUsageTable({
-  title,
-  label,
-  rows,
-}: {
-  title: string;
-  label: string;
-  rows: Array<{ name: string; count: number }>;
-}) {
+function FunnelRow({ label, value, rate }: { label: string; value: number; rate?: number }) {
   return (
-    <div className="rounded-md border bg-muted/20 p-4">
-      <p className="text-sm font-semibold">{title}</p>
-      {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">-</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{label}</TableHead>
-              <TableHead className="text-right">Count</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell className="font-medium">{row.name}</TableCell>
-                <TableCell className="text-right">{row.count}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </div>
-  );
-}
-
-function ProductFunnelTable({
-  title,
-  label,
-  rows,
-}: {
-  title: string;
-  label: string;
-  rows: Array<{ name: string; count: number }>;
-}) {
-  return <ProductUsageTable title={title} label={label} rows={rows} />;
-}
-
-function FeedbackBreakdownTable({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: Array<{ value: string; count: number; percentage: number }>;
-}) {
-  return (
-    <div className="rounded-md border bg-muted/20 p-4">
-      <p className="text-sm font-semibold">{title}</p>
-      {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">-</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Value</TableHead>
-              <TableHead className="text-right">Count</TableHead>
-              <TableHead className="text-right">%</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.value}>
-                <TableCell className="font-medium">{formatFeedbackValue(row.value)}</TableCell>
-                <TableCell className="text-right">{row.count}</TableCell>
-                <TableCell className="text-right">{formatRate(row.percentage)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </div>
-  );
-}
-
-function TopUsefulModulesTable({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: Array<{ module: string; yes: number; no: number; yesRate: number; total: number }>;
-}) {
-  return (
-    <div className="rounded-md border bg-muted/20 p-4">
-      <p className="text-sm font-semibold">{title}</p>
-      {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">-</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Module</TableHead>
-              <TableHead className="text-right">Yes</TableHead>
-              <TableHead className="text-right">No</TableHead>
-              <TableHead className="text-right">%</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.module}>
-                <TableCell className="font-medium">{formatFeedbackValue(row.module)}</TableCell>
-                <TableCell className="text-right">{row.yes}</TableCell>
-                <TableCell className="text-right">{row.no}</TableCell>
-                <TableCell className="text-right">{formatRate(row.yesRate)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </div>
-  );
-}
-
-function FunnelRow({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: number;
-  note?: string;
-}) {
-  return (
-    <TableRow>
-      <TableCell className="font-medium">{label}</TableCell>
-      <TableCell className="text-right">
-        <span>{value}</span>
-        {note ? (
-          <span className="ml-2 text-xs text-muted-foreground">{note}</span>
-        ) : null}
+    <TableRow className="hover:bg-muted/5 group h-8">
+      <TableCell className="py-1.5 pl-4 text-xs font-medium text-foreground/80">{label}</TableCell>
+      <TableCell className="py-1.5 text-right font-mono text-xs">{value}</TableCell>
+      <TableCell className="py-1.5 text-right pr-4">
+        {rate !== undefined ? (
+          <Badge tone="neutral" className="h-4 text-[9px] font-bold px-1.5">{Math.round(rate * 100)}%</Badge>
+        ) : (
+          <span className="text-muted-foreground/30">—</span>
+        )}
       </TableCell>
     </TableRow>
   );
 }
 
-function toneForStatus(status: "Pending" | "Approved" | "Rejected") {
-  if (status === "Approved") {
-    return "positive";
-  }
+function TabButton({ active, onClick, icon, children }: { active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-bold uppercase tracking-wider transition-all border-b-2",
+        active 
+          ? "border-primary bg-card text-primary shadow-sm" 
+          : "border-transparent text-muted-foreground hover:bg-muted/10 hover:text-foreground"
+      )}
+    >
+      {icon}
+      {children}
+    </button>
+  );
+}
 
-  if (status === "Rejected") {
-    return "warning";
-  }
-
-  return "info";
+function SmallMetric({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-lg border bg-muted/5 p-2 flex flex-col items-center justify-center">
+      <span className="text-[9px] font-black uppercase text-muted-foreground/60">{label}</span>
+      <span className="text-sm font-bold">{value}</span>
+    </div>
+  );
 }
 
 function formatRate(value: number) {
@@ -795,24 +402,15 @@ function formatMetric(value: number) {
   return Number.isFinite(value) ? value.toFixed(2) : "-";
 }
 
-function formatFeedbackPercentage(
-  rows: Array<{ value: string; percentage: number }>,
-  value: string,
-) {
+function formatFeedbackPercentage(rows: Array<{ value: string; percentage: number }>, value: string) {
   const row = rows.find((item) => item.value === value);
   return row ? formatRate(row.percentage) : "0%";
 }
 
 function formatFeedbackValue(value: string) {
-  return value
-    .split("_")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return value.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
 }
 
 function formatAuditEventType(value: string) {
-  return value
-    .split("_")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return value.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
 }

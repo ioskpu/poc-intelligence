@@ -16,10 +16,17 @@ const buttonVariants = cva(
         ghost:
           "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-secondary",
       },
+      tone: {
+        neutral: "border-border bg-muted text-muted-foreground hover:bg-muted/80",
+        positive: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20",
+        info: "border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/20",
+        warning: "border-accent/30 bg-accent/10 text-accent hover:bg-accent/20",
+      },
       size: {
         default: "h-10 px-4",
         sm: "h-9 px-3",
         lg: "h-11 px-5",
+        xs: "h-7 px-2 text-[10px]",
       },
     },
     defaultVariants: {
@@ -35,10 +42,10 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
 type ButtonLinkProps = React.ComponentProps<typeof Link> &
   VariantProps<typeof buttonVariants>;
 
-export function Button({ className, variant, size, ...props }: ButtonProps) {
+export function Button({ className, variant, tone, size, ...props }: ButtonProps) {
   return (
     <button
-      className={cn(buttonVariants({ variant, size }), className)}
+      className={cn(buttonVariants({ variant, tone, size }), className)}
       {...props}
     />
   );
@@ -47,10 +54,11 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
 export function ButtonLink({
   className,
   variant,
+  tone,
   size,
   ...props
 }: ButtonLinkProps) {
   return (
-    <Link className={cn(buttonVariants({ variant, size }), className)} {...props} />
+    <Link className={cn(buttonVariants({ variant, tone, size }), className)} {...props} />
   );
 }

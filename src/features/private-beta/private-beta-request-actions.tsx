@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getPrivateBetaCopy } from "@/lib/private-beta-content";
 import { type Locale } from "@/lib/i18n";
 import { changePrivateBetaRequestStatus } from "@/services/api/private-beta-client";
+import { Check, X } from "lucide-react";
 
 type PrivateBetaRequestActionsProps = {
   locale: Locale;
@@ -49,31 +50,40 @@ export function PrivateBetaRequestActions({
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-end gap-2">
         <Button
           type="button"
-          size="sm"
+          size="xs"
+          tone="info"
+          variant="outline"
+          className="font-bold h-7"
           onClick={() => runAction("Approved", "approve")}
           disabled={isPending || pendingAction !== null}
         >
-          {pendingAction === "approve"
-            ? copy.admin.actions.approving
-            : copy.admin.actions.approve}
+          {pendingAction === "approve" ? (
+             <span className="animate-pulse">{copy.admin.actions.approving}</span>
+          ) : (
+            <span className="flex items-center gap-1"><Check className="h-3 w-3" /> {copy.admin.actions.approve}</span>
+          )}
         </Button>
         <Button
           type="button"
-          size="sm"
+          size="xs"
+          tone="warning"
           variant="outline"
+          className="font-bold h-7"
           onClick={() => runAction("Rejected", "reject")}
           disabled={isPending || pendingAction !== null}
         >
-          {pendingAction === "reject"
-            ? copy.admin.actions.rejecting
-            : copy.admin.actions.reject}
+          {pendingAction === "reject" ? (
+            <span className="animate-pulse">{copy.admin.actions.rejecting}</span>
+          ) : (
+            <span className="flex items-center gap-1"><X className="h-3 w-3" /> {copy.admin.actions.reject}</span>
+          )}
         </Button>
       </div>
-      {error ? <p className="text-xs text-rose-500">{error}</p> : null}
+      {error ? <p className="text-[10px] text-rose-500 text-right">{error}</p> : null}
     </div>
   );
 }
