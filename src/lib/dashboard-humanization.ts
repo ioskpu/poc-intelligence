@@ -43,7 +43,7 @@ const copy: Record<Locale, DashboardHumanization> = {
         "Seguimiento de oportunidades rechazadas para ver qué ocurrió después.",
       freshnessScanner: "Qué tan reciente es la última lectura del Scanner.",
       freshnessDecisions: "Qué tan reciente es la actividad de decisiones.",
-      freshnessObservations: "Qué tan reciente es la evidencia de observación histórica.",
+      freshnessObservations: "Estado de actividad automática del motor de investigación.",
       profitFactor: "Ganancia bruta dividida por pérdida bruta.",
       rewardRisk: "Relación entre la ganancia esperada y la pérdida estimada.",
       maxFavorableExcursion:
@@ -83,7 +83,7 @@ const copy: Record<Locale, DashboardHumanization> = {
         "Rejected-opportunity tracking that shows what happened next.",
       freshnessScanner: "How recent the latest Scanner read is.",
       freshnessDecisions: "How recent the decision activity is.",
-      freshnessObservations: "How recent the historical observation data is.",
+      freshnessObservations: "Activity status of the automated research engine.",
       profitFactor: "Gross profit divided by gross loss.",
       rewardRisk: "The ratio between expected gain and estimated loss.",
       maxFavorableExcursion:

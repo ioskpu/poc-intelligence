@@ -246,7 +246,7 @@ function normalizeFreshness(value: unknown) {
     toFreshnessStatus("Decisions", firstFreshnessEntry(record, ["futuresLabDecision"])),
     toFreshnessStatus(
       "Observations",
-      firstFreshnessEntry(record, ["futuresLabObservation", "futuresCandidatePromoter"]),
+      firstFreshnessEntry(record, ["futuresScanner", "futuresLabDecision", "futuresLabObservation"]),
     ),
   ].filter((item) => item.timestamp !== null || item.ageMinutes !== null);
 }

@@ -44,7 +44,7 @@ export function FreshnessStrip({ freshness, locale }: FreshnessStripProps) {
               </div>
             </div>
             <Badge tone={getFreshnessTone(status.isFresh)}>
-              {getFreshnessLabel(status.isFresh, locale)}
+              {getFreshnessLabel(status.label, status.isFresh, locale)}
             </Badge>
           </div>
         ))}
@@ -65,12 +65,18 @@ function getFreshnessTone(isFresh: boolean | null) {
   return "neutral";
 }
 
-function getFreshnessLabel(isFresh: boolean | null, locale: Locale) {
+function getFreshnessLabel(label: string, isFresh: boolean | null, locale: Locale) {
   if (isFresh === true) {
+    if (label === "Observations") {
+      return locale === "es" ? "Motor activo" : "Engine active";
+    }
     return locale === "es" ? "Reciente" : "Fresh";
   }
 
   if (isFresh === false) {
+    if (label === "Observations") {
+      return locale === "es" ? "Motor en espera" : "Engine standby";
+    }
     return locale === "es" ? "Antiguo" : "Stale";
   }
 

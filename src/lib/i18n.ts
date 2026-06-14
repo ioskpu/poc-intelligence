@@ -509,32 +509,36 @@ export function translateVolatility(value: string, locale: Locale) {
     return "Media";
   }
 
-  if (value === "Low") {
-    return "Baja";
+  if (value === "Observations freshness") {
+    return "Actividad del motor";
   }
 
   return value;
-}
+  }
 
-export function translateFreshnessLabel(value: string, locale: Locale) {
+  export function translateFreshnessLabel(value: string, locale: Locale) {
   if (locale === "en") {
+    if (value === "Observations") {
+      return "Engine activity";
+    }
     return value;
   }
 
-  if (value === "Scanner freshness") {
-    return "Frescura del scanner";
+  if (value === "Scanner") {
+    return "Scanner";
   }
 
-  if (value === "Decision freshness") {
-    return "Frescura de decisiones";
+  if (value === "Decisions") {
+    return "Decisiones";
   }
 
-  if (value === "Observations freshness") {
-    return "Frescura de observaciones";
+  if (value === "Observations") {
+    return "Actividad del motor";
   }
 
   return value;
-}
+  }
+
 
 export function formatHumanDuration(minutes: number | null | undefined, locale: Locale) {
   if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) {
